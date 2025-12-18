@@ -1,7 +1,12 @@
 package io.ljp.simapi
 
-import io.ktor.client.plugins.ResponseException
 
+import com.ljp.common.log.core.printer.w
+import com.ljp.common.log.core.priority.LogcatPriorityInstance
+import io.ktor.client.plugins.ResponseException
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ApiResponse<T>(val code:Int,val msg:String,val data:T?) {
     companion object {
         const val SUCCESS_CODE = 200
@@ -42,6 +47,9 @@ suspend inline fun <reified T> safeApiCall(crossinline call:suspend () -> ApiRes
             message = e.message, cause = e)
     }catch (e: Exception) {
         ResultWrapper.Error(message = e.message ?: "未知异常", cause = e)
+    }.let { it->
+        it.w(LogcatPriorityInstance, "[APiClient] $it")
+        it
     }
 
 }

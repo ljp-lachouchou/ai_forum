@@ -21,6 +21,8 @@ import io.ljp.simapi.client.HttpClientFactory
 import io.ljp.simapi.client.HttpEngineType
 import io.ljp.simapi.module.HttpClientModule
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.Serializable
+
 
 class ApiRequestBuilder(var path: String){
 
@@ -51,7 +53,6 @@ class ApiClient(val httpClient: HttpClient) {
                 apiRequest.params?.forEach { (k, v) -> parameter(k, v) }
             }.body<ApiResponse<T>>()
         }
-        w(LogcatPriorityInstance,response)
         return response
     }
     suspend inline fun <reified T> post( block: ()->ApiRequest): RW<T> {
@@ -64,7 +65,6 @@ class ApiClient(val httpClient: HttpClient) {
                 apiRequest.headers?.forEach { (k, v) -> header(k, v) }
             }.body<ApiResponse<T>>()
         }
-        w(LogcatPriorityInstance,response)
         return response
     }
     suspend inline fun <reified T> put( block: ()->ApiRequest): RW<T> {
@@ -77,7 +77,6 @@ class ApiClient(val httpClient: HttpClient) {
                 apiRequest.headers?.forEach { (k, v) -> header(k, v) }
             }.body<ApiResponse<T>>()
         }
-        w(LogcatPriorityInstance,response)
         return response
     }
     suspend inline fun <reified T>  patch( block: ()->ApiRequest): RW<T> {
@@ -90,7 +89,6 @@ class ApiClient(val httpClient: HttpClient) {
                 apiRequest.headers?.forEach { (k, v) -> header(k, v) }
             }.body<ApiResponse<T>>()
         }
-        w(LogcatPriorityInstance,response)
         return response
     }
     suspend inline fun <reified T> delete( block: ()->ApiRequest): RW<T> {
@@ -102,7 +100,6 @@ class ApiClient(val httpClient: HttpClient) {
                 apiRequest.headers?.forEach { (k, v) -> header(k, v) }
             }.body<ApiResponse<T>>()
         }
-        w(LogcatPriorityInstance,response)
         return response
     }
 }
