@@ -16,7 +16,6 @@ class LoggingModule(override val enable: Boolean) : HttpClientModule {
             level = LogLevel.ALL
             sanitizeHeader { header -> header == HttpHeaders.Authorization }
         }
-
     }
 }
 

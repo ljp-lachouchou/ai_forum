@@ -9,6 +9,6 @@ import io.ljp.simapi.module.LoggingModule
 class MyApplication : Application(){
     override fun onCreate() {
         super.onCreate()
-        ApiService.init(baseUrl = "https://ktor.io/docs/", modules = listOf(LoggingModule(enable = true)))
+        ApiService.init(baseUrl = "https://www.csdn.net/", modules = listOf(LoggingModule(enable = true)))
     }
 }

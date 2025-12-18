@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "io.ljp.simapi"
+    namespace = "com.ljp.common"
     compileSdk = 36
 
     defaultConfig {
@@ -33,20 +33,6 @@ android {
 }
 
 dependencies {
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.slf4j.android)
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.ktor.client.websockets)
-    implementation(libs.ktor.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.serialization.kotlinx.xml)
-    implementation(libs.ktor.logging)
-    implementation(project(":common"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

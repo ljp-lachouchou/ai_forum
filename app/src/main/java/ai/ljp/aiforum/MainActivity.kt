@@ -11,19 +11,14 @@ import androidx.compose.material3.Text
 
 import androidx.compose.ui.tooling.preview.Preview
 import ai.ljp.aiforum.ui.theme.AIForumTheme
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.ktor.client.HttpClient
+import com.ljp.common.log.core.printer.i
+import com.ljp.common.log.core.priority.LogcatPriorityInstance
 
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.defaultRequest
-import io.ljp.simapi.ApiClient
 import io.ljp.simapi.ExampleViewModel
-import io.ljp.simapi.apiRequest
-import kotlinx.coroutines.runBlocking
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +26,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         val vm by viewModels<ExampleViewModel>()
         setContent {
+            i(LogcatPriorityInstance,"hello")
             AIForumTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(

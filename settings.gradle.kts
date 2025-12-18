@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "AIForum"
 include(":app")
 include(":simapi")
+include(":common")
