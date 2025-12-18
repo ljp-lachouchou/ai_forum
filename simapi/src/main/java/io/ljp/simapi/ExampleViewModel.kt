@@ -10,14 +10,11 @@ import kotlinx.coroutines.launch
 class ExampleViewModel : ViewModel() {
     fun fetchData() = viewModelScope.launch {
         apiClient {
-            val a = get<Any> {
+            get<Any> {
                 apiRequest("weixin_43960383/article/details/120103913") {
                     params = mapOf("userId" to "123")
                 }
-            }.let { e(LogcatPriorityInstance,it) }
-
-
-
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 package io.ljp.simapi
 
+import com.ljp.common.log.core.printer.w
+import com.ljp.common.log.core.priority.LogcatPriorityInstance
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -40,21 +42,21 @@ data class ApiRequest(
 )
 typealias RW<T> = ResultWrapper<T>
 class ApiClient(val httpClient: HttpClient) {
-
     suspend inline fun <reified T> get( block: ()->ApiRequest): RW<T>{
         val apiRequest = block()
-        return safeApiCall {
+        val response = safeApiCall {
             httpClient.get(apiRequest.path) {
                 apiRequest.contentType?.let { contentType(it) }
                 apiRequest.headers?.forEach { (k, v) -> header(k, v) }
                 apiRequest.params?.forEach { (k, v) -> parameter(k, v) }
             }.body<ApiResponse<T>>()
         }
+        w(LogcatPriorityInstance,response)
+        return response
     }
-
     suspend inline fun <reified T> post( block: ()->ApiRequest): RW<T> {
         val apiRequest = block()
-        return safeApiCall {
+        val response =  safeApiCall {
 
             httpClient.post(apiRequest.path) {
                 apiRequest.contentType?.let { contentType(it) } ?: contentType(ContentType.Application.Json)
@@ -62,11 +64,12 @@ class ApiClient(val httpClient: HttpClient) {
                 apiRequest.headers?.forEach { (k, v) -> header(k, v) }
             }.body<ApiResponse<T>>()
         }
+        w(LogcatPriorityInstance,response)
+        return response
     }
-
     suspend inline fun <reified T> put( block: ()->ApiRequest): RW<T> {
         val apiRequest = block()
-        return safeApiCall {
+        val response = safeApiCall {
 
             httpClient.put(apiRequest.path) {
                 apiRequest.contentType?.let { contentType(it) } ?: contentType(ContentType.Application.Json)
@@ -74,11 +77,12 @@ class ApiClient(val httpClient: HttpClient) {
                 apiRequest.headers?.forEach { (k, v) -> header(k, v) }
             }.body<ApiResponse<T>>()
         }
+        w(LogcatPriorityInstance,response)
+        return response
     }
-
     suspend inline fun <reified T>  patch( block: ()->ApiRequest): RW<T> {
         val apiRequest = block()
-        return safeApiCall {
+        val response = safeApiCall {
 
             httpClient.patch(apiRequest.path) {
                 apiRequest.contentType?.let { contentType(it) } ?: contentType(ContentType.Application.Json)
@@ -86,18 +90,21 @@ class ApiClient(val httpClient: HttpClient) {
                 apiRequest.headers?.forEach { (k, v) -> header(k, v) }
             }.body<ApiResponse<T>>()
         }
+        w(LogcatPriorityInstance,response)
+        return response
     }
     suspend inline fun <reified T> delete( block: ()->ApiRequest): RW<T> {
         val apiRequest = block()
-        return safeApiCall {
+        val response = safeApiCall {
             httpClient.delete(apiRequest.path) {
                 apiRequest.contentType?.let { contentType(it) }
                 apiRequest.params?.forEach { (k, v) -> parameter(k, v) }
                 apiRequest.headers?.forEach { (k, v) -> header(k, v) }
             }.body<ApiResponse<T>>()
         }
+        w(LogcatPriorityInstance,response)
+        return response
     }
-
 }
 fun apiRequest(path: String,block:ApiRequestBuilder.() -> Unit): ApiRequest {
     val builder = ApiRequestBuilder(path)
