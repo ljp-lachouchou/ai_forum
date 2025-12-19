@@ -21,19 +21,24 @@ fun EventHandler.asEvent(dispatcher: CoroutineDispatcher, eventName: String,vara
 fun EventHandler.asInteractionEvent(eventName: String,vararg tag:String)
         = InteractionEvent(eventName = eventName,event = this,expectedReceivers = tag.toSetOrNull())
 
-fun LifecycleOwner.observeEvent(eventName: String,myTag:String? = null,isSticky: Boolean = false)
+fun LifecycleOwner.observeEvent(eventName: String,myTag:String,isSticky: Boolean = false)
 {
     val subscribeTime =  System.currentTimeMillis()
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             EventBusHub.getFlowByName(eventName).collect { busEvent ->
-                if (busEvent.expectedReceivers == null || busEvent.expectedReceivers!!.contains(myTag) ) {
+                val _isTarget = busEvent.expectedReceivers == null || busEvent.expectedReceivers!!.contains(myTag)
+                if (_isTarget) {
                     if (!isSticky &&  busEvent.timestamp < subscribeTime) {
+                        return@collect
+                    }
+                    if  (EventBusHub.hasConsumed(busEvent,myTag)) {
                         return@collect
                     }
                     withContext(busEvent.dispatcher) {
                         busEvent.event.invoke()
                     }
+                    EventBusHub.acknowledge(busEvent,myTag)
                 }
             }
         }

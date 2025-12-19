@@ -1,6 +1,7 @@
 package com.ljp.common.event
 
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import java.util.concurrent.ConcurrentHashMap
@@ -10,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 object EventBusHub {
     private val interceptors = CopyOnWriteArrayList<EventInterceptor>()
+    private val processedRecords = ConcurrentHashMap<Int, MutableSet<String>>()
 
     fun addInterceptor(interceptor: EventInterceptor) {
         interceptors.add(interceptor)
@@ -37,11 +39,31 @@ object EventBusHub {
             currentEvent = currentEvent?.let { interceptor.intercept(it) }
             if (currentEvent == null) return
         }
-
+        processedRecords[originalEvent.hashCode()] = ConcurrentHashMap.newKeySet()
         currentEvent?.let { event ->
             getFlowByName(event.eventName).tryEmit(event)
         }
     }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun clearStickyEvent(name: String) {
+        val flow = _eventFlows[name] ?:  return
+        flow.resetReplayCache()
+    }
+    fun hasConsumed(event: BusEvent,receiveTag:String) :  Boolean {
+        return  processedRecords[event.hashCode()]?.contains(receiveTag) ?: false
+    }
+    fun acknowledge(event: BusEvent,receiveTag:String) {
+        val id = event.hashCode()
+        val excepted = event.expectedReceivers ?: return
+        val processed = processedRecords[id] ?: return
+        processed.add(receiveTag)
+        if (processed.containsAll(excepted)) {
+            clearStickyEvent(event.eventName)
+            processedRecords.remove(id)
+
+        }
+    }
+
 }
 fun intercept(interceptor: EventInterceptor) {
     EventBusHub.addInterceptor(interceptor)

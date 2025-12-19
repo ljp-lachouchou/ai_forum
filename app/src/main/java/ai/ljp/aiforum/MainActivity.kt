@@ -48,6 +48,8 @@ class MainActivity : ComponentActivity() {
                                 }
                                 clickTask
                                     .asInteractionEvent("USER_CLICK_ACTION",
+                                        "MainScreen",
+                                        "SecondScreen"
                                         )
                                     .publish()
                             }
