@@ -15,6 +15,11 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.ljp.common.event.EventHandler
+import com.ljp.common.event.InteractionEvent
+import com.ljp.common.event.asInteractionEvent
+import com.ljp.common.event.observeEvent
+import com.ljp.common.event.publish
 import com.ljp.common.log.core.printer.i
 import com.ljp.common.log.core.priority.LogcatPriorityInstance
 
@@ -25,6 +30,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val vm by viewModels<ExampleViewModel>()
+        observeEvent("USER_CLICK_ACTION","MainScreen")
         setContent {
             i(LogcatPriorityInstance,"hello")
             AIForumTheme {
@@ -32,7 +38,14 @@ class MainActivity : ComponentActivity() {
                     Greeting(
                         name = "Android",
                         modifier = Modifier.padding(innerPadding).clickable {
-                            vm.fetchData()
+                            val clickTask: EventHandler = {
+                                i(LogcatPriorityInstance, "执行了点击后的具体业务逻辑！")
+                                vm.fetchData()
+                            }
+                            clickTask
+                                .asInteractionEvent("USER_CLICK_ACTION",
+                                    "MainScreen")
+                            .publish()
                         }
                     )
 

@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.ktor.logging)
     implementation(libs.slf4j.android)
     implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
 
     implementation(project(":simapi"))
     implementation(project(":common"))

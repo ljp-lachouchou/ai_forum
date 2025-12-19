@@ -14,7 +14,7 @@ ktor="3.3.3"
 kotlinx-coroutines = "1.10.2"
 slf4j_version = "1.7.36"
 firebaseCrashlyticsBuildtools = "3.0.6"
-lifecycleViewModelKtx = "2.8.7"
+lifecycleExtKtx = "2.8.7"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -44,9 +44,9 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 ktor-serialization-kotlinx-xml = { module = "io.ktor:ktor-serialization-kotlinx-xml", version.ref = "ktor"}
 ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor"}
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx",version.ref = "lifecycleViewModelKtx" }
+lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx",version.ref = "lifecycleExtKtx" }
 slf4j-android = {module = "org.slf4j:slf4j-android",version.ref = "slf4j_version"}
-
+lifecycle-runtime-ktx =  {module = "androidx.lifecycle:lifecycle-runtime-ktx",version.ref = "lifecycleExtKtx"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
