@@ -16,13 +16,14 @@ object EventBusHub {
     }
     init {
         intercept(LogEventInterceptorInstance)
+        intercept(DebounceInterceptorInstance)
     }
     private val _eventFlows = ConcurrentHashMap<String, MutableSharedFlow<BusEvent>>()
 
     fun getFlowByName(name: String): MutableSharedFlow<BusEvent> {
         return _eventFlows.computeIfAbsent(name) {
             MutableSharedFlow(
-                replay = 0,
+                replay = 1,
                 extraBufferCapacity = 64,
                 onBufferOverflow = BufferOverflow.DROP_OLDEST
             )

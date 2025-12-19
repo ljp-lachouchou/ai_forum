@@ -12,19 +12,28 @@ import kotlinx.coroutines.withContext
 
 
 typealias EventHandler = ()-> Unit
-fun EventHandler.asEvent(dispatcher: CoroutineDispatcher, eventName: String,targetTag:String? = null): RealBusEvent
-        = RealBusEvent(dispatcher, eventName, this, targetTag = targetTag)
+fun <T> Array<out T>.toSetOrNull(): Set<T>? {
+    return if (this.isNotEmpty()) this.toSet() else null
+}
+fun EventHandler.asEvent(dispatcher: CoroutineDispatcher, eventName: String,vararg tag:String): RealBusEvent
+        = RealBusEvent(dispatcher, eventName, this, expectedReceivers = tag.toSetOrNull())
 
-fun EventHandler.asInteractionEvent(eventName: String,tag:String?)
-        = InteractionEvent(eventName = eventName,event = this, targetTag = tag)
+fun EventHandler.asInteractionEvent(eventName: String,vararg tag:String)
+        = InteractionEvent(eventName = eventName,event = this,expectedReceivers = tag.toSetOrNull())
 
-fun LifecycleOwner.observeEvent(eventName: String,myTag:String? = null)
-    = lifecycleScope.launch {
-    repeatOnLifecycle(Lifecycle.State.STARTED) {
-        EventBusHub.getFlowByName(eventName).collect { busEvent ->
-            if (busEvent.targetTag == null || busEvent.targetTag == myTag) {
-                withContext(busEvent.dispatcher) {
-                    busEvent.event.invoke()
+fun LifecycleOwner.observeEvent(eventName: String,myTag:String? = null,isSticky: Boolean = false)
+{
+    val subscribeTime =  System.currentTimeMillis()
+    lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            EventBusHub.getFlowByName(eventName).collect { busEvent ->
+                if (busEvent.expectedReceivers == null || busEvent.expectedReceivers!!.contains(myTag) ) {
+                    if (!isSticky &&  busEvent.timestamp < subscribeTime) {
+                        return@collect
+                    }
+                    withContext(busEvent.dispatcher) {
+                        busEvent.event.invoke()
+                    }
                 }
             }
         }
@@ -37,16 +46,21 @@ interface BusEvent {
     val dispatcher: CoroutineDispatcher
     val eventName: String
     val event: EventHandler
-    val targetTag: String?
+    val timestamp: Long
+    val expectedReceivers: Set<String>?
+
 }
 data class RealBusEvent(
     override val dispatcher: CoroutineDispatcher,
     override val eventName: String,
-    override val event: EventHandler, override var targetTag: String?
+    override val event: EventHandler,
+    override val timestamp: Long = System.currentTimeMillis(),
+    override val expectedReceivers: Set<String>?
 ) : BusEvent
 class InteractionEvent(
     override val dispatcher: CoroutineDispatcher = Dispatchers.Main,
     override val eventName: String = "ClickEvent", override val event: EventHandler,
-    override val targetTag: String?,
+     override val timestamp: Long = System.currentTimeMillis(),
+    override val expectedReceivers: Set<String>?,
 ) : BusEvent
 

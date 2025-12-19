@@ -11,12 +11,14 @@ import androidx.compose.material3.Text
 
 import androidx.compose.ui.tooling.preview.Preview
 import ai.ljp.aiforum.ui.theme.AIForumTheme
+import android.content.Intent
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.ljp.common.event.EventHandler
-import com.ljp.common.event.InteractionEvent
 import com.ljp.common.event.asInteractionEvent
 import com.ljp.common.event.observeEvent
 import com.ljp.common.event.publish
@@ -33,23 +35,32 @@ class MainActivity : ComponentActivity() {
         observeEvent("USER_CLICK_ACTION","MainScreen")
         setContent {
             i(LogcatPriorityInstance,"hello")
+            val intent = Intent(this, SecondActivity::class.java)
             AIForumTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding).clickable {
-                            val clickTask: EventHandler = {
-                                i(LogcatPriorityInstance, "执行了点击后的具体业务逻辑！")
-                                vm.fetchData()
+                    Column {
+                        Greeting(
+                            name = "Android",
+                            modifier = Modifier.padding(innerPadding).clickable {
+                                val clickTask: EventHandler = {
+                                    i(LogcatPriorityInstance, "执行了点击后的具体业务逻辑！")
+                                    vm.fetchData()
+                                }
+                                clickTask
+                                    .asInteractionEvent("USER_CLICK_ACTION",
+                                        )
+                                    .publish()
                             }
-                            clickTask
-                                .asInteractionEvent("USER_CLICK_ACTION",
-                                    "MainScreen")
-                            .publish()
+                        )
+                        Button(onClick = {
+                            startActivity(intent)
+                        }) {
+                            Text("跳转")
                         }
-                    )
+                    }
 
                 }
+
             }
         }
     }
