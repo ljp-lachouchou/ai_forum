@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.tooling.preview.Preview
 import ai.ljp.aiforum.ui.theme.AIForumTheme
 import android.content.Intent
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -56,9 +57,11 @@ class MainActivity : ComponentActivity() {
                         )
                         Button(onClick = {
                             startActivity(intent)
+                            Log.e("nihao","nihao")
                         }) {
                             Text("跳转")
                         }
+
                     }
 
                 }
