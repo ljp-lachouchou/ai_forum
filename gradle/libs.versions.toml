@@ -15,6 +15,12 @@ kotlinx-coroutines = "1.10.2"
 slf4j_version = "1.7.36"
 firebaseCrashlyticsBuildtools = "3.0.6"
 lifecycleExtKtx = "2.8.7"
+runtime = "1.10.0"
+animationCore = "1.10.0"
+ui = "1.10.0"
+foundationLayout = "1.10.0"
+commonmark = "0.27.0"
+foundation = "1.10.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -47,7 +53,14 @@ firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "fireb
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx",version.ref = "lifecycleExtKtx" }
 slf4j-android = {module = "org.slf4j:slf4j-android",version.ref = "slf4j_version"}
 lifecycle-runtime-ktx =  {module = "androidx.lifecycle:lifecycle-runtime-ktx",version.ref = "lifecycleExtKtx"}
-
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
+androidx-compose-animation-core = { group = "androidx.compose.animation", name = "animation-core", version.ref = "animationCore" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+commonmark-ext-table = {module = "org.commonmark:commonmark-ext-gfm-tables",version.ref = "commonmark"}
+commonmark-core = {module = "org.commonmark:commonmark",version.ref = "commonmark"}
+commonmark-ext-heading = {module = "org.commonmark:commonmark-ext-heading-anchor",version.ref = "commonmark"}
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
