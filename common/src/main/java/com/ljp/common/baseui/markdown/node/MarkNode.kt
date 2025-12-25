@@ -28,6 +28,11 @@ import androidx.compose.ui.text.AnnotatedString
  * | **HardLineBreak**     | `      ` (两个空格加回车) | 硬换行，必须触发换行。                             |
  *
  */
+enum class TableCellAlignment { LEFT, CENTER, RIGHT }
+data class TableCellData(
+    val text: AnnotatedString,
+    val images: Map<String, String> // 存储该单元格对应的 ID -> URL 映射
+)
 sealed class MarkNode {
     // 块级节点：对应 LazyColumn 的独立 Item
     sealed class Block : MarkNode() {
@@ -37,9 +42,14 @@ sealed class MarkNode {
         data class OrderedList(val startNumber: Int, val items: List<Block>) : Block()
         data class ListItem(val children: List<Block>) : Block()
         data class CodeBlock(val code: String, val language: String?, val isFenced: Boolean) : Block()
+
         data class BlockQuote(val children: List<Block>) : Block()
         object ThematicBreak : Block() // 分隔线 ---
-        data class Table(val head: List<String>, val rows: List<List<String>>) : Block() // 对应 TableBlock 系列
+        data class Table(
+            val head: List<TableCellData>,
+            val rows: List<List<TableCellData>>,
+            val alignments: List<TableCellAlignment> = emptyList()
+        ) : Block()
     }
 
     // 行内节点信息：通常在解析段落时作为辅助数据
