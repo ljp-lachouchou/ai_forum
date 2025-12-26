@@ -30,14 +30,21 @@ import androidx.compose.ui.text.AnnotatedString
  */
 enum class TableCellAlignment { LEFT, CENTER, RIGHT }
 data class TableCellData(
-    val text: AnnotatedString,
-    val images: Map<String, String> // 存储该单元格对应的 ID -> URL 映射
+    val elements: List<ParagraphElement>, // 替换原来的 AnnotatedString
+    val images: List<String>
 )
+sealed class ParagraphElement {
+    data class TextElement(val content: AnnotatedString) : ParagraphElement()
+    data class ImageElement(val url: String, val id: String) : ParagraphElement()
+}
 sealed class MarkNode {
     // 块级节点：对应 LazyColumn 的独立 Item
     sealed class Block : MarkNode() {
-        data class Heading(val level: Int, val content: AnnotatedString) : Block()
-        data class Paragraph(val content: AnnotatedString, val imageMap: Map<String, String>) : Block()
+        data class Heading(val level: Int, val content: List<ParagraphElement>) : Block()
+        data class Paragraph(
+            val elements: List<ParagraphElement>,
+            val imageMap: List<String>
+        ) : Block()
         data class BulletList(val items: List<Block>) : Block()
         data class OrderedList(val startNumber: Int, val items: List<Block>) : Block()
         data class ListItem(val children: List<Block>) : Block()

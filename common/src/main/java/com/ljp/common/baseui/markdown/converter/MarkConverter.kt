@@ -2,6 +2,7 @@ package com.ljp.common.baseui.markdown.converter
 
 import androidx.compose.ui.text.AnnotatedString
 import com.ljp.common.baseui.markdown.node.MarkNode
+import com.ljp.common.baseui.markdown.node.ParagraphElement
 import com.ljp.common.baseui.markdown.node.TableCellData
 import com.ljp.common.baseui.markdown.render.config.InlineStyleConfig
 import org.commonmark.ext.gfm.tables.TableBlock
@@ -51,12 +52,12 @@ internal class MarkConverter(val urlSigner:(String)-> String,
     }
     override fun visit(paragraph: Paragraph?) {
         paragraph?.let {
-            val imageMap = mutableMapOf<String, String>()
+            val imageMap = mutableListOf<String>()
 
             val inlineConverter = InlineConverter(urlSigner, imageMap,styleConfig)
-            val annotatedString = inlineConverter.build(it)
+            val elements = inlineConverter.build(it)
 
-            blocks.add(MarkNode.Block.Paragraph(annotatedString, imageMap))
+            blocks.add(MarkNode.Block.Paragraph(elements, imageMap))
         }
     }
 
@@ -68,11 +69,11 @@ internal class MarkConverter(val urlSigner:(String)-> String,
 
     override fun visit(heading: Heading?) {
         heading?.let {
-            val imageMap = mutableMapOf<String, String>()
+            val imageMap = mutableListOf<String>()
             val inlineConverter = InlineConverter(urlSigner, imageMap,styleConfig)
-            val annotatedString = inlineConverter.build(it)
+            val elements = inlineConverter.build(it)
 
-            blocks.add(MarkNode.Block.Heading(heading.level, annotatedString))
+            blocks.add(MarkNode.Block.Heading(heading.level, elements))
         }
     }
 
@@ -115,17 +116,17 @@ internal class MarkConverter(val urlSigner:(String)-> String,
         var cell = row.firstChild
         while (cell != null) {
             if (cell is TableCell) {
-                val cellImageMap = mutableMapOf<String, String>()
-                val builder = AnnotatedString.Builder()
-
+                val cellImageMap = mutableListOf<String>()
+                val allElements = mutableListOf<ParagraphElement>()
                 var inlineNode = cell.firstChild
                 while (inlineNode != null) {
                     val converter = InlineConverter(urlSigner, cellImageMap, styleConfig)
-                    builder.append(converter.build(inlineNode))
+                    val nodeElements = converter.build(inlineNode)
+                    allElements.addAll(nodeElements)
                     inlineNode = inlineNode.next
                 }
 
-                cells.add(TableCellData(builder.toAnnotatedString(), cellImageMap))
+                cells.add(TableCellData(allElements, cellImageMap))
             }
             cell = cell.next
         }

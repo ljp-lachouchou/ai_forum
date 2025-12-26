@@ -1,17 +1,20 @@
 package com.ljp.common.baseui.markdown.render.actual
 
 import android.R
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,15 +35,21 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
@@ -53,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.ljp.common.baseui.markdown.converter.MarkConverter
 import com.ljp.common.baseui.markdown.node.MarkNode
+import com.ljp.common.baseui.markdown.node.ParagraphElement
 import com.ljp.common.baseui.markdown.node.TableCellData
 import com.ljp.common.baseui.markdown.render.config.InlineStyleConfigBuilder
 import org.commonmark.ext.gfm.tables.TablesExtension
@@ -77,19 +87,37 @@ fun MarkdownHeading(node: MarkNode.Block.Heading) {
     }
 
     Column(modifier = Modifier.padding(top = topPadding, bottom = 4.dp)) {
-        Text(
-            text = node.content,
-            style = style.copy(
-                fontWeight = FontWeight.Bold,
-                // M3 的标题行间距通常较紧凑，可以根据需要微调
-                lineHeight = style.lineHeight * 1.2
-            ),
-            color = MaterialTheme.colorScheme.onSurface
-        )
+
+        node.content.forEach { element ->
+            when(element) {
+                is ParagraphElement.TextElement -> {
+                    Text(
+                        text = element.content,
+                        style = style.copy(
+                            fontWeight = FontWeight.Bold,
+                            lineHeight = style.lineHeight * 1.2
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                is ParagraphElement.ImageElement -> {
+                    AsyncImage(
+                        model = element.url,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .aspectRatio(16f / 9f),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        }
 
         if (node.level <= 2) {
             HorizontalDivider(
-                modifier = Modifier.padding(top = 4.dp),
+                modifier = Modifier.padding(top = 8.dp),
                 thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant
             )
@@ -97,51 +125,55 @@ fun MarkdownHeading(node: MarkNode.Block.Heading) {
     }
 }
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun MarkdownParagraph(
     node: MarkNode.Block.Paragraph,
     onLinkClick: (String) -> Unit
 ) {
-    // 1. 存储布局结果，用于将点击坐标转换为字符索引
     var layoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
+    node.elements.forEach { element ->
+        when(element) {
+            is ParagraphElement.TextElement -> {
+                Text(
+                    text = element.content,
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        // 2. 核心：通过 pointerInput 手动处理点击
+                        .pointerInput(Unit) {
+                            detectTapGestures { pos ->
+                                layoutResult?.let { result ->
+                                    // 3. 将点击的坐标 (Offset) 转换为字符索引
+                                    val offset = result.getOffsetForPosition(pos)
 
-    // 处理行内图片占位符（Text 支持这个属性）
-    val inlineContent = node.imageMap.map { (id, url) ->
-        id to InlineTextContent(
-            Placeholder(125.sp, 125.sp, PlaceholderVerticalAlign.Center)
-        ) {
-            Log.e("sadsa",url)
-            AsyncImage(model = url,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.star_on))
-        }
-    }.toMap()
-
-    Text(
-        text = node.content,
-        modifier = Modifier
-            .padding(vertical = 4.dp)
-            // 2. 核心：通过 pointerInput 手动处理点击
-            .pointerInput(Unit) {
-                detectTapGestures { pos ->
-                    layoutResult?.let { result ->
-                        // 3. 将点击的坐标 (Offset) 转换为字符索引
-                        val offset = result.getOffsetForPosition(pos)
-
-                        // 4. 从 AnnotatedString 中提取 URL 注解
-                        node.content.getStringAnnotations(tag = "URL", start = offset, end = offset)
-                            .firstOrNull()?.let { annotation ->
-                                onLinkClick(annotation.item)
+                                    // 4. 从 AnnotatedString 中提取 URL 注解
+                                    element.content.getStringAnnotations(tag = "URL", start = offset, end = offset)
+                                        .firstOrNull()?.let { annotation ->
+                                            onLinkClick(annotation.item)
+                                        }
+                                }
                             }
-                    }
-                }
-            },
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurface,
-        inlineContent = inlineContent,
-        onTextLayout = { layoutResult = it }
-    )
+                        },
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    onTextLayout = { layoutResult = it }
+                )
+            }
+            is ParagraphElement.ImageElement -> {
+                AsyncImage(
+                    model = element.url,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .aspectRatio(16f / 9f),
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -233,38 +265,42 @@ fun MarkdownTableCell(
     isHeader: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val inlineContent = remember(data) {
-        data.images.mapValues { (_, url) ->
-            InlineTextContent(
-                Placeholder(100.sp, 100.sp, PlaceholderVerticalAlign.Center)
-            ) {
-                AsyncImage(
-                    model = url,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                    placeholder = painterResource(R.drawable.star_on)
-                )
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        data.elements.forEach { element ->
+            when (element) {
+                is ParagraphElement.TextElement -> {
+                    Text(
+                        text = element.content,
+                        style = if (isHeader) {
+                            MaterialTheme.typography.titleSmall
+                                .copy(fontWeight = FontWeight.Bold)
+                        } else {
+                            MaterialTheme.typography.bodyMedium
+                        },
+                        // 防止长文本在单元格内不换行导致 UI 破碎
+                        softWrap = true,
+
+                    )
+                }
+                is ParagraphElement.ImageElement -> {
+                    AsyncImage(
+                        model = element.url,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .aspectRatio(16f / 9f),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
         }
-    }
-
-    Box(
-        modifier = modifier
-            .border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
-            .padding(12.dp),
-        contentAlignment = if (isHeader) Alignment.Center else Alignment.CenterStart
-    ) {
-        Text(
-            text = data.text,
-            inlineContent = inlineContent,
-            style = if (isHeader) {
-                MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
-            } else {
-                MaterialTheme.typography.bodyMedium
-            },
-            color = if (isHeader) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
 @Composable
@@ -367,12 +403,13 @@ fun MarkdownRenderer(
     }
 }
 @Composable
-fun MarkdownView(content: String,
+fun MarkdownView(input: String,
                  configBlock: InlineStyleConfigBuilder.()-> Unit,
                  modifier: Modifier = Modifier,
 
                  urlSigner:String.()-> String = {this},
                  onLinkClick: (String) -> Unit = {}) {
+    val content = preprocessMarkdown(input)
     val config = InlineStyleConfigBuilder().apply(configBlock).build()
     val extensions = listOf(TablesExtension.create())
     val parse = Parser.builder().extensions(extensions).build()
@@ -380,5 +417,10 @@ fun MarkdownView(content: String,
     val visitor = MarkConverter(urlSigner,config)
     rootNode.accept(visitor)
     MarkdownRenderer(modifier = modifier, nodes = visitor.blocks, onLinkClick = onLinkClick)
+}
+fun preprocessMarkdown(input: String): String {
+    // 正则逻辑：找到所有以 --- 开头且上方不是空行的位置，插入一个换行
+    // 注意：要避开代码块内部的情况
+    return input.replace(Regex("([^\n])\n---"), "$1\n\n---")
 }
 

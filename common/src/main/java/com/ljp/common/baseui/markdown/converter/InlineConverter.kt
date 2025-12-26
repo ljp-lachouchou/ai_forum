@@ -2,6 +2,7 @@ package com.ljp.common.baseui.markdown.converter
 
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.ui.text.AnnotatedString
+import com.ljp.common.baseui.markdown.node.ParagraphElement
 import com.ljp.common.baseui.markdown.render.config.InlineStyleConfig
 import org.commonmark.node.AbstractVisitor
 import org.commonmark.node.Code
@@ -16,15 +17,29 @@ import org.commonmark.node.Text
 
 internal class InlineConverter(
     private val urlSigner: (String) -> String,
-    private val imageMap: MutableMap<String, String>,
+    private val imageMap: MutableList<String>,
     private val styleConfig: InlineStyleConfig
 ) : AbstractVisitor() {
+    private val elements = mutableListOf<ParagraphElement>()
+    private var builder = AnnotatedString.Builder()
 
-    private val builder = AnnotatedString.Builder()
-
-    fun build(node: Node): AnnotatedString {
+    fun build(node: Node): List<ParagraphElement> {
+        initData()
         node.accept(this)
-        return builder.toAnnotatedString()
+        flushText()
+        return elements
+    }
+
+    private fun initData() {
+        elements.clear()
+        builder = AnnotatedString.Builder()
+    }
+
+    private fun flushText() {
+        if (builder.length > 0) {
+            elements.add(ParagraphElement.TextElement(builder.toAnnotatedString()))
+            builder = AnnotatedString.Builder()
+        }
     }
 
     override fun visit(softLineBreak: SoftLineBreak?) {
@@ -73,11 +88,10 @@ internal class InlineConverter(
     }
 
     override fun visit(image: Image) {
-        // 行内图片：![alt](url) -> 挖坑
+        flushText()
         val id = "inline_img_${image.hashCode()}"
         val signedUrl = urlSigner(image.destination)
-        imageMap[id] = signedUrl
-
-        builder.appendInlineContent(id, "[图]")
+        imageMap.add(signedUrl)
+        elements.add(ParagraphElement.ImageElement(signedUrl, id))
     }
 }
