@@ -123,6 +123,8 @@ class SecondActivity : ComponentActivity() {
                         ## 5. 图片测试 (H2)
 
                         这里包含一张行内图片：
+                        ![alt](https://book-1369048677.cos.ap-beijing.myqcloud.com/img-313e1e7f98d05fdf819fb2324519c258.png)
+
                         以及一张带描述的图片：
 
                         ---

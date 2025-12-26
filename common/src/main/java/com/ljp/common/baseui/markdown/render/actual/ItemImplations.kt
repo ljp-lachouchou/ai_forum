@@ -1,6 +1,7 @@
 package com.ljp.common.baseui.markdown.render.actual
 
 import android.R
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
@@ -106,10 +108,13 @@ fun MarkdownParagraph(
     // 处理行内图片占位符（Text 支持这个属性）
     val inlineContent = node.imageMap.map { (id, url) ->
         id to InlineTextContent(
-            Placeholder(20.sp, 20.sp, PlaceholderVerticalAlign.Center)
+            Placeholder(125.sp, 125.sp, PlaceholderVerticalAlign.Center)
         ) {
-            // 这里加载图片
-            Text("🖼️")
+            Log.e("sadsa",url)
+            AsyncImage(model = url,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.star_on))
         }
     }.toMap()
 
@@ -135,7 +140,6 @@ fun MarkdownParagraph(
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onSurface,
         inlineContent = inlineContent,
-        // 5. 必须捕获布局结果，否则无法计算 offset
         onTextLayout = { layoutResult = it }
     )
 }
@@ -232,12 +236,13 @@ fun MarkdownTableCell(
     val inlineContent = remember(data) {
         data.images.mapValues { (_, url) ->
             InlineTextContent(
-                Placeholder(20.sp, 20.sp, PlaceholderVerticalAlign.Center)
+                Placeholder(100.sp, 100.sp, PlaceholderVerticalAlign.Center)
             ) {
                 AsyncImage(
                     model = url,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
                     placeholder = painterResource(R.drawable.star_on)
                 )
             }
@@ -366,7 +371,7 @@ fun MarkdownView(content: String,
                  configBlock: InlineStyleConfigBuilder.()-> Unit,
                  modifier: Modifier = Modifier,
 
-                 urlSigner:(String)-> String = {""},
+                 urlSigner:String.()-> String = {this},
                  onLinkClick: (String) -> Unit = {}) {
     val config = InlineStyleConfigBuilder().apply(configBlock).build()
     val extensions = listOf(TablesExtension.create())
