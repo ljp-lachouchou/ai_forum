@@ -1,11 +1,8 @@
 package com.ljp.common.baseui.markdown.render.actual
 
-import android.R
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -35,7 +31,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,15 +39,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -65,7 +53,9 @@ import com.ljp.common.baseui.markdown.node.MarkNode
 import com.ljp.common.baseui.markdown.node.ParagraphElement
 import com.ljp.common.baseui.markdown.node.TableCellData
 import com.ljp.common.baseui.markdown.render.config.InlineStyleConfigBuilder
+import com.ljp.common.baseui.markdown.render.devered.CheckBoxIcon
 import org.commonmark.ext.gfm.tables.TablesExtension
+import org.commonmark.ext.task.list.items.TaskListItemsExtension
 import org.commonmark.parser.Parser
 
 @Composable
@@ -207,17 +197,76 @@ fun MarkdownListItem(
     modifier: Modifier = Modifier,
     onLinkClick: (String) -> Unit
 ) {
-    Row(modifier = Modifier.padding(vertical = 2.dp)) {
-        // 渲染列表符号（例如：• ）
+    Row(modifier = modifier) {
+        if (node.isTask) {
+            CheckBoxIcon(node.isCompleted,modifier = Modifier.padding(top = 3.dp, end = 6.dp))
+        }else {
+            Text(
+                text = "• ",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(top = 2.dp)
+            )
+        }
+
+        Column(modifier = Modifier.weight(1f)) {
+            node.children.forEach { child ->
+                when (child) {
+                    is MarkNode.Block.BulletList, is MarkNode.Block.OrderedList -> {
+                        Box(modifier = Modifier.padding(start = 16.dp)) {
+                            MarkdownBlockItem(child, Modifier, onLinkClick)
+                        }
+                    }
+                    else -> {
+                        MarkdownBlockItem(child, Modifier, onLinkClick)
+                    }
+                }
+            }
+        }
+    }
+}
+@Composable
+fun MarkdownOrderedList(
+    node: MarkNode.Block.OrderedList,
+    modifier: Modifier = Modifier,
+    onLinkClick: (String) -> Unit
+) {
+    Column {
+        val startNumber = node.startNumber
+
+        node.items.forEachIndexed { index, child ->
+            MarkdownOrderedListItem(
+                number = startNumber + index,
+                node = child as MarkNode.Block.ListItem,
+                onLinkClick = onLinkClick
+            )
+        }
+    }
+}
+@Composable
+fun MarkdownOrderedListItem(
+    number: Int,
+    node: MarkNode.Block.ListItem,
+    onLinkClick: (String) -> Unit
+) {
+    Row(modifier = Modifier.padding(vertical = 4.dp)) {
         Text(
-            text = "• ",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(end = 8.dp)
+            text = "$number. ",
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.widthIn(min = 24.dp).padding(top = 2.dp)
         )
 
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             node.children.forEach { child ->
-                MarkdownBlockItem(child, modifier,onLinkClick)
+                when (child) {
+                    is MarkNode.Block.BulletList, is MarkNode.Block.OrderedList -> {
+                        Box(modifier = Modifier.padding(start = 16.dp)) {
+                            MarkdownBlockItem(child, Modifier, onLinkClick)
+                        }
+                    }
+                    else -> {
+                        MarkdownBlockItem(child, Modifier, onLinkClick)
+                    }
+                }
             }
         }
     }
@@ -267,7 +316,6 @@ fun MarkdownTableCell(
 ) {
     Column(
         modifier = modifier
-            .fillMaxWidth()
             .padding(8.dp),
         verticalArrangement = Arrangement.Center
     ) {
@@ -308,13 +356,6 @@ fun MarkdownTable(
     table: MarkNode.Block.Table,
     modifier: Modifier = Modifier
 ) {
-    val scrollState = rememberScrollState()
-
-    // 计算列数
-    val columnCount = table.head.size.coerceAtLeast(
-        table.rows.firstOrNull()?.size ?: 0
-    )
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -324,7 +365,6 @@ fun MarkdownTable(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
         Column(Modifier.width(IntrinsicSize.Max)) {
-            // 1. 渲染表头 (Table Head)
             Row(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -340,7 +380,6 @@ fun MarkdownTable(
                 }
             }
 
-            // 2. 渲染数据行 (Table Rows)
             table.rows.forEachIndexed { index, rowData ->
                 val backgroundColor = if (index % 2 == 0) {
                     Color.Transparent // 斑马纹效果可选
@@ -367,6 +406,18 @@ fun MarkdownTable(
     }
 }
 @Composable
+fun MarkdownBullet(
+    node: MarkNode.Block.BulletList,
+    modifier: Modifier = Modifier,
+    onLinkClick: (String) -> Unit
+) {
+    Column {
+        node.items.forEach { child ->
+            MarkdownBlockItem(child, modifier,onLinkClick)
+        }
+    }
+}
+@Composable
 fun MarkdownBlockItem(
     node: MarkNode.Block,
     modifier: Modifier = Modifier,
@@ -384,6 +435,9 @@ fun MarkdownBlockItem(
             modifier = Modifier.padding(vertical = 16.dp),
             color = MaterialTheme.colorScheme.outlineVariant
         )
+        is MarkNode.Block.BulletList -> MarkdownBullet(node,modifier, onLinkClick)
+        is MarkNode.Block.OrderedList ->
+            MarkdownOrderedList(node, modifier, onLinkClick)
         else -> {}
     }
 }
@@ -405,18 +459,17 @@ fun MarkdownRenderer(
 @Composable
 fun MarkdownView(input: String,
                  configBlock: InlineStyleConfigBuilder.()-> Unit,
-                 modifier: Modifier = Modifier,
 
                  urlSigner:String.()-> String = {this},
                  onLinkClick: (String) -> Unit = {}) {
     val content = preprocessMarkdown(input)
     val config = InlineStyleConfigBuilder().apply(configBlock).build()
-    val extensions = listOf(TablesExtension.create())
+    val extensions = listOf(TablesExtension.create(), TaskListItemsExtension.create())
     val parse = Parser.builder().extensions(extensions).build()
     val rootNode = parse.parse(content)
     val visitor = MarkConverter(urlSigner,config)
     rootNode.accept(visitor)
-    MarkdownRenderer(modifier = modifier, nodes = visitor.blocks, onLinkClick = onLinkClick)
+    MarkdownRenderer(modifier = Modifier, nodes = visitor.blocks, onLinkClick = onLinkClick)
 }
 fun preprocessMarkdown(input: String): String {
     // 正则逻辑：找到所有以 --- 开头且上方不是空行的位置，插入一个换行

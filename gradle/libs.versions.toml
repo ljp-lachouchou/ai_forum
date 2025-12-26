@@ -64,7 +64,9 @@ androidx-compose-foundation-layout = { group = "androidx.compose.foundation", na
 commonmark-ext-table = {module = "org.commonmark:commonmark-ext-gfm-tables",version.ref = "commonmark"}
 commonmark-core = {module = "org.commonmark:commonmark",version.ref = "commonmark"}
 commonmark-ext-heading = {module = "org.commonmark:commonmark-ext-heading-anchor",version.ref = "commonmark"}
+commonmark-ext-task = {module = "org.commonmark:commonmark-ext-task-list-items",version.ref = "commonmark"}
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 compose-material3 = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "composeMaterial3" }
 ads-mobile-sdk = { group = "com.google.android.libraries.ads.mobile.sdk", name = "ads-mobile-sdk", version.ref = "adsMobileSdk" }

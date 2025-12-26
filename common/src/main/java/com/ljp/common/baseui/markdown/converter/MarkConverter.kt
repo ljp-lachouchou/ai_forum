@@ -10,6 +10,7 @@ import org.commonmark.ext.gfm.tables.TableBody
 import org.commonmark.ext.gfm.tables.TableCell
 import org.commonmark.ext.gfm.tables.TableHead
 import org.commonmark.ext.gfm.tables.TableRow
+import org.commonmark.ext.task.list.items.TaskListItemMarker
 import org.commonmark.node.AbstractVisitor
 import org.commonmark.node.BlockQuote
 import org.commonmark.node.BulletList
@@ -151,9 +152,15 @@ internal class MarkConverter(val urlSigner:(String)-> String,
      */
     override fun visit(listItem: ListItem?) {
         listItem?.let {
+            val firstChild = it.firstChild
+            var isTask = false
+            var isCompleted = false
+            if (firstChild is TaskListItemMarker) {
+                isTask = true
+                isCompleted = firstChild.isChecked
+            }
             val children = collectChildren(it)
-
-             blocks.add(MarkNode.Block.ListItem(children))
+            blocks.add(MarkNode.Block.ListItem(children,isTask,isCompleted))
         }
     }
 

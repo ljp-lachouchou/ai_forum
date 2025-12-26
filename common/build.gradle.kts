@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.commonmark.core)
     implementation(libs.commonmark.ext.table)
     implementation(libs.commonmark.ext.heading)
+    implementation(libs.commonmark.ext.task)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

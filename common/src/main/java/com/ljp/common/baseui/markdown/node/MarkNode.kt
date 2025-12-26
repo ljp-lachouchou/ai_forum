@@ -47,7 +47,7 @@ sealed class MarkNode {
         ) : Block()
         data class BulletList(val items: List<Block>) : Block()
         data class OrderedList(val startNumber: Int, val items: List<Block>) : Block()
-        data class ListItem(val children: List<Block>) : Block()
+        data class ListItem(val children: List<Block>, val isTask: Boolean, val isCompleted: Boolean) : Block()
         data class CodeBlock(val code: String, val language: String?, val isFenced: Boolean) : Block()
 
         data class BlockQuote(val children: List<Block>) : Block()

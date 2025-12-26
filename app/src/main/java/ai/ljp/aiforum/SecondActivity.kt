@@ -1,35 +1,25 @@
 package ai.ljp.aiforum
 
 import ai.ljp.aiforum.ui.theme.AIForumTheme
-import android.graphics.Canvas
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
@@ -59,7 +49,6 @@ class SecondActivity : ComponentActivity() {
 你可以将这段文本直接作为测试输入传给你的 `MarkdownRenderer`。
 
 ---
-
 # 🌟 Markdown 渲染测试大全 (H1)
 
 ## 1. 文本样式测试 (H2)
@@ -76,8 +65,8 @@ class SecondActivity : ComponentActivity() {
 
 * 第一项
 * 第二项
-* 嵌套子项 A
-* 嵌套子项 B
+  * 嵌套子项 A
+  * 嵌套子项 B
 
 
 * 第三项
@@ -85,9 +74,14 @@ class SecondActivity : ComponentActivity() {
 ### 有序列表
 
 1. 第一步：解析 Markdown
+  1. 我的世界
+- 你好
+  - nil
 2. 第二步：转换组件
+  2. 我的世界
+  3. Nih
 3. 第三步：UI 渲染
-
+  5. kkk
 ---
 
 ## 3. 引用与分隔线 (H2)
@@ -164,7 +158,7 @@ a
 **如果渲染结果中有任何样式不如预期（比如表格挤在一起或图片无法显示），你可以告诉我，我们针对性地调整对应的 Compose 函数。你想让我先帮你处理表格（Table）的渲染逻辑吗？**
                     """.trimIndent(),{
                         codeBackgroundColor = Color.Red
-                    }, modifier = Modifier.padding(innerPadding))
+                    })
                 }
             }
         }
