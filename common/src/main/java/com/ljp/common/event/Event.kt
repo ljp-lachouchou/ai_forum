@@ -4,6 +4,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.ljp.common.navigation.Screen
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,9 +21,9 @@ fun EventHandler.asEvent(dispatcher: CoroutineDispatcher, eventName: String,vara
 
 fun EventHandler.asInteractionEvent(eventName: String,vararg tag:String)
         = InteractionEvent(eventName = eventName,event = this,expectedReceivers = tag.toSetOrNull())
+fun Screen.asNavEvent(vararg tag: String) = NavEvent(this,tag.toSetOrNull())
 
-fun LifecycleOwner.observeEvent(eventName: String,myTag:String,isSticky: Boolean = false)
-{
+fun LifecycleOwner.observeEvent(eventName: String,myTag:String,isSticky: Boolean = false,navHandler:(NavEvent)-> Unit = {}) {
     val subscribeTime =  System.currentTimeMillis()
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -35,8 +36,15 @@ fun LifecycleOwner.observeEvent(eventName: String,myTag:String,isSticky: Boolean
                     if  (EventBusHub.hasConsumed(busEvent,myTag)) {
                         return@collect
                     }
-                    withContext(busEvent.dispatcher) {
-                        busEvent.event.invoke()
+                    when(busEvent) {
+                        is NavEvent -> {
+                            navHandler(busEvent)
+                        }
+                        else -> {
+                            withContext(busEvent.dispatcher) {
+                                busEvent.event.invoke()
+                            }
+                        }
                     }
                     EventBusHub.acknowledge(busEvent,myTag)
                 }
@@ -55,7 +63,7 @@ interface BusEvent {
     val expectedReceivers: Set<String>?
 
 }
-data class RealBusEvent(
+open class RealBusEvent(
     override val dispatcher: CoroutineDispatcher,
     override val eventName: String,
     override val event: EventHandler,
@@ -63,9 +71,32 @@ data class RealBusEvent(
     override val expectedReceivers: Set<String>?
 ) : BusEvent
 class InteractionEvent(
-    override val dispatcher: CoroutineDispatcher = Dispatchers.Main,
-    override val eventName: String = "ClickEvent", override val event: EventHandler,
-     override val timestamp: Long = System.currentTimeMillis(),
-    override val expectedReceivers: Set<String>?,
-) : BusEvent
+    dispatcher: CoroutineDispatcher = Dispatchers.Main,
+    eventName: String = "ClickEvent", event: EventHandler,
+     timestamp: Long = System.currentTimeMillis(),
+    expectedReceivers: Set<String>?,
+) : RealBusEvent(dispatcher = dispatcher,
+    eventName = eventName,
+    event = event,
+    timestamp = timestamp,
+    expectedReceivers = expectedReceivers)
+
+/**
+ * 导航事件
+ */
+data class NavEvent(
+    val route: Screen,
+    override val expectedReceivers: Set<String>?
+) : RealBusEvent(
+    eventName = EVENT_NAME,
+    timestamp = System.currentTimeMillis(),
+    event = {},dispatcher = Dispatchers.Main,
+    expectedReceivers = expectedReceivers
+) {
+    companion object {
+        const val EVENT_NAME = "NavEvent"
+    }
+}
+
+
 
