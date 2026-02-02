@@ -18,8 +18,10 @@ import ai.ljp.database.model.ProfileEntity
 import ai.ljp.database.model.RecentSearchQueryEntity
 import ai.ljp.database.model.TreeholeEntity
 import ai.ljp.database.model.WordEntity
+import ai.ljp.database.util.InstantConverter
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
 @Database(
     entities = [
@@ -35,6 +37,9 @@ import androidx.room.RoomDatabase
     ],
     version = 1,
     exportSchema = true
+)
+@TypeConverters(
+    InstantConverter::class
 )
 internal abstract class AIForumDatabase : RoomDatabase() {
     abstract fun bookmarkDao() : BookmarkDao
