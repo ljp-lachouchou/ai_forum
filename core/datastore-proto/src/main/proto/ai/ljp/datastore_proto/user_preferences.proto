@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "ai/ljp/datastore_proto/dark_theme_config.proto";
+import "ai/ljp/datastore_proto/theme_brand.proto";
+import "ai/ljp/datastore_proto/mood_theme_config.proto";
+
+option java_package = "ai.ljp.datastore";
+option java_multiple_files = true;
+
+message UserPreferences {
+  string current_user_id = 1;
+  string auth_token = 2;
+  int64 last_sync_version = 3;
+  bool should_hide_onboarding = 4;
+  bool use_dynamic_color = 5;
+  ThemeBrandProto theme_brand = 6;
+  DarkThemeConfigProto dark_theme_config = 7;
+  MoodThemeConfigProto mood_theme_config = 8;
+}
