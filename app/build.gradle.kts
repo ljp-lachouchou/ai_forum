@@ -1,19 +1,22 @@
 import org.gradle.kotlin.dsl.implementation
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.aiforum.android.application)
+    alias(libs.plugins.aiforum.android.application.compose)
+    alias(libs.plugins.aiforum.android.application.firebase)
+    alias(libs.plugins.aiforum.hilt)
+    alias(libs.plugins.google.osslicenses)
+    alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.roborazzi)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
     namespace = "ai.ljp.aiforum"
-    compileSdk = 36
 
     defaultConfig {
         applicationId = "ai.ljp.aiforum"
-        minSdk = 24
-        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -22,28 +25,25 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = providers.gradleProperty("minifyWithR8")
+                .map(String::toBooleanStrict).getOrElse(true)
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.named("debug").get()
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+    packaging {
+        resources {
+            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+        }
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
-    }
+    testOptions.unitTests.isIncludeAndroidResources = true
 }
 
 dependencies {
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
+
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.okhttp)
@@ -52,30 +52,50 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.serialization.kotlinx.xml)
     implementation(libs.ktor.logging)
+
+    api(projects.core.datastore)
     implementation(libs.slf4j.android)
-    implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.coil.compose)
-    implementation(project(":simapi"))
-    implementation(project(":common"))
-    implementation(libs.navigation.compose)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    implementation(project(":core:simapi"))
+    implementation(project(":core:common"))
+
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    implementation(libs.firebase.crashlytics.buildtools)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.compose.material3.adaptive)
+    implementation(libs.androidx.compose.material3.adaptive.layout)
+    implementation(libs.androidx.compose.material3.adaptive.navigation)
+    implementation(libs.androidx.compose.material3.adaptive.navigation3)
+    implementation(libs.androidx.compose.material3.windowSizeClass)
+    implementation(libs.androidx.compose.runtime.tracing)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.lifecycle.runtimeCompose)
+    implementation(libs.androidx.lifecycle.viewModel.navigation3)
+    implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.tracing.ktx)
+    implementation(libs.androidx.window.core)
+    implementation(libs.kotlinx.coroutines.guava)
+    implementation(libs.coil.kt)
+    implementation(libs.kotlinx.serialization.json)
+
+    ksp(libs.hilt.compiler)
+
+    debugImplementation(libs.androidx.compose.ui.testManifest)
+
+    kspTest(libs.hilt.compiler)
+
+    testImplementation(libs.hilt.android.testing)
+    testImplementation(libs.kotlin.test)
+
+    testImplementation(libs.androidx.navigation.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.roborazzi)
+
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.compose.ui.test)
+    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.kotlin.test)
 
 
 

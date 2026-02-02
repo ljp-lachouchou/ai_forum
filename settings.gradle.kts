@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -14,12 +15,27 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
     }
 }
-
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "AIForum"
 include(":app")
-include(":simapi")
-include(":common")
+include(":core:simapi")
+include(":core:common")
+
+include(":core:model")
+include(":core:datastore-proto")
+include(":core:analytics")
+include(":core:designsystem")
+include(":core:datastore")
+include(":core:logger")
+include(":core:event")
+include(":core:navigation")

@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="ai.ljp.aiforum" />
+                  <option name="mobileSdkAppId" value="1:793461091978:android:c44981f0aa93b085f00773" />
+                  <option name="projectId" value="ai-forum-557da" />
+                  <option name="projectNumber" value="793461091978" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

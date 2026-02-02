@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "793461091978",
+    "project_id": "ai-forum-557da",
+    "storage_bucket": "ai-forum-557da.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:793461091978:android:c44981f0aa93b085f00773",
+        "android_client_info": {
+          "package_name": "ai.ljp.aiforum"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6NFuvG73Ji3sHjHsRORo8s6YvNfOeDJA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:793461091978:android:8463a9b327f5c514f00773",
+        "android_client_info": {
+          "package_name": "com.ljp.ai_forum"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6NFuvG73Ji3sHjHsRORo8s6YvNfOeDJA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
