@@ -36,10 +36,10 @@ data class WordCommentsResource internal constructor(
     val createdAt : Instant,
     val updatedAt : Instant,
     val comments : List<Comment>,
-    val likes : Int = 0,
-    val bookMarks : Int = 0
+    val likes : List<Profile>,
+    val bookMarks : List<Profile>
 ) {
-    constructor(word : Word,comments : List<Comment>,like: Int,bookMark : Int) : this(
+    constructor(word : Word,comments : List<Comment>,likes : List<Profile> ,bookMarks : List<Profile>) : this(
         wordId = word.wordId,
         authorId = word.authorId,
         wordName = word.wordName,
@@ -49,9 +49,9 @@ data class WordCommentsResource internal constructor(
         createdAt = word.createdAt,
         updatedAt = word.updatedAt,
         comments = comments,
-        likes = like,
-        bookMarks = bookMark
+        likes = likes,
+        bookMarks = bookMarks
     )
 }
-fun List<Word>.asWordCommentsResources(comments: List<Comment>,like : Int,bookMark : Int) : List<WordCommentsResource> = map { WordCommentsResource(it,comments,like,bookMark) }
+fun List<Word>.asWordCommentsResources(comments: List<Comment>,likes : List<Profile> ,bookMarks : List<Profile>) : List<WordCommentsResource> = map { WordCommentsResource(it,comments,likes,bookMarks) }
 

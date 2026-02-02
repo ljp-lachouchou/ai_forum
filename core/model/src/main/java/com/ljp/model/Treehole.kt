@@ -7,5 +7,5 @@ data class Treehole(
     val authorId : String?,
     val content : String,
     val anonymous : Boolean,
-    val createAt : Instant,
+    val createdAt : Instant,
 )
