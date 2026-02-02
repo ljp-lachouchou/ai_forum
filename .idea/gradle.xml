@@ -34,6 +34,7 @@
             <option value="$PROJECT_DIR$/core/event" />
             <option value="$PROJECT_DIR$/core/logger" />
             <option value="$PROJECT_DIR$/core/model" />
+            <option value="$PROJECT_DIR$/core/navigation" />
             <option value="$PROJECT_DIR$/core/simapi" />
           </set>
         </option>
