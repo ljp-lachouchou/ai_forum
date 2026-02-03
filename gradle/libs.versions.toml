@@ -236,6 +236,7 @@ aiforum-android-lint = { id = "aiforum.android.lint" }
 aiforum-android-room = { id = "aiforum.android.room" }
 aiforum-android-test = { id = "aiforum.android.test" }
 aiforum-hilt = { id = "aiforum.hilt" }
+aiforum-ktor = { id = "aiforum.ktor" }
 aiforum-jvm-library = { id = "aiforum.jvm.library" }
 aiforum-root = { id = "aiforum.root" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
