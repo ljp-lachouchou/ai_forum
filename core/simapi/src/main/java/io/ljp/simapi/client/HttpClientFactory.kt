@@ -15,10 +15,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
 import io.ljp.simapi.module.HttpClientModule
 
-enum class HttpEngineType {
-    CIO,
-    OKHTTP
-}
+
 class HttpClientFactory(
     private val modules: List<HttpClientModule>
 ) {

@@ -4,7 +4,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -16,10 +15,10 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ljp.simapi.client.HttpClientFactory
-import io.ljp.simapi.client.HttpEngineType
+import io.ljp.simapi.di.HttpEngineFactory
+import io.ljp.simapi.di.HttpEngineType
 import io.ljp.simapi.module.HttpClientModule
-import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.Serializable
+import javax.inject.Inject
 
 
 class ApiRequestBuilder(var path: String){
@@ -41,7 +40,9 @@ data class ApiRequest(
     val body: Any?
 )
 internal typealias RW<T> = ResultWrapper<T>
-class ApiClient(val httpClient: HttpClient) {
+class ApiClient @Inject constructor(
+    @HttpEngineFactory(HttpEngineType.OKHTTP) val httpClient: HttpClient
+) {
     suspend inline fun <reified T> get(crossinline block: ()->ApiRequest): RW<T>{
         val apiRequest = block()
         val response = safeApiCall {
@@ -106,31 +107,8 @@ fun apiRequest(path: String,block:ApiRequestBuilder.() -> Unit): ApiRequest {
     builder.apply(block)
     return builder.build()
 }
-object ApiService {
-    private var _client: HttpClient? = null
-    private var _apiClient: ApiClient? = null
-
-    fun init(
-        engineType: HttpEngineType = HttpEngineType.CIO,
-        baseUrl: String,
-        modules: List<HttpClientModule> = listOf()
-    ) {
-        if (_client != null) return
-
-        val engineFactory = when(engineType) {
-            HttpEngineType.CIO -> CIO
-            HttpEngineType.OKHTTP -> OkHttp
-        }
-        val factory = HttpClientFactory(modules)
-        _client = factory.create(engineFactory, baseUrl)
-        _apiClient = ApiClient(_client!!)
-    }
-
-    val apiClient: ApiClient
-        get() = _apiClient ?: throw IllegalStateException("必须先调用 ApiService.init()!")
-}
 
 // 调用工具函数：不再负责“设置”，只负责“提供环境”
-suspend fun apiClient(block:suspend ApiClient.() -> Unit) {
-    block(ApiService.apiClient)
+suspend fun ApiClient.apiClient(block:suspend ApiClient.() -> Unit) {
+    block(this)
 }

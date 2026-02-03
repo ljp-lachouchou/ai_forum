@@ -6,9 +6,13 @@ import android.util.Log.i
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-class ExampleViewModel : ViewModel() {
+import javax.inject.Inject
+
+class ExampleViewModel @Inject constructor(
+    private val ac: ApiClient
+) : ViewModel() {
     fun fetchData() = viewModelScope.launch {
-        apiClient {
+        ac.apiClient {
             get<Any> {
                 apiRequest("weixin_43960383/article/details/120103913") {
                     params = mapOf("userId" to "123")
