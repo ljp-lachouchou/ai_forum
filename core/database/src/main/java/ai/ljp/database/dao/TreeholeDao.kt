@@ -1,7 +1,23 @@
 package ai.ljp.database.dao
 
+import ai.ljp.database.model.TreeholeEntity
+import androidx.paging.PagingSource
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.IGNORE
+import androidx.room.Query
+import androidx.room.Upsert
 
 @Dao
 interface TreeholeDao {
+    @Upsert
+    suspend fun upsertTreeholes(treeholes : List<TreeholeEntity>)
+
+    @Insert(onConflict = IGNORE)
+    suspend fun insertTreehole(treehole : TreeholeEntity)
+    @Query("""
+        SELECT * FROM treeholes
+        ORDER BY createdAt DESC
+    """)
+    fun getTreeholes() : PagingSource<Int, TreeholeEntity>
 }
