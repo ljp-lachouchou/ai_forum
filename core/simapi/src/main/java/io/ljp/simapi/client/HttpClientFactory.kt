@@ -14,6 +14,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
 import io.ljp.simapi.module.HttpClientModule
+import kotlinx.serialization.json.Json
 
 
 class HttpClientFactory(
@@ -37,7 +38,11 @@ class HttpClientFactory(
             url(baseUrl)
         }
         install(ContentNegotiation) {
-            json()
+            json(
+                Json {
+                    ignoreUnknownKeys = true
+                }
+            )
         }
         modules.forEach { it.install(this) }
     }
