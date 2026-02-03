@@ -71,6 +71,10 @@ gradlePlugin {
             id = libs.plugins.aiforum.android.room.get().pluginId
             implementationClass = "AndroidRoomConventionPlugin"
         }
+        register("androidPaging") {
+            id = libs.plugins.aiforum.android.paging.get().pluginId
+            implementationClass = "AndroidPagingConventionPlugin"
+        }
         register("androidFirebase") {
             id = libs.plugins.aiforum.android.application.firebase.get().pluginId
             implementationClass = "AndroidApplicationFirebaseConventionPlugin"

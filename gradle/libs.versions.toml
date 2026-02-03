@@ -6,6 +6,7 @@ accompanist = "0.37.0"
 androidDesugarJdkLibs = "2.1.4"
 # AGP and tools should be updated together
 androidGradlePlugin = "8.13.1"
+
 androidTools = "31.13.1"
 androidxActivity = "1.9.3"
 androidxAppCompat = "1.7.0"
@@ -53,6 +54,7 @@ kotlin = "2.3.0"
 kotlinxCoroutines = "1.10.1"
 kotlinxDatetime = "0.6.1"
 kotlinxSerializationJson = "1.8.0"
+paging = "3.4.0"
 ksp = "2.3.4"
 okhttp = "4.12.0"
 protobuf = "4.29.2"
@@ -71,6 +73,9 @@ material = "1.13.0"
 animation = "1.10.1"
 
 [libraries]
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
 
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
@@ -164,6 +169,7 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = "androidTools" }
+
 lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.ref = "androidTools" }
 lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "androidTools" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
@@ -217,6 +223,7 @@ room = { id = "androidx.room", version.ref = "room" }
 
 aiforum-android-application = { id = "aiforum.android.application" }
 aiforum-android-application-compose = { id = "aiforum.android.application.compose" }
+aiforum-android-paging = {id = "aiforum.android.paging"}
 aiforum-android-application-firebase = { id = "aiforum.android.application.firebase" }
 aiforum-android-application-flavors = { id = "aiforum.android.application.flavors" }
 aiforum-android-application-jacoco = { id = "aiforum.android.application.jacoco" }
