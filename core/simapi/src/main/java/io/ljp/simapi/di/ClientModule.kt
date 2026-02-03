@@ -9,6 +9,7 @@ import io.ktor.client.engine.HttpClientEngineFactory
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ljp.simapi.ApiClient
+import io.ljp.simapi.BuildConfig
 import io.ljp.simapi.client.HttpClientFactory
 import io.ljp.simapi.module.HttpClientModule
 import javax.inject.Singleton
@@ -37,7 +38,7 @@ internal object ClientModule {
     fun providersOkhttpClient(
         @HttpEngineFactory(HttpEngineType.OKHTTP) okHttpEngine : HttpClientEngineFactory<*>,
         clientFactory : HttpClientFactory
-    ) : HttpClient = clientFactory.create(okHttpEngine,"http://115.190.188.164:9000")
+    ) : HttpClient = clientFactory.create(okHttpEngine, BuildConfig.BACKEND_URL )
 
 
 
