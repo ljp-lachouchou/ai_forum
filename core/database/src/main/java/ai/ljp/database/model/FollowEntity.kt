@@ -1,5 +1,6 @@
 package ai.ljp.database.model
 
+import ai.ljp.database.model.help.SyncState
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -16,5 +17,11 @@ data class FollowEntity(
     @ColumnInfo(name = "followId")
     val followId : String,
     @ColumnInfo(name = "createdAt")
-    val createdAt : Instant
+    val createdAt : Instant,
+    @ColumnInfo(name = "syncState")
+    val syncState: SyncState = SyncState.Pending,
+    @ColumnInfo(name = "deleted")
+    val deleted : Boolean  = false,
+    @ColumnInfo(name = "updatedAt")
+    val updatedAt : Instant
 )

@@ -1,5 +1,6 @@
 package ai.ljp.database.model
 
+import ai.ljp.database.model.help.SyncState
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import kotlinx.datetime.Instant
@@ -14,6 +15,12 @@ data class BookmarkEntity(
     @ColumnInfo(name = "postId")
     val postId : String,
     @ColumnInfo(name = "createdAt")
-    val createdAt : Instant
+    val createdAt : Instant,
+    @ColumnInfo(name = "syncState")
+    val syncState: SyncState = SyncState.Pending,
+    @ColumnInfo(name = "deleted")
+    val deleted : Boolean  = false,
+    @ColumnInfo(name = "updatedAt")
+    val updatedAt : Instant
 )
 
