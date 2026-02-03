@@ -12,7 +12,7 @@ import kotlinx.datetime.Instant
 
 @Dao
 interface BookmarkDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(bookmarks : List<BookmarkEntity>)
 
     @Query(
