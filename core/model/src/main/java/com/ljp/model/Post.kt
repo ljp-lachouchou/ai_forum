@@ -15,6 +15,7 @@ data class Word(
     val wordTags : List<WordTag>,
     val wordUrl : String,
     val category : String,
+    val status : String,
     val createdAt : Instant,
     val updatedAt : Instant,
     val wordName : String
@@ -32,9 +33,10 @@ data class WordCommentsResource internal constructor(
     val wordName : String,
     val wordTags : List<WordTag>,
     val wordUrl : String,
+    val status: String,
     val category : String,
     val createdAt : Instant,
-    val updatedAt : Instant,
+    val updatedAt : Instant = createdAt,
     val comments : List<Comment>,
     val likes : List<Profile>,
     val bookMarks : List<Profile>
@@ -49,6 +51,7 @@ data class WordCommentsResource internal constructor(
         createdAt = word.createdAt,
         updatedAt = word.updatedAt,
         comments = comments,
+        status = word.status,
         likes = likes,
         bookMarks = bookMarks
     )

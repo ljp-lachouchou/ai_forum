@@ -14,7 +14,7 @@ data class ApiResponse<T>(val code:Int,val msg:String,val data:T?) {
     }
 }
 sealed class ResultWrapper<out T> {
-    data class Success<T>(val data: T) : ResultWrapper<T>()
+    data class Success<T>(val data: T?) : ResultWrapper<T>()
     data class Error(
         // 区分业务错误码和HTTP状态码
         val businessCode: Int? = null,  // 后端返回的code
@@ -35,10 +35,18 @@ suspend inline fun <reified T> safeApiCall(crossinline call:suspend () -> ApiRes
     return try {
         val response = call()
         if (response.code == ApiResponse.SUCCESS_CODE) {
-            response.data?.let {
-                ResultWrapper.Success(it)
-            } ?:  ResultWrapper.Error(businessCode = response.code,
-                message = response.msg)
+            val data = response.data
+            when {
+                data != null -> ResultWrapper.Success(data)
+                T::class == Unit::class -> {
+                    @Suppress("UNCHECKED_CAST")
+                    ResultWrapper.Success(null)
+                }
+                else -> ResultWrapper.Error(
+                    businessCode = response.code,
+                    message = response.msg
+                )
+            }
         }else {
             ResultWrapper.Error(businessCode = response.code,
                 message = response.msg)

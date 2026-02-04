@@ -1,5 +1,6 @@
 package ai.ljp.database.model
 
+import androidx.annotation.StyleRes
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -26,7 +27,9 @@ data class WordEntity(
     @ColumnInfo(name = "updatedAt")
     val updatedAt : Instant,
     @ColumnInfo(name = "wordName")
-    val wordName : String
+    val wordName : String,
+    @ColumnInfo(name = "status")
+    val status : String
 )
 fun WordEntity.asExtraModel() = Word(
     wordId = wordId,
@@ -36,5 +39,6 @@ fun WordEntity.asExtraModel() = Word(
     category = category,
     createdAt = createdAt,
     updatedAt = updatedAt,
+    status = status,
     wordName = wordName
 )
