@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_notifications_words_notification_channel_name">Words Update</string>
+    <string name="core_notifications_words_notification_channel_description">The latest updates on what\'s AI Forum</string>
+    <string name="core_notifications_words_summary_notification_title">%1$d words updates</string>
+<!--    %起始符 1$ 1个占位符 d十进制数字-->
+</resources>

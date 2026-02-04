@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
+<!--    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>-->
+<!--    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION" tools:node="remove"/>-->
+<!--    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID" tools:node="remove"/>-->
     <application
         android:allowBackup="true"
         android:name="io.ljp.simapi.example.MyApplication"
@@ -21,6 +24,17 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+<!--                声明该 Activity 可以执行“查看”操作。这是浏览器和大多数应用跳转链接时默认使用的 Action-->
+                <action android:name="android.intent.action.VIEW" />
+                <!--                必须添加。为了让 Activity 能够接收隐式 Intent-->
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="www.apps.ai.forum.ljp.com" />
             </intent-filter>
         </activity>
         <activity android:name=".SecondActivity"/>
