@@ -1,5 +1,6 @@
-package ai.ljp.data.repository
+package ai.ljp.data.repository.impl
 
+import ai.ljp.data.repository.RecentSearchRepository
 import ai.ljp.database.dao.RecentSearchQueryDao
 import ai.ljp.database.model.RecentSearchQueryEntity
 import ai.ljp.database.model.asExternalModel
@@ -13,7 +14,7 @@ class DefaultRecentSearchRepository @Inject constructor(
     private val recentSearchQueryDao: RecentSearchQueryDao
 ) : RecentSearchRepository {
     override fun getRecentSearchQueries(limit: Int): Flow<List<RecentSearchQuery>> =
-        recentSearchQueryDao.getRecentSearchQueryEntities(limit).map {searchQueryEntities ->
+        recentSearchQueryDao.getRecentSearchQueryEntities(limit).map { searchQueryEntities ->
             searchQueryEntities.map { it.asExternalModel() }
         }
 
