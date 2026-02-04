@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--    具体来说，有了这个权限，你的 App 可以知道：-->
+
+    <!--    手机当前是否连接到了互联网？-->
+
+    <!--    是通过 Wi-Fi 连上的，还是通过 移动数据（4G/5G）？-->
+
+    <!--    当前网络是否处于漫游状态？-->
+
+    <!--    当前网络是否属于“计费网络”（比如手机热点），从而决定是否暂停大文件下载。-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+</manifest>

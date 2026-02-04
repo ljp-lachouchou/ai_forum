@@ -20,5 +20,7 @@ internal abstract class AnalyticsModule {
     fun provideFirebaseAnalytics(): FirebaseAnalytics = Firebase.analytics
 
     @Binds
-    abstract fun bindsAnalyticsHelper(firebaseAnalyticsHelper: FirebaseAnalyticsHelper) : AnalyticsHelper
+    abstract fun bindsAnalyticsHelper(
+        firebaseAnalyticsHelper: FirebaseAnalyticsHelper
+    ) : AnalyticsHelper
 }

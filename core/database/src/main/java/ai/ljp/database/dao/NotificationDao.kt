@@ -23,10 +23,11 @@ interface NotificationDao {
     fun unreadCount(): Flow<Int>
 
     @Query("""
-        SELECT * FROM notifications
+        SELECT * FROM notifications 
+        WHERE `userId` = :userId 
         ORDER BY createdAt DESC
     """)
-    fun getNotifications(): PagingSource<Int, NotificationEntity>
+    fun getNotifications(userId : String): PagingSource<Int, NotificationEntity>
 
     @Upsert
     suspend fun upsertNotifications(

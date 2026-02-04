@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 interface ProfileDao {
     @Upsert
     suspend fun upsertProfile(profile : ProfileEntity)
+
+    @Upsert
+    suspend fun upsertProfiles(profiles : List<ProfileEntity>)
     @Query(
         """
             SELECT * 
