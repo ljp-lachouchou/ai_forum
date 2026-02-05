@@ -18,7 +18,7 @@ import kotlinx.datetime.Instant
         )
     ],
     indices = [
-        Index("treehole_authorId"),
+        Index("authorId"),
     ]
 )
 data class TreeholeEntity(

@@ -1,6 +1,5 @@
 package ai.ljp.sync.di
 
-import ai.ljp.sync.status.FirebaseSubscriber
 import ai.ljp.sync.status.SyncManager
 import ai.ljp.sync.status.SyncSubscriber
 import ai.ljp.sync.status.WorkManagerSyncManager
@@ -18,17 +17,17 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class SyncModule {
 
-    @Binds
-    abstract fun bindsSyncSubscriber(
-        subscriber: FirebaseSubscriber
-    ) : SyncSubscriber
+//    @Binds
+//    abstract fun bindsSyncSubscriber(
+//        subscriber: FirebaseSubscriber
+//    ) : SyncSubscriber
     @Binds
     abstract fun bindsSyncManager(
         syncManager : WorkManagerSyncManager
     ) : SyncManager
     companion object {
-        @Provides
-        @Singleton
-        fun providersFirebaseMessaging() : FirebaseMessaging = Firebase.messaging
+//        @Provides
+//        @Singleton
+//        fun providersFirebaseMessaging() : FirebaseMessaging = Firebase.messaging
     }
 }

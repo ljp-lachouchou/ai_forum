@@ -14,9 +14,10 @@ dependencies {
     implementation(libs.androidx.work.ktx)
     implementation(libs.hilt.ext.work)
     implementation(projects.core.analytics)
+    implementation(libs.firebase.cloud.messaging)
     implementation(projects.core.data)
     implementation(projects.core.notification)
-    implementation(libs.firebase.cloud.messaging)
+    api(libs.jiguang.push)
     implementation(platform(libs.firebase.bom))
 
     testImplementation(libs.junit)

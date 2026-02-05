@@ -20,6 +20,7 @@ import ai.ljp.database.model.TreeholeEntity
 import ai.ljp.database.model.WordEntity
 import ai.ljp.database.util.InstantConverter
 import ai.ljp.database.util.SyncStateConverter
+import ai.ljp.database.util.WordTagConverter
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -41,7 +42,8 @@ import androidx.room.TypeConverters
 )
 @TypeConverters(
     InstantConverter::class,
-    SyncStateConverter::class
+    SyncStateConverter::class,
+    WordTagConverter::class
 )
 internal abstract class AIForumDatabase : RoomDatabase() {
     abstract fun bookmarkDao() : BookmarkDao

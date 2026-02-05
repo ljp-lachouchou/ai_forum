@@ -24,8 +24,8 @@ import kotlinx.datetime.Instant
         )
     ],
     indices = [
-        Index("follow_authorId"),
-        Index("follow_postId"),
+        Index("authorId"),
+        Index("postId"),
     ]
 )
 data class CommentEntity(

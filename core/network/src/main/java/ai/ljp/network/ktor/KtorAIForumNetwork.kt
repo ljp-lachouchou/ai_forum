@@ -159,7 +159,7 @@ class KtorAIForumNetwork @Inject constructor(
         authorId: String,
         wordUpdateRequesst: WordUpdateRequesst
     )  =
-        client.apiClient {
+        client.apiClient<Unit> {
             put<Unit> {
                 apiRequest("/api/v1/words/$wordId") {
                     params = simApiMapOf(
@@ -171,7 +171,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun submitWord(wordId: String, authorId: String) =
-        client.apiClient {
+        client.apiClient<Unit> {
             post<Unit> {
                 apiRequest("/api/v1/words/$wordId/submit") {
                     params = simApiMapOf(
@@ -182,7 +182,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun publishWord(wordId: String, adminId: String) =
-        client.apiClient {
+        client.apiClient<Unit> {
             post<Unit> {
                 apiRequest("/api/v1/words/$wordId/publish") {
                     params = simApiMapOf(
@@ -197,7 +197,7 @@ class KtorAIForumNetwork @Inject constructor(
         adminId: String,
         reson: String
     )  =
-        client.apiClient {
+        client.apiClient<Unit> {
             post<Unit> {
                 apiRequest("/api/v1/words/$wordId/reject") {
                     params = simApiMapOf(
@@ -209,7 +209,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun archiveWord(wordId: String, adminId: String) =
-        client.apiClient {
+        client.apiClient<Unit> {
             post<Unit> {
                 apiRequest("/api/v1/words/$wordId/archive") {
                     body = simApiMapOf(
@@ -220,7 +220,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun deleteWord(wordId: String)  =
-        client.apiClient {
+        client.apiClient<Unit> {
             delete<Unit> {
                 apiRequest("/api/v1/words/$wordId")
             }
@@ -268,7 +268,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun aiReview(postId: String) =
-        client.apiClient {
+        client.apiClient<Unit> {
             post<Unit> {
                 apiRequest("/api/v1/ai/review") {
                     params = simApiMapOf("id" to postId)
@@ -306,7 +306,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun deleteComment(commentId: String, authorId: String) =
-        client.apiClient {
+        client.apiClient<Unit> {
             delete<Unit> {
                 apiRequest("/api/v1/comments/$commentId") {
                     body = simApiMapOf(
@@ -477,7 +477,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun deleteFollow(userId: String, followId: String) =
-        client.apiClient {
+        client.apiClient<Unit> {
             delete<Unit> {
                 apiRequest("/api/v1/follows") {
                     body = simApiMapOf("user_id" to userId,

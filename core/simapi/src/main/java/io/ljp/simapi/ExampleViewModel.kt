@@ -5,9 +5,10 @@ import android.util.Log.i
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+@HiltViewModel
 class ExampleViewModel @Inject constructor(
     private val ac: ApiClient
 ) : ViewModel() {

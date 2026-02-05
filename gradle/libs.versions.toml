@@ -71,13 +71,13 @@ junit = "4.13.2"
 junitVersion = "1.3.0"
 material = "1.13.0"
 animation = "1.10.1"
-
+jpush = "5.6.0"
 [libraries]
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
-
+jiguang-push = {group = "cn.jiguang.sdk",name = "jpush",version.ref = "jpush"}
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
 slf4j-android = {module = "org.slf4j:slf4j-android",version.ref = "slf4j_version"}
 commonmark-ext-table = {module = "org.commonmark:commonmark-ext-gfm-tables",version.ref = "commonmark"}

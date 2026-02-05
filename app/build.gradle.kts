@@ -1,10 +1,8 @@
 import org.gradle.kotlin.dsl.implementation
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.aiforum.android.application)
     alias(libs.plugins.aiforum.android.application.compose)
-    alias(libs.plugins.aiforum.android.application.firebase)
     alias(libs.plugins.aiforum.hilt)
     alias(libs.plugins.google.osslicenses)
     alias(libs.plugins.baselineprofile)
@@ -19,7 +17,16 @@ android {
         applicationId = "ai.ljp.aiforum"
         versionCode = 1
         versionName = "1.0"
+        manifestPlaceholders += mapOf(
+            "JPUSH_PKGNAME" to applicationId!!,
+            "JPUSH_APPKEY" to "6778f4b44dcfcec3b40be16e", // 填入极光后台获取的 24 位 AppKey
+            "JPUSH_CHANNEL" to "developer-default"
+        )
 
+        // 建议保留 ndk 配置，确保在 64 位手机上不崩溃
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
+        }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -52,13 +59,15 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.serialization.kotlinx.xml)
     implementation(libs.ktor.logging)
-
+    implementation(projects.sync)
     api(projects.core.datastore)
     implementation(libs.slf4j.android)
 
     implementation(project(":core:simapi"))
     implementation(project(":core:common"))
-
+    implementation(platform(libs.firebase.bom))
+    implementation(projects.core.analytics)
+    implementation(libs.firebase.cloud.messaging)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation3.ui)

@@ -1,6 +1,7 @@
 package ai.ljp.sync.status
 
 import ai.ljp.sync.initializer.SYNC_WORK_NAME
+import ai.ljp.sync.worker.SyncWorker
 import android.content.Context
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkInfo
@@ -27,7 +28,7 @@ class WorkManagerSyncManager @Inject constructor(
         workManager.enqueueUniqueWork(
             uniqueWorkName = SYNC_WORK_NAME,
             existingWorkPolicy = ExistingWorkPolicy.KEEP,
-            request = TODO()
+            request = SyncWorker.startSyncWork()
             )//同步任务
     }
 }

@@ -7,7 +7,7 @@
 <!--    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID" tools:node="remove"/>-->
     <application
         android:allowBackup="true"
-        android:name="io.ljp.simapi.example.MyApplication"
+        android:name="AIForumApp"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"

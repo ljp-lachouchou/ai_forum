@@ -3,11 +3,15 @@ package ai.ljp.database.model
 import ai.ljp.database.model.help.SyncState
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import kotlinx.datetime.Instant
 
 @Entity(
     tableName = "bookmarks",
-    primaryKeys = ["userId","postId"]
+    primaryKeys = ["userId","postId"],
+    indices = [
+        Index(value = ["postId"])
+    ]
 )
 data class BookmarkEntity(
     @ColumnInfo(name = "userId")
