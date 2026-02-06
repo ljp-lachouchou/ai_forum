@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.aiforum.android.application)
     alias(libs.plugins.aiforum.android.application.compose)
     alias(libs.plugins.aiforum.hilt)
+    alias(libs.plugins.aiforum.android.application.firebase)
     alias(libs.plugins.google.osslicenses)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.roborazzi)
