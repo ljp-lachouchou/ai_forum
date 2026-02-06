@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_sync_sync_channel_name">sync_channel</string>
+    <string name="sync_work_notification_channel_description">Background tasks for AI Forum</string>
+    <string name="sync_work_notification_title">AI Forum</string>
+</resources>
