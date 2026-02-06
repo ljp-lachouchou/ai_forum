@@ -22,6 +22,13 @@ interface BookmarkDao {
         """
     )
     suspend fun delete( userId: String,postId : String)
+    @Query(
+        value = """
+            DELETE FROM bookmarks
+            WHERE `id` in (:ids)
+        """,
+    )
+    suspend fun deleteAll(ids : List<String>)
     @Query (
         """
             UPDATE bookmarks 

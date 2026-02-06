@@ -4,16 +4,20 @@ import ai.ljp.database.model.help.SyncState
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
+import androidx.room.PrimaryKey
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 @Entity(
     tableName = "bookmarks",
-    primaryKeys = ["userId","postId"],
     indices = [
         Index(value = ["postId"])
     ]
 )
 data class BookmarkEntity(
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id : String,
     @ColumnInfo(name = "userId")
     val userId : String,
     @ColumnInfo(name = "postId")
@@ -25,6 +29,6 @@ data class BookmarkEntity(
     @ColumnInfo(name = "deleted")
     val deleted : Boolean  = false,
     @ColumnInfo(name = "updatedAt")
-    val updatedAt : Instant
-)
+    val updatedAt : Instant = Clock.System.now()
+) : BaseEntity
 

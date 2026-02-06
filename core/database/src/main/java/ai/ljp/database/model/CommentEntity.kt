@@ -40,7 +40,7 @@ data class CommentEntity(
     val content : String,
     @ColumnInfo(name = "createdAt")
     val createdAt : Instant
-)
+) : BaseEntity
 fun CommentEntity.asExtraModel() =
     Comment(
         id = id,
