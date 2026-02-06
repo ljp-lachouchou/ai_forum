@@ -9,6 +9,11 @@ data class ChangelogItem(
     val op: String,
     val updatedAt: Long
 )
+data class GetChangeLogResponse(
+    val latestVersion : Int,
+    val changes : List<ChangelogItem>
+)
+fun ChangelogItem.deleted() = op.trim().lowercase() == "delete"
 
 data class SyncWordItem(
     val wordId : String,
@@ -51,12 +56,21 @@ data class SyncNotificationItem(
 
 
 data class SyncLikeItem(
+    val id : String,
     val postId : String,
     val userId : String,
     val createdAt : Instant
 )
 
 data class SyncBookmarkItem(
+    val id : String,
+    val postId: String,
+    val userId: String,
+    val createdAt: Long
+)
+
+data class SyncFollowItem(
+    val id : String,
     val postId: String,
     val bookmarked: Boolean,
     val updatedAt: Long
