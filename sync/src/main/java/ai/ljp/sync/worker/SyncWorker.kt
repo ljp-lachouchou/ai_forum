@@ -13,6 +13,7 @@ import ai.ljp.data.repository.WordRepository
 import ai.ljp.datastore.AIForumPreferencesDatastore
 import ai.ljp.datastore.ChangeVersion
 import ai.ljp.sync.initializer.SyncConstraints
+import ai.ljp.sync.initializer.syncForegroundInfo
 import ai.ljp.sync.status.SyncSubscriber
 import android.content.Context
 import androidx.hilt.work.HiltWorker
@@ -54,7 +55,7 @@ class SyncWorker @AssistedInject constructor(
     ForegroundInfo 就是通知配置（标题、渠道、图标等）
      */
     override suspend fun getForegroundInfo(): ForegroundInfo =
-        TODO()
+        appContext.syncForegroundInfo()
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
         analyticsHelper.logSyncStarted()
         val syncSuccessfully = true
