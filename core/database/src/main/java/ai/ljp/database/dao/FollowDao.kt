@@ -44,4 +44,12 @@ interface FollowDao {
     suspend fun updateSync(userId: String,
                            followId: String,syncState: SyncState,
                            updatedAt : Instant)
+
+    @Query(
+        value = """
+            DELETE FROM follows
+            WHERE `id` in (:ids)
+        """,
+    )
+    suspend fun deleteAll(ids : List<String>)
 }

@@ -20,4 +20,12 @@ interface TreeholeDao {
         ORDER BY createdAt DESC
     """)
     fun getTreeholes() : PagingSource<Int, TreeholeEntity>
+
+    @Query(
+        value = """
+            DELETE FROM treeholes
+            WHERE `treeholeId` in (:ids)
+        """,
+    )
+    suspend fun deleteAll(ids : List<String>)
 }

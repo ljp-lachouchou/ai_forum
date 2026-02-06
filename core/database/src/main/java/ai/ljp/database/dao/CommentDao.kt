@@ -36,4 +36,12 @@ interface CommentDao {
         """
     )
     suspend fun deleteComment(commentId : String)
+
+    @Query(
+        value = """
+            DELETE FROM comments
+            WHERE `commentId` in (:ids)
+        """,
+    )
+    suspend fun deleteAll(ids : List<String>)
 }

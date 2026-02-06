@@ -33,4 +33,12 @@ interface NotificationDao {
     suspend fun upsertNotifications(
         notifications: List<NotificationEntity>
     )
+
+    @Query(
+        value = """
+            DELETE FROM notifications
+            WHERE `notificationId` in (:ids)
+        """,
+    )
+    suspend fun deleteAll(ids : List<String>)
 }

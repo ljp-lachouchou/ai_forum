@@ -21,4 +21,12 @@ interface ProfileDao {
         """
     )
     fun getSelfProfile(userId : String) : Flow<ProfileEntity>
+
+    @Query(
+        value = """
+            DELETE FROM profiles
+            WHERE `profileId` in (:ids)
+        """,
+    )
+    suspend fun deleteAll(ids : List<String>)
 }

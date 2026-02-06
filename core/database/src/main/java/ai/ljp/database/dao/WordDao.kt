@@ -30,4 +30,12 @@ interface WordDao {
     @Transaction
     @Query("SELECT * FROM words ORDER BY createdAt DESC")
     fun getPopulatedWordResources(): PagingSource<Int, PopulatedWordCommentsResource>
+
+    @Query(
+        value = """
+            DELETE FROM words
+            WHERE `wordId` in (:ids)
+        """,
+    )
+    suspend fun deleteAll(ids : List<String>)
 }
