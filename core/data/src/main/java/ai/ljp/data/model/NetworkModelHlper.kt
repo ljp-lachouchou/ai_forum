@@ -1,9 +1,11 @@
 package ai.ljp.data.model
 
 import ai.ljp.database.model.BookmarkEntity
+import ai.ljp.database.model.FollowEntity
 import ai.ljp.database.model.LikeEntity
 import ai.ljp.database.model.help.SyncState
 import ai.ljp.network.model.SyncBookmarkItem
+import ai.ljp.network.model.SyncFollowItem
 import ai.ljp.network.model.SyncLikeItem
 import kotlinx.datetime.Instant
 
@@ -21,6 +23,15 @@ fun SyncLikeItem.asDBModel() =
         id = id,
         userId = userId,
         postId = postId,
+        syncState = SyncState.Success,
+        createdAt = createdAt.let(Instant::fromEpochMilliseconds),
+    )
+
+fun SyncFollowItem.asDBModel() =
+    FollowEntity(
+        id = id,
+        userId = userId,
+        followId = followId,
         syncState = SyncState.Success,
         createdAt = createdAt.let(Instant::fromEpochMilliseconds),
     )

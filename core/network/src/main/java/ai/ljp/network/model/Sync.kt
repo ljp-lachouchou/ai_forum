@@ -71,7 +71,7 @@ data class SyncBookmarkItem(
 
 data class SyncFollowItem(
     val id : String,
-    val postId: String,
-    val bookmarked: Boolean,
-    val updatedAt: Long
+    val userId: String,
+    val followId: String,
+    val createdAt: Long
 )
