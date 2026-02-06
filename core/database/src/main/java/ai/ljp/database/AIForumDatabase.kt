@@ -21,6 +21,7 @@ import ai.ljp.database.model.WordEntity
 import ai.ljp.database.util.InstantConverter
 import ai.ljp.database.util.SyncStateConverter
 import ai.ljp.database.util.WordTagConverter
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -37,8 +38,11 @@ import androidx.room.TypeConverters
         TreeholeEntity::class,
         WordEntity::class
     ],
-    version = 1,
-    exportSchema = true
+    version = 2,
+    exportSchema = true,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2)
+    ]
 )
 @TypeConverters(
     InstantConverter::class,
