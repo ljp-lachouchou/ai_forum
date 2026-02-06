@@ -179,9 +179,9 @@ interface AIForumNetworkDataSource {
     ) : ReportCreateResponse?
 
     suspend fun getChangelogs(
-        since : Int,
-        limit : Int?
-    ) : List<ChangelogItem>?
+        since : Long,
+        limit : Int? = null
+    ) : GetChangeLogResponse?
 
     suspend fun syncWords(
         ids : List<String>
@@ -201,16 +201,19 @@ interface AIForumNetworkDataSource {
     ) : List<SyncNotificationItem>?
 
     suspend fun syncSyncBookmarks(
-        userId: String,
+        userId: String? = null,
         ids : List<String>
     ) : List< SyncBookmarkItem>?
 
     suspend fun syncSyncLikes(
-        userId: String,
+        userId: String? = null,
         ids : List<String>
     ) : List< SyncLikeItem>?
 
-
+    suspend fun syncSyncFollows(
+        userId: String? = null,
+        ids : List<String>
+    ) : List< SyncFollowItem>?
 
 
 

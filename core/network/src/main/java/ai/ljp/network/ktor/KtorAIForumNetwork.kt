@@ -9,6 +9,7 @@ import ai.ljp.network.model.CommentCreateResponse
 import ai.ljp.network.model.CommentItem
 import ai.ljp.network.model.FollowCreateResponse
 import ai.ljp.network.model.FollowItem
+import ai.ljp.network.model.GetChangeLogResponse
 import ai.ljp.network.model.LikeResponse
 import ai.ljp.network.model.LoginResponse
 import ai.ljp.network.model.NotificationCreateResponse
@@ -22,6 +23,7 @@ import ai.ljp.network.model.RegisterResponse
 import ai.ljp.network.model.ReportCreateResponse
 import ai.ljp.network.model.SyncBookmarkItem
 import ai.ljp.network.model.SyncCommentItem
+import ai.ljp.network.model.SyncFollowItem
 import ai.ljp.network.model.SyncLikeItem
 import ai.ljp.network.model.SyncNotificationItem
 import ai.ljp.network.model.SyncTreeholeItem
@@ -501,7 +503,7 @@ class KtorAIForumNetwork @Inject constructor(
         targetId: String,
         reson: String
     ): ReportCreateResponse? =
-        client.apiClient<ReportCreateResponse?> {
+        client.apiClient {
             post<ReportCreateResponse?> {
                 apiRequest("/api/v1/reports") {
                     body = simApiMapOf(
@@ -515,11 +517,11 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun getChangelogs(
-        since: Int,
+        since: Long,
         limit: Int?
-    ): List<ChangelogItem>? =
-        client.apiClient<List<ChangelogItem>?> {
-            get<List<ChangelogItem>?> {
+    ): GetChangeLogResponse? =
+        client.apiClient {
+            get<GetChangeLogResponse?> {
                 apiRequest("/api/v1/sync/changelog") {
                     params = simApiMapOf(
                         "since" to since,
@@ -530,7 +532,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun syncWords(ids: List<String>): List<SyncWordItem>?  =
-        client.apiClient<List<SyncWordItem>?> {
+        client.apiClient {
             post<List<SyncWordItem>?> {
                 apiRequest("/api/v1/sync/words") {
                     body = simApiMapOf(
@@ -574,7 +576,7 @@ class KtorAIForumNetwork @Inject constructor(
             }.getOrNull()
         }
 
-    override suspend fun syncSyncBookmarks(userId: String, ids: List<String>): List<SyncBookmarkItem>?  =
+    override suspend fun syncSyncBookmarks(userId: String?, ids: List<String>): List<SyncBookmarkItem>?  =
         client.apiClient<List<SyncBookmarkItem>?> {
             post<List<SyncBookmarkItem>?> {
                 apiRequest("/api/v1/sync/bookmarks") {
@@ -585,8 +587,8 @@ class KtorAIForumNetwork @Inject constructor(
                 }
             }.getOrNull()
         }
-    override suspend fun syncSyncLikes(userId: String, ids: List<String>): List<SyncLikeItem>?  =
-        client.apiClient<List<SyncLikeItem>?> {
+    override suspend fun syncSyncLikes(userId: String?, ids: List<String>): List<SyncLikeItem>?  =
+        client.apiClient {
             post<List<SyncLikeItem>?> {
                 apiRequest("/api/v1/sync/likes") {
                     body = simApiMapOf(
@@ -596,6 +598,19 @@ class KtorAIForumNetwork @Inject constructor(
                 }
             }.getOrNull()
         }
-
+    override suspend fun syncSyncFollows(
+        userId: String?,
+        ids : List<String>
+    ) : List< SyncFollowItem>? =
+        client.apiClient {
+            post<List<SyncFollowItem>?> {
+                apiRequest("/api/v1/sync/follows") {
+                    body = simApiMapOf(
+                        "ids" to ids,
+                        "user_id" to userId
+                    )
+                }
+            }.getOrNull()
+        }
 
 }
