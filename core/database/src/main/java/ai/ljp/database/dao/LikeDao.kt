@@ -44,4 +44,12 @@ interface LikeDao {
     suspend fun updateSync(userId: String,
                            postId: String,syncState: SyncState,
                            updatedAt : Instant)
+
+    @Query(
+        value = """
+            DELETE FROM likes
+            WHERE `id` in (:ids)
+        """,
+    )
+    suspend fun deleteAll(ids : List<String>)
 }

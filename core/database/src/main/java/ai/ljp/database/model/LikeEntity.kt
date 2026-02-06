@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 @Entity (
     tableName = "likes",
@@ -27,5 +28,5 @@ data class LikeEntity(
     @ColumnInfo(name = "deleted")
     val deleted : Boolean  = false,
     @ColumnInfo(name = "updatedAt")
-    val updatedAt : kotlinx.datetime.Instant
+    val updatedAt : kotlinx.datetime.Instant = Clock.System.now()
 ) : BaseEntity

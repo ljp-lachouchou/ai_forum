@@ -59,7 +59,7 @@ data class SyncLikeItem(
     val id : String,
     val postId : String,
     val userId : String,
-    val createdAt : Instant
+    val createdAt : Long
 )
 
 data class SyncBookmarkItem(
