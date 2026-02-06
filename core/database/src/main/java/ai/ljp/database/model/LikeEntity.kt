@@ -4,15 +4,18 @@ import ai.ljp.database.model.help.SyncState
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
+import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 @Entity (
     tableName = "likes",
-    primaryKeys = ["userId","postId"],
     indices = [
         Index(value = ["postId"])
     ]
 )
 data class LikeEntity(
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id : String,
     @ColumnInfo(name = "userId")
     val userId : String,
     @ColumnInfo(name = "postId")
@@ -25,4 +28,4 @@ data class LikeEntity(
     val deleted : Boolean  = false,
     @ColumnInfo(name = "updatedAt")
     val updatedAt : kotlinx.datetime.Instant
-)
+) : BaseEntity

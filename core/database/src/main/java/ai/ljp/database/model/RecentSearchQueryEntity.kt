@@ -14,7 +14,7 @@ data class RecentSearchQueryEntity(
     val query: String,
     @ColumnInfo
     val queriedDate: Instant,
-)
+) : BaseEntity
 fun RecentSearchQueryEntity.asExternalModel() = RecentSearchQuery(
     query = query,
     queriedDate = queriedDate,

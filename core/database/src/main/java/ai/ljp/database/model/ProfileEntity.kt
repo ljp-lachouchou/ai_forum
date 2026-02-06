@@ -24,7 +24,7 @@ data class ProfileEntity(
     val createdAt : Instant,
     @ColumnInfo(name = "profileCount")
     val profileCount : String?
-)
+) : BaseEntity
 
 fun ProfileEntity.asExtraModel() =
     Profile(

@@ -7,6 +7,9 @@ import androidx.room.PrimaryKey
 import com.ljp.model.Word
 import com.ljp.model.WordTag
 import kotlinx.datetime.Instant
+import kotlin.reflect.KClass
+
+interface  BaseEntity
 @Entity(
     tableName = "words"
 )
@@ -30,7 +33,7 @@ data class WordEntity(
     val wordName : String,
     @ColumnInfo(name = "status")
     val status : String
-)
+) : BaseEntity
 fun WordEntity.asExtraModel() = Word(
     wordId = wordId,
     authorId = authorId,
@@ -42,3 +45,13 @@ fun WordEntity.asExtraModel() = Word(
     status = status,
     wordName = wordName
 )
+
+val <T : BaseEntity> Class<T>.roomTableName : String
+    get() {
+        val annotation = this.getAnnotation(Entity::class.java)
+        return if (annotation?.tableName?.isNotEmpty() == true) {
+            annotation.tableName
+        } else {
+            this.simpleName ?: ""
+        }
+    }

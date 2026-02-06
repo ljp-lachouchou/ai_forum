@@ -5,13 +5,16 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 @Entity (
     tableName = "follows",
-    primaryKeys = ["userId","followId"],
 
 )
 data class FollowEntity(
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id : String,
     @ColumnInfo(name = "userId")
     val userId : String,
     @ColumnInfo(name = "followId")
@@ -24,4 +27,4 @@ data class FollowEntity(
     val deleted : Boolean  = false,
     @ColumnInfo(name = "updatedAt")
     val updatedAt : Instant
-)
+) : BaseEntity

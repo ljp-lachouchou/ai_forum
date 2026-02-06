@@ -26,7 +26,7 @@ data class NotificationEntity(
     val read : Boolean,
     @ColumnInfo(name = "createdAt")
     val createdAt : Instant
-)
+) : BaseEntity
 
 fun NotificationEntity.asExtraModel() =
     Notification(
