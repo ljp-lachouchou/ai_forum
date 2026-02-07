@@ -4,7 +4,9 @@ import ai.ljp.data.FeedPagingConfig
 import ai.ljp.data.SYNC_BATCH_SIZE
 import ai.ljp.data.Synchronizer
 import ai.ljp.data.changeSync
+import ai.ljp.data.model.AIPost
 import ai.ljp.data.model.asDBModel
+import ai.ljp.data.model.asExtraModel
 import ai.ljp.data.repository.WordRepository
 import ai.ljp.database.dao.WordDao
 import ai.ljp.database.model.TreeholeEntity
@@ -86,6 +88,12 @@ class OfflineFirstWordRepository @Inject constructor(
             .map { pagingData->
                 pagingData.map(WordEntity::asExtraModel)
             }
+
+    override suspend fun aiAssistPost(content: String): AIPost =
+        network.aiAssistPost(content)?.asExtraModel() ?: AIPost(
+            content = "",
+            suggestions = emptyList()
+        )
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
         synchronizer.changeSync(

@@ -9,6 +9,7 @@ import ai.ljp.database.model.ProfileEntity
 import ai.ljp.database.model.TreeholeEntity
 import ai.ljp.database.model.WordEntity
 import ai.ljp.database.model.help.SyncState
+import ai.ljp.network.model.AIAssistPostResponse
 import ai.ljp.network.model.SyncBookmarkItem
 import ai.ljp.network.model.SyncCommentItem
 import ai.ljp.network.model.SyncFollowItem
@@ -97,4 +98,9 @@ fun SyncWordItem.asDBModel() =
         updatedAt = updatedAt.toInstant(),
         wordName = wordName,
         status = status
+    )
+fun AIAssistPostResponse.asExtraModel() =
+    AIPost(
+        content = content,
+        suggestions = suggestions
     )
