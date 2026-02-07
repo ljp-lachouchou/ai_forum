@@ -11,6 +11,7 @@ import ai.ljp.database.model.asExtraModel
 import ai.ljp.database.model.roomTableName
 import ai.ljp.datastore.AIForumPreferencesDatastore
 import ai.ljp.datastore.ChangeVersion
+import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.ktor.KtorAIForumNetwork
 import ai.ljp.network.model.SyncProfileItem
 import com.ljp.model.Profile
@@ -21,7 +22,7 @@ import javax.inject.Inject
 import kotlin.collections.chunked
 
 class OfflineFirstProfileRepository @Inject constructor(
-    private val network: KtorAIForumNetwork,
+    private val network: AIForumNetworkDataSource,
     private val preferencesDatastore: AIForumPreferencesDatastore,
     private val profileDao: ProfileDao
 ) : ProfileRepository{
