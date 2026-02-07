@@ -47,7 +47,7 @@ import io.ljp.simapi.util.simApiMapOf
 import javax.inject.Inject
 
 
-fun <T> ResultWrapper<T>.getOrNull() =
+inline fun <reified T> ResultWrapper<T>.getOrNull() =
     when(this) {
         is ResultWrapper.Success -> data
         is ResultWrapper.Error -> {

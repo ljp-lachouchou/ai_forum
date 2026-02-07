@@ -111,6 +111,6 @@ fun apiRequest(path: String,block:ApiRequestBuilder.() -> Unit = {}): ApiRequest
 // 调用工具函数：不再负责“设置”，只负责“提供环境”
 
 
-suspend fun <T> ApiClient.apiClient(block:suspend ApiClient.() -> T) : T {
+suspend inline fun <reified T> ApiClient.apiClient(block:suspend ApiClient.() -> T) : T {
     return block(this)
 }
