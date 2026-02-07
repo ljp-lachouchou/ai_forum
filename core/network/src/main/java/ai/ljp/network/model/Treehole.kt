@@ -1,5 +1,10 @@
 package ai.ljp.network.model
 
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.Serializable
+
+@OptIn(InternalSerializationApi::class)
+@Serializable
 data class TreeholeCreateResponse(
     val id: String,
     val authorId: String,
@@ -7,7 +12,8 @@ data class TreeholeCreateResponse(
     val isAnonymous: Boolean,
     val createdAt: Long
 )
-
+@OptIn(InternalSerializationApi::class)
+@Serializable
 data class TreeholeItem(
     val id: String,
     val authorId: String,
@@ -15,7 +21,8 @@ data class TreeholeItem(
     val isAnonymous: Boolean,
     val createdAt: Long
 )
-
+@OptIn(InternalSerializationApi::class)
+@Serializable
 data class TreeholeAiReplyResponse(
     val replyId: String,
     val treeholeId: String,

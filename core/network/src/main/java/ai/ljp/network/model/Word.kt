@@ -2,49 +2,23 @@ package ai.ljp.network.model
 
 import com.ljp.model.WordTag
 import io.ljp.simapi.util.simApiMapOf
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.Serializable
 
 fun WordUpdateRequesst.simApiMapOf() = simApiMapOf<String, Any>(
     "tags" to wordTags,
     "word_name" to wordName,
     "category" to category
 )
+@OptIn(InternalSerializationApi::class)
+@Serializable
 data class WordUpdateRequesst(
     val wordTags : List<WordTag>,
     val wordName : String,
     val category : String,
 )
-data class WordUpdateResponse(
-    val wordId: String,
-    val updatedFields: Map<String, Any?>,
-    val updatedAt: Long
-)
-
-data class WordSubmitResponse(
-    val id: String,
-    val status: String
-)
-
-data class WordPublishResponse(
-    val id: String,
-    val status: String
-)
-
-data class WordRejectResponse(
-    val id: String,
-    val status: String,
-    val reason: String
-)
-
-data class WordArchiveResponse(
-    val id: String,
-    val status: String
-)
-
-data class WordDeleteResponse(
-    val id: String,
-    val deleted: Boolean
-)
-
+@OptIn(InternalSerializationApi::class)
+@Serializable
 data class WordDetailResponse(
     val wordId: String,
     val authorId: String,
@@ -55,6 +29,8 @@ data class WordDetailResponse(
     val status: String,
     val createdAt: Long
 )
+@OptIn(InternalSerializationApi::class)
+@Serializable
 data class WordFeedItem(
     val wordId: String,
     val wordName: String,
