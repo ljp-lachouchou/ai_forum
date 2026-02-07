@@ -9,10 +9,8 @@ import ai.ljp.data.model.asDBModel
 import ai.ljp.data.model.asExtraModel
 import ai.ljp.data.repository.WordRepository
 import ai.ljp.database.dao.WordDao
-import ai.ljp.database.model.TreeholeEntity
 import ai.ljp.database.model.WordEntity
 import ai.ljp.database.model.asExtraModel
-import ai.ljp.database.model.roomTableName
 import ai.ljp.datastore.AIForumPreferencesDatastore
 import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
@@ -97,16 +95,13 @@ class OfflineFirstWordRepository @Inject constructor(
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
         synchronizer.changeSync(
-            networkEntity = TreeholeEntity::class,
+            tableName = "words",
             versionReader = ChangeVersion::syncVersion,
             changeFetcher = {sinceVersion ->
                 network.getChangelogs(since = sinceVersion)
             },
             versionUpdater = {lastVersion ->
                 ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            entityTagger = {entityClass ->
-                entityClass.roomTableName
             },
             modelDeleter = wordDao::deleteAll,
             modelUpdater = { changedIds ->//分批

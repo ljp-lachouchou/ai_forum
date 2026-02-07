@@ -9,7 +9,6 @@ import ai.ljp.data.repository.FollowRepository
 import ai.ljp.database.dao.FollowDao
 import ai.ljp.database.model.FollowEntity
 import ai.ljp.database.model.help.SyncState
-import ai.ljp.database.model.roomTableName
 import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncFollowItem
@@ -37,16 +36,13 @@ class OfflineFirstFollowRepository @Inject constructor(
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
         synchronizer.changeSync(
-            networkEntity = FollowEntity::class,
+            tableName = "follows",
             versionReader = ChangeVersion::syncVersion,
             changeFetcher = {sinceVersion ->
                 network.getChangelogs(since = sinceVersion)
             },
             versionUpdater = {lastVersion ->
                 ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            entityTagger = {entityClass ->
-                entityClass.roomTableName
             },
             modelDeleter = followDao::deleteAll,
             modelUpdater = { changedIds ->//分批

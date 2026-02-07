@@ -9,7 +9,6 @@ import ai.ljp.data.repository.NotificationRepository
 import ai.ljp.database.dao.NotificationDao
 import ai.ljp.database.model.NotificationEntity
 import ai.ljp.database.model.asExtraModel
-import ai.ljp.database.model.roomTableName
 import ai.ljp.datastore.AIForumPreferencesDatastore
 import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
@@ -72,16 +71,13 @@ class OfflineFirstNotificationRepository @Inject constructor(
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
         synchronizer.changeSync(
-            networkEntity = NotificationEntity::class,
+            tableName = "notifications",
             versionReader = ChangeVersion::syncVersion,
             changeFetcher = {sinceVersion ->
                 network.getChangelogs(since = sinceVersion)
             },
             versionUpdater = {lastVersion ->
                 ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            entityTagger = {entityClass ->
-                entityClass.roomTableName
             },
             modelDeleter = notificationDao::deleteAll,
             modelUpdater = { changedIds ->//分批

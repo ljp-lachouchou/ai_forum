@@ -46,12 +46,3 @@ fun WordEntity.asExtraModel() = Word(
     wordName = wordName
 )
 
-val <T : BaseEntity> Class<T>.roomTableName : String
-    get() {
-        val annotation = this.getAnnotation(Entity::class.java)
-        return if (annotation?.tableName?.isNotEmpty() == true) {
-            annotation.tableName
-        } else {
-            this.simpleName ?: ""
-        }
-    }

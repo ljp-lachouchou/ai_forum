@@ -8,7 +8,6 @@ import ai.ljp.data.repository.ProfileRepository
 import ai.ljp.database.dao.ProfileDao
 import ai.ljp.database.model.ProfileEntity
 import ai.ljp.database.model.asExtraModel
-import ai.ljp.database.model.roomTableName
 import ai.ljp.datastore.AIForumPreferencesDatastore
 import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
@@ -44,7 +43,7 @@ class OfflineFirstProfileRepository @Inject constructor(
     }
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
         synchronizer.changeSync(
-            networkEntity = ProfileEntity::class,
+            tableName = "profiles",
             versionReader = ChangeVersion::syncVersion,
             changeFetcher = {sinceVersion ->
                 network.getChangelogs(since = sinceVersion)
@@ -52,9 +51,7 @@ class OfflineFirstProfileRepository @Inject constructor(
             versionUpdater = {lastVersion ->
                 ChangeVersion(syncVersion = 1L * lastVersion)
             },
-            entityTagger = {entityClass ->
-                entityClass.roomTableName
-            },
+
             modelDeleter = profileDao::deleteAll,
             modelUpdater = { changedIds ->//分批
                 changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->

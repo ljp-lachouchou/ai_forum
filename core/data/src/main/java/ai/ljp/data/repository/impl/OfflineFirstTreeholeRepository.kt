@@ -9,7 +9,6 @@ import ai.ljp.data.repository.TreeholeRepository
 import ai.ljp.database.dao.TreeholeDao
 import ai.ljp.database.model.TreeholeEntity
 import ai.ljp.database.model.asExtraModel
-import ai.ljp.database.model.roomTableName
 import ai.ljp.datastore.AIForumPreferencesDatastore
 import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
@@ -55,16 +54,13 @@ class OfflineFirstTreeholeRepository @Inject constructor(
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
         synchronizer.changeSync(
-            networkEntity = TreeholeEntity::class,
+            tableName = "treeholes",
             versionReader = ChangeVersion::syncVersion,
             changeFetcher = {sinceVersion ->
                 network.getChangelogs(since = sinceVersion)
             },
             versionUpdater = {lastVersion ->
                 ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            entityTagger = {entityClass ->
-                entityClass.roomTableName
             },
             modelDeleter = treeholeDao::deleteAll,
             modelUpdater = { changedIds ->//分批

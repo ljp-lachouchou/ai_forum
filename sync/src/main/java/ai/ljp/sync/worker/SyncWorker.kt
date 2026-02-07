@@ -16,6 +16,7 @@ import ai.ljp.sync.initializer.SyncConstraints
 import ai.ljp.sync.initializer.syncForegroundInfo
 import ai.ljp.sync.status.SyncSubscriber
 import android.content.Context
+import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
@@ -58,7 +59,7 @@ class SyncWorker @AssistedInject constructor(
         appContext.syncForegroundInfo()
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
         analyticsHelper.logSyncStarted()
-        val syncSuccessfully = true
+        val syncSuccessfully =
             awaitAll(
             async { bookmarkRepository.sync() },
             async { likeRepository.sync() },
@@ -69,6 +70,7 @@ class SyncWorker @AssistedInject constructor(
             async { treeholeRepository.sync() },
             async { wordRepository.sync() }
         ).all { it }
+        Log.e("SYnc do work",syncSuccessfully.toString())
         analyticsHelper.logSyncFinished(syncSuccessfully)
         if (syncSuccessfully) {
             Result.success()

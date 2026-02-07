@@ -9,7 +9,6 @@ import ai.ljp.data.repository.CommentRepository
 import ai.ljp.database.dao.CommentDao
 import ai.ljp.database.model.CommentEntity
 import ai.ljp.database.model.asExtraModel
-import ai.ljp.database.model.roomTableName
 import ai.ljp.datastore.AIForumPreferencesDatastore
 import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
@@ -65,16 +64,13 @@ class OfflineFirstCommentRepository @Inject constructor(
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
         synchronizer.changeSync(
-            networkEntity = CommentEntity::class,
+            tableName = "comments",
             versionReader = ChangeVersion::syncVersion,
             changeFetcher = {sinceVersion ->
                 network.getChangelogs(since = sinceVersion)
             },
             versionUpdater = {lastVersion ->
                 ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            entityTagger = {entityClass ->
-                entityClass.roomTableName
             },
             modelDeleter = commentDao::deleteAll,
             modelUpdater = { changedIds ->//分批

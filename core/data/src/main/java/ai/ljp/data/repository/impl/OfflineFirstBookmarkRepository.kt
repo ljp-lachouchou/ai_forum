@@ -9,7 +9,6 @@ import ai.ljp.data.repository.BookmarkRepository
 import ai.ljp.database.dao.BookmarkDao
 import ai.ljp.database.model.BookmarkEntity
 import ai.ljp.database.model.help.SyncState
-import ai.ljp.database.model.roomTableName
 import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncBookmarkItem
@@ -36,16 +35,13 @@ class OfflineFirstBookmarkRepository @Inject constructor(
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean {
         return synchronizer.changeSync(
-            networkEntity = BookmarkEntity::class,
+            tableName = "bookmarks",
             versionReader = ChangeVersion::syncVersion,
             changeFetcher = {sinceVersion ->
                 network.getChangelogs(since = sinceVersion)
             },
             versionUpdater = {lastVersion ->
                 ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            entityTagger = {entityClass ->
-                entityClass.roomTableName
             },
             modelDeleter = bookmarkDao::deleteAll,
             modelUpdater = { changedIds ->//分批

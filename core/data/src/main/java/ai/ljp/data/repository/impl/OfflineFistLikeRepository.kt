@@ -7,9 +7,7 @@ import ai.ljp.data.model.Like
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.LikeRepository
 import ai.ljp.database.dao.LikeDao
-import ai.ljp.database.model.LikeEntity
 import ai.ljp.database.model.help.SyncState
-import ai.ljp.database.model.roomTableName
 import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncLikeItem
@@ -40,16 +38,13 @@ class OfflineFistLikeRepository @Inject constructor(
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
         synchronizer.changeSync(
-            networkEntity = LikeEntity::class,
+            tableName = "likes",
             versionReader = ChangeVersion::syncVersion,
             changeFetcher = {sinceVersion ->
                 network.getChangelogs(since = sinceVersion)
             },
             versionUpdater = {lastVersion ->
                 ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            entityTagger = {entityClass ->
-                entityClass.roomTableName
             },
             modelDeleter = likeDao::deleteAll,
             modelUpdater = { changedIds ->//分批
