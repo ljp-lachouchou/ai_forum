@@ -16,9 +16,11 @@ import ai.ljp.data.repository.impl.OfflineFirstBookmarkRepository
 import ai.ljp.data.repository.impl.OfflineFirstCommentRepository
 import ai.ljp.data.repository.impl.OfflineFirstFollowRepository
 import ai.ljp.data.repository.impl.OfflineFirstInteractionWordRepository
+import ai.ljp.data.repository.impl.OfflineFirstNotificationRepository
 import ai.ljp.data.repository.impl.OfflineFirstProfileRepository
 import ai.ljp.data.repository.impl.OfflineFirstTreeholeRepository
 import ai.ljp.data.repository.impl.OfflineFirstUserDataRepository
+import ai.ljp.data.repository.impl.OfflineFirstWordRepository
 import ai.ljp.data.repository.impl.OfflineFistLikeRepository
 import dagger.Binds
 import dagger.Module
@@ -54,7 +56,7 @@ interface RepositoryModule {
 
     @Binds
     fun bindsNotificationRepo(
-        notificationRepository: OfflineFirstInteractionWordRepository
+        notificationRepository: OfflineFirstNotificationRepository
     ) : NotificationRepository
 
     @Binds
@@ -79,6 +81,6 @@ interface RepositoryModule {
 
     @Binds
     fun bindsWordRepo(
-        wordRepo : OfflineFirstInteractionWordRepository
+        wordRepo : OfflineFirstWordRepository
     ) : WordRepository
 }

@@ -36,14 +36,14 @@ class SyncWorker @AssistedInject constructor(
     @Assisted private val appContext : Context,
     @Assisted params : WorkerParameters,
     private val aiForumPreferences: AIForumPreferencesDatastore,
-//    private val bookmarkRepository: BookmarkRepository,
-//    private val likeRepository: LikeRepository,
-//    private val commentRepository: CommentRepository,
-//    private val followRepository: FollowRepository,
-//    private val notificationRepository: NotificationRepository,
-//    private val profileRepository: ProfileRepository,
-//    private val treeholeRepository: TreeholeRepository,
-//    private val wordRepository: WordRepository,
+    private val bookmarkRepository: BookmarkRepository,
+    private val likeRepository: LikeRepository,
+    private val commentRepository: CommentRepository,
+    private val followRepository: FollowRepository,
+    private val notificationRepository: NotificationRepository,
+    private val profileRepository: ProfileRepository,
+    private val treeholeRepository: TreeholeRepository,
+    private val wordRepository: WordRepository,
     @Dispatcher(AIForumDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val analyticsHelper: AnalyticsHelper,
 ) : CoroutineWorker(appContext,params), Synchronizer {
@@ -59,16 +59,16 @@ class SyncWorker @AssistedInject constructor(
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
         analyticsHelper.logSyncStarted()
         val syncSuccessfully = true
-//            awaitAll(
-//            async { bookmarkRepository.sync() },
-//            async { likeRepository.sync() },
-//            async { commentRepository.sync() },
-//            async { followRepository.sync() },
-//            async { notificationRepository.sync() },
-//            async { profileRepository.sync() },
-//            async { treeholeRepository.sync() },
-//            async { wordRepository.sync() }
-//        ).all { it }
+            awaitAll(
+            async { bookmarkRepository.sync() },
+            async { likeRepository.sync() },
+            async { commentRepository.sync() },
+            async { followRepository.sync() },
+            async { notificationRepository.sync() },
+            async { profileRepository.sync() },
+            async { treeholeRepository.sync() },
+            async { wordRepository.sync() }
+        ).all { it }
         analyticsHelper.logSyncFinished(syncSuccessfully)
         if (syncSuccessfully) {
             Result.success()
