@@ -5,21 +5,24 @@ import ai.ljp.database.model.CommentEntity
 import ai.ljp.database.model.FollowEntity
 import ai.ljp.database.model.LikeEntity
 import ai.ljp.database.model.NotificationEntity
+import ai.ljp.database.model.ProfileEntity
 import ai.ljp.database.model.help.SyncState
 import ai.ljp.network.model.SyncBookmarkItem
 import ai.ljp.network.model.SyncCommentItem
 import ai.ljp.network.model.SyncFollowItem
 import ai.ljp.network.model.SyncLikeItem
 import ai.ljp.network.model.SyncNotificationItem
+import ai.ljp.network.model.SyncProfileItem
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-
+private fun Long?.toInstant() = this?.let(Instant::fromEpochMilliseconds) ?: Clock.System.now()
 fun SyncBookmarkItem.asDBModel() =
     BookmarkEntity(
         id = id,
         userId = userId,
         postId = postId,
         syncState = SyncState.Success,
-        createdAt = createdAt.let(Instant::fromEpochMilliseconds),
+        createdAt = createdAt.toInstant(),
     )
 
 fun SyncLikeItem.asDBModel() =
@@ -28,7 +31,7 @@ fun SyncLikeItem.asDBModel() =
         userId = userId,
         postId = postId,
         syncState = SyncState.Success,
-        createdAt = createdAt.let(Instant::fromEpochMilliseconds),
+        createdAt = createdAt.toInstant(),
     )
 
 fun SyncFollowItem.asDBModel() =
@@ -37,7 +40,7 @@ fun SyncFollowItem.asDBModel() =
         userId = userId,
         followId = followId,
         syncState = SyncState.Success,
-        createdAt = createdAt.let(Instant::fromEpochMilliseconds),
+        createdAt = createdAt.toInstant(),
     )
 fun SyncCommentItem.asDBModel() =
     CommentEntity(
@@ -45,7 +48,7 @@ fun SyncCommentItem.asDBModel() =
         postId = postId,
         authorId = authorId,
         content = content,
-        createdAt = createdAt.let(Instant::fromEpochMilliseconds),
+        createdAt = createdAt.toInstant(),
     )
 
 fun SyncNotificationItem.asDBModel() =
@@ -57,5 +60,16 @@ fun SyncNotificationItem.asDBModel() =
         refType = refType,
         refId = refId,
         read = read,
-        createdAt = createdAt.let(Instant::fromEpochMilliseconds)
+        createdAt = createdAt.toInstant()
+    )
+
+fun SyncProfileItem.asDBModel() =
+    ProfileEntity(
+        id = id,
+        userName = userName,
+        avatarUrl = avatarUrl,
+        bio = bio,
+        role = role,
+        createdAt = createdAt.toInstant(),
+        profileCount = profileCount
     )

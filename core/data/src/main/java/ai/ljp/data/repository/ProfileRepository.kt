@@ -6,9 +6,12 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository : Syncable {
 
-    suspend fun upsertProfile(profile : Profile)
+    suspend fun updateProfile(
+        userName: String?,
+        avatarUrl: String?,
+        bio: String?
+    )
 
-    suspend fun upsertProfiles(profiles : List<Profile>)
-    fun getSelfProfile(userId : String) : Flow<Profile>
+    suspend fun getSelfProfile() : Flow<Profile>
 
 }

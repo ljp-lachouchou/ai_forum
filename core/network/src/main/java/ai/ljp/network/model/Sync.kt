@@ -82,6 +82,6 @@ data class SyncProfileItem(
     val avatarUrl : String?,
     val bio : String?,
     val role : String,
-    val createdAt : Instant,
+    val createdAt : Long,
     val profileCount : String?
 )
