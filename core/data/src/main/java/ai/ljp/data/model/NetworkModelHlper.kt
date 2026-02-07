@@ -18,6 +18,7 @@ import ai.ljp.network.model.SyncNotificationItem
 import ai.ljp.network.model.SyncProfileItem
 import ai.ljp.network.model.SyncTreeholeItem
 import ai.ljp.network.model.SyncWordItem
+import com.ljp.model.Word
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 private fun Long?.toInstant() = this?.let(Instant::fromEpochMilliseconds) ?: Clock.System.now()
@@ -103,4 +104,17 @@ fun AIAssistPostResponse.asExtraModel() =
     AIPost(
         content = content,
         suggestions = suggestions
+    )
+
+fun SyncWordItem.asExtraModel() =
+    Word(
+        wordId = wordId,
+        authorId = authorId,
+        wordTags = wordTags,
+        wordUrl = wordUrl,
+        category = category,
+        status = status,
+        createdAt = createdAt.toInstant(),
+        updatedAt = Clock.System.now(),
+        wordName = wordName
     )

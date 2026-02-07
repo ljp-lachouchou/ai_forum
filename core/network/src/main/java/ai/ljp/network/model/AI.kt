@@ -7,7 +7,8 @@ data class SearchResult(
 )
 
 data class AISearchResponse(
-    val results: List<SearchResult>
+    val referenceWords: List<SearchResult>,
+    val answer : String
 )
 
 data class AIReviewResponse(

@@ -1,5 +1,6 @@
 package ai.ljp.network.model
 
+import com.ljp.model.Word
 import com.ljp.model.WordTag
 import kotlinx.datetime.Instant
 
@@ -85,3 +86,5 @@ data class SyncProfileItem(
     val createdAt : Long,
     val profileCount : String?
 )
+
+
