@@ -1,14 +1,11 @@
 package ai.ljp.data.repository.impl
 
 import ai.ljp.data.SYNC_BATCH_SIZE
-import ai.ljp.data.Synchronizer
-import ai.ljp.data.changeSync
 import ai.ljp.data.model.Like
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.LikeRepository
 import ai.ljp.database.dao.LikeDao
 import ai.ljp.database.model.help.SyncState
-import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncLikeItem
 import kotlinx.datetime.Instant
@@ -36,25 +33,19 @@ class OfflineFistLikeRepository @Inject constructor(
             deleted,
             updatedAt)
 
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
-        synchronizer.changeSync(
-            tableName = "likes",
-            versionReader = ChangeVersion::syncVersion,
-            changeFetcher = {sinceVersion ->
-                network.getChangelogs(since = sinceVersion)
-            },
-            versionUpdater = {lastVersion ->
-                ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            modelDeleter = likeDao::deleteAll,
-            modelUpdater = { changedIds ->//分批
-                changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
-                    val likes = network.syncSyncLikes(ids = ids)
-                        ?.map(SyncLikeItem::asDBModel) ?: return@forEach
-                    likeDao.insertAll(likes)
-                }
-            }
-        )
+    override val tableName: String
+        get() = "likes"
+
+    override suspend fun modelDeleter(ids: List<String>) =
+        likeDao.deleteAll(ids)
+
+    override suspend fun modelUpdater(changedIds: List<String>) {
+        changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
+            val likes = network.syncSyncLikes(ids = ids)
+                ?.map(SyncLikeItem::asDBModel) ?: return@forEach
+            likeDao.insertAll(likes)
+        }
+    }
 
     override suspend fun updateSync(
         userId: String,

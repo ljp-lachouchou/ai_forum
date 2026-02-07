@@ -3,7 +3,6 @@ package ai.ljp.network.ktor
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.AIAssistPostResponse
 import ai.ljp.network.model.AISearchResponse
-import ai.ljp.network.model.ChangelogItem
 import ai.ljp.network.model.CollectResponse
 import ai.ljp.network.model.CommentCreateResponse
 import ai.ljp.network.model.CommentItem
@@ -567,7 +566,7 @@ class KtorAIForumNetwork @Inject constructor(
             }.getOrNull()
         }
 
-    override suspend fun syncSyncNotifications(userId: String, ids: List<String>): List<SyncNotificationItem>? =
+    override suspend fun syncSyncNotifications(userId: String?, ids: List<String>): List<SyncNotificationItem>? =
         client.apiClient {
             post<List<SyncNotificationItem>?> {
                 apiRequest("/api/v1/sync/notifications") {

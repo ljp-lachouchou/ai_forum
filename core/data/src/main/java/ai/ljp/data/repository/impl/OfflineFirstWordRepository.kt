@@ -2,8 +2,6 @@ package ai.ljp.data.repository.impl
 
 import ai.ljp.data.FeedPagingConfig
 import ai.ljp.data.SYNC_BATCH_SIZE
-import ai.ljp.data.Synchronizer
-import ai.ljp.data.changeSync
 import ai.ljp.data.model.AIPost
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.model.asExtraModel
@@ -12,7 +10,6 @@ import ai.ljp.database.dao.WordDao
 import ai.ljp.database.model.WordEntity
 import ai.ljp.database.model.asExtraModel
 import ai.ljp.datastore.AIForumPreferencesDatastore
-import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncWordItem
 import ai.ljp.network.model.WordUpdateRequesst
@@ -93,24 +90,19 @@ class OfflineFirstWordRepository @Inject constructor(
             suggestions = emptyList()
         )
 
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
-        synchronizer.changeSync(
-            tableName = "words",
-            versionReader = ChangeVersion::syncVersion,
-            changeFetcher = {sinceVersion ->
-                network.getChangelogs(since = sinceVersion)
-            },
-            versionUpdater = {lastVersion ->
-                ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            modelDeleter = wordDao::deleteAll,
-            modelUpdater = { changedIds ->//分批
-                changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
-                    val items = network.syncWords(ids = ids)
-                        ?.map(SyncWordItem::asDBModel) ?: return@forEach
-                    wordDao.upsertAll(items)
-                }
-            }
-        )
+
+    override val tableName: String
+        get() = "words"
+
+    override suspend fun modelDeleter(ids: List<String>)=
+         wordDao.deleteAll(ids)
+
+    override suspend fun modelUpdater(changedIds: List<String>) {
+        changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
+            val items = network.syncWords(ids = ids)
+                ?.map(SyncWordItem::asDBModel) ?: return@forEach
+            wordDao.upsertAll(items)
+        }
+    }
 
 }

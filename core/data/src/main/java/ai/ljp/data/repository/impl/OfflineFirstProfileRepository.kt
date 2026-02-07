@@ -1,17 +1,13 @@
 package ai.ljp.data.repository.impl
 
 import ai.ljp.data.SYNC_BATCH_SIZE
-import ai.ljp.data.Synchronizer
-import ai.ljp.data.changeSync
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.ProfileRepository
 import ai.ljp.database.dao.ProfileDao
 import ai.ljp.database.model.ProfileEntity
 import ai.ljp.database.model.asExtraModel
 import ai.ljp.datastore.AIForumPreferencesDatastore
-import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
-import ai.ljp.network.ktor.KtorAIForumNetwork
 import ai.ljp.network.model.SyncProfileItem
 import com.ljp.model.Profile
 import kotlinx.coroutines.flow.Flow
@@ -41,24 +37,18 @@ class OfflineFirstProfileRepository @Inject constructor(
             userId = userData.currentUserId
         ).map(ProfileEntity::asExtraModel)
     }
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
-        synchronizer.changeSync(
-            tableName = "profiles",
-            versionReader = ChangeVersion::syncVersion,
-            changeFetcher = {sinceVersion ->
-                network.getChangelogs(since = sinceVersion)
-            },
-            versionUpdater = {lastVersion ->
-                ChangeVersion(syncVersion = 1L * lastVersion)
-            },
 
-            modelDeleter = profileDao::deleteAll,
-            modelUpdater = { changedIds ->//分批
-                changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
-                    val items = network.syncProfiles(profileIds = ids)
-                        ?.map(SyncProfileItem::asDBModel) ?: return@forEach
-                    profileDao.upsertProfiles(items)
-                }
-            }
-        )
+    override val tableName: String
+        get() = "profiles"
+
+    override suspend fun modelDeleter(ids: List<String>)=
+        profileDao.deleteAll(ids)
+
+    override suspend fun modelUpdater(changedIds: List<String>) {
+        changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
+            val items = network.syncProfiles(profileIds = ids)
+                ?.map(SyncProfileItem::asDBModel) ?: return@forEach
+            profileDao.upsertProfiles(items)
+        }
+    }
 }

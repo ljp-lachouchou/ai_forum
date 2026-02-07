@@ -1,13 +1,16 @@
 package com.ljp.model
 
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 //业务逻辑data model
 @Serializable
 data class WordTag(
     val id : String,
-    val createTime : Instant,
+    @SerialName("create_time")
+    val createTime : Long,
+    @SerialName("display_content")
     val displayContent : String
 )
 data class Word(

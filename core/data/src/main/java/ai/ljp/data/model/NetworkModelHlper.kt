@@ -28,7 +28,7 @@ fun SyncBookmarkItem.asDBModel() =
         userId = userId,
         postId = postId,
         syncState = SyncState.Success,
-        createdAt = createdAt.toInstant(),
+        createdAt = createdAt,
     )
 
 fun SyncLikeItem.asDBModel() =
@@ -37,7 +37,7 @@ fun SyncLikeItem.asDBModel() =
         userId = userId,
         postId = postId,
         syncState = SyncState.Success,
-        createdAt = createdAt.toInstant(),
+        createdAt = createdAt,
     )
 
 fun SyncFollowItem.asDBModel() =
@@ -46,7 +46,7 @@ fun SyncFollowItem.asDBModel() =
         userId = userId,
         followId = followId,
         syncState = SyncState.Success,
-        createdAt = createdAt.toInstant(),
+        createdAt = createdAt,
     )
 fun SyncCommentItem.asDBModel() =
     CommentEntity(
@@ -54,7 +54,7 @@ fun SyncCommentItem.asDBModel() =
         postId = postId,
         authorId = authorId,
         content = content,
-        createdAt = createdAt.toInstant(),
+        createdAt = createdAt,
     )
 
 fun SyncNotificationItem.asDBModel() =
@@ -66,17 +66,17 @@ fun SyncNotificationItem.asDBModel() =
         refType = refType,
         refId = refId,
         read = read,
-        createdAt = createdAt.toInstant()
+        createdAt = createdAt
     )
 
 fun SyncProfileItem.asDBModel() =
     ProfileEntity(
         id = id,
-        userName = userName,
+        userName = username,
         avatarUrl = avatarUrl,
         bio = bio,
         role = role,
-        createdAt = createdAt.toInstant(),
+        createdAt = createdAt,
         profileCount = profileCount
     )
 
@@ -86,7 +86,7 @@ fun SyncTreeholeItem.asDBModel() =
         authorId = authorId,
         content = content,
         anonymous = anonymous,
-        createdAt = createdAt.toInstant()
+        createdAt = createdAt
     )
 fun SyncWordItem.asDBModel() =
     WordEntity(
@@ -95,8 +95,8 @@ fun SyncWordItem.asDBModel() =
         wordTags = wordTags,
         wordUrl = wordUrl,
         category = category,
-        createdAt = createdAt.toInstant(),
-        updatedAt = updatedAt.toInstant(),
+        createdAt = createdAt,
+        updatedAt = updatedAt,
         wordName = wordName,
         status = status
     )
@@ -114,7 +114,7 @@ fun SyncWordItem.asExtraModel() =
         wordUrl = wordUrl,
         category = category,
         status = status,
-        createdAt = createdAt.toInstant(),
+        createdAt = createdAt,
         updatedAt = Clock.System.now(),
         wordName = wordName
     )

@@ -2,15 +2,12 @@ package ai.ljp.data.repository.impl
 
 import ai.ljp.data.FeedPagingConfig
 import ai.ljp.data.SYNC_BATCH_SIZE
-import ai.ljp.data.Synchronizer
-import ai.ljp.data.changeSync
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.CommentRepository
 import ai.ljp.database.dao.CommentDao
 import ai.ljp.database.model.CommentEntity
 import ai.ljp.database.model.asExtraModel
 import ai.ljp.datastore.AIForumPreferencesDatastore
-import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncCommentItem
 import androidx.paging.Pager
@@ -62,23 +59,17 @@ class OfflineFirstCommentRepository @Inject constructor(
     }
 
 
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
-        synchronizer.changeSync(
-            tableName = "comments",
-            versionReader = ChangeVersion::syncVersion,
-            changeFetcher = {sinceVersion ->
-                network.getChangelogs(since = sinceVersion)
-            },
-            versionUpdater = {lastVersion ->
-                ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            modelDeleter = commentDao::deleteAll,
-            modelUpdater = { changedIds ->//分批
-                changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
-                    val follows = network.syncComments(ids = ids)
-                        ?.map(SyncCommentItem::asDBModel) ?: return@forEach
-                    commentDao.insertAll(follows)
-                }
-            }
-        )
+    override val tableName: String
+        get() = "comments"
+
+    override suspend fun modelDeleter(ids: List<String>) =
+        commentDao.deleteAll(ids)
+
+    override suspend fun modelUpdater(changedIds: List<String>) {
+        changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
+            val items = network.syncComments(ids = ids)
+                ?.map(SyncCommentItem::asDBModel) ?: return@forEach
+            commentDao.insertAll(items)
+        }
+    }
 }

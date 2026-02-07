@@ -2,15 +2,12 @@ package ai.ljp.data.repository.impl
 
 import ai.ljp.data.FeedPagingConfig
 import ai.ljp.data.SYNC_BATCH_SIZE
-import ai.ljp.data.Synchronizer
-import ai.ljp.data.changeSync
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.TreeholeRepository
 import ai.ljp.database.dao.TreeholeDao
 import ai.ljp.database.model.TreeholeEntity
 import ai.ljp.database.model.asExtraModel
 import ai.ljp.datastore.AIForumPreferencesDatastore
-import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncTreeholeItem
 import androidx.paging.Pager
@@ -52,23 +49,17 @@ class OfflineFirstTreeholeRepository @Inject constructor(
                 pagingData.map(TreeholeEntity::asExtraModel)
             }
 
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
-        synchronizer.changeSync(
-            tableName = "treeholes",
-            versionReader = ChangeVersion::syncVersion,
-            changeFetcher = {sinceVersion ->
-                network.getChangelogs(since = sinceVersion)
-            },
-            versionUpdater = {lastVersion ->
-                ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            modelDeleter = treeholeDao::deleteAll,
-            modelUpdater = { changedIds ->//分批
-                changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
-                    val items = network.syncSyncTreeholes(ids = ids)
-                        ?.map(SyncTreeholeItem::asDBModel) ?: return@forEach
-                    treeholeDao.upsertTreeholes(items)
-                }
-            }
-        )
+    override val tableName: String
+        get() = "treeholes"
+
+    override suspend fun modelDeleter(ids: List<String>) =
+        treeholeDao.deleteAll(ids)
+
+    override suspend fun modelUpdater(changedIds: List<String>) {
+        changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
+            val items = network.syncSyncTreeholes(ids = ids)
+                ?.map(SyncTreeholeItem::asDBModel) ?: return@forEach
+            treeholeDao.upsertTreeholes(items)
+        }
+    }
 }

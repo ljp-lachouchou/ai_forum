@@ -2,15 +2,14 @@ package ai.ljp.data.repository.impl
 
 import ai.ljp.data.SYNC_BATCH_SIZE
 import ai.ljp.data.Synchronizer
-import ai.ljp.data.changeSync
 import ai.ljp.data.model.Bookmark
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.BookmarkRepository
 import ai.ljp.database.dao.BookmarkDao
-import ai.ljp.database.model.BookmarkEntity
 import ai.ljp.database.model.help.SyncState
 import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
+import ai.ljp.network.model.ChangelogItem
 import ai.ljp.network.model.SyncBookmarkItem
 import kotlinx.datetime.Instant
 import javax.inject.Inject
@@ -33,25 +32,18 @@ class OfflineFirstBookmarkRepository @Inject constructor(
     ) =
         bookmarkDao.toggleBookmark(userId,postId,deleted,updatedAt)
 
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean {
-        return synchronizer.changeSync(
-            tableName = "bookmarks",
-            versionReader = ChangeVersion::syncVersion,
-            changeFetcher = {sinceVersion ->
-                network.getChangelogs(since = sinceVersion)
-            },
-            versionUpdater = {lastVersion ->
-                ChangeVersion(syncVersion = 1L * lastVersion)
-            },
-            modelDeleter = bookmarkDao::deleteAll,
-            modelUpdater = { changedIds ->//分批
-                changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
-                    val bookmarks = network.syncSyncBookmarks(ids = ids)
-                        ?.map(SyncBookmarkItem::asDBModel) ?: return@forEach
-                    bookmarkDao.insertAll(bookmarks)
-                }
-            }
-        )
+    override val tableName: String
+        get() = "bookmarks"
+
+    override suspend fun modelDeleter(ids: List<String>) =
+        bookmarkDao.deleteAll(ids)
+
+    override suspend fun modelUpdater(changedIds: List<String>) {
+        changedIds.chunked(SYNC_BATCH_SIZE).forEach { ids ->
+            val bookmarks = network.syncSyncBookmarks(ids = ids)
+                ?.map(SyncBookmarkItem::asDBModel) ?: return@forEach
+            bookmarkDao.insertAll(bookmarks)
+        }
     }
 
     override suspend fun updateSync(

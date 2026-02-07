@@ -196,7 +196,7 @@ interface AIForumNetworkDataSource {
     ) : List<SyncTreeholeItem>?
 
     suspend fun syncSyncNotifications(
-        userId : String,
+        userId : String? = null,
         ids : List<String>
     ) : List<SyncNotificationItem>?
 

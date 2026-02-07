@@ -1,6 +1,8 @@
 package ai.ljp.sync.worker
 
 import ai.ljp.analytics.AnalyticsHelper
+import ai.ljp.data.SYNC_LOG_TAG
+import ai.ljp.data.Syncable
 import ai.ljp.data.Synchronizer
 import ai.ljp.data.repository.BookmarkRepository
 import ai.ljp.data.repository.CommentRepository
@@ -10,11 +12,13 @@ import ai.ljp.data.repository.NotificationRepository
 import ai.ljp.data.repository.ProfileRepository
 import ai.ljp.data.repository.TreeholeRepository
 import ai.ljp.data.repository.WordRepository
+import ai.ljp.data.suspendRunCatching
 import ai.ljp.datastore.AIForumPreferencesDatastore
 import ai.ljp.datastore.ChangeVersion
+import ai.ljp.network.AIForumNetworkDataSource
+import ai.ljp.network.model.GetChangeLogResponse
 import ai.ljp.sync.initializer.SyncConstraints
 import ai.ljp.sync.initializer.syncForegroundInfo
-import ai.ljp.sync.status.SyncSubscriber
 import android.content.Context
 import android.util.Log
 import androidx.hilt.work.HiltWorker
@@ -31,6 +35,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltWorker
 class SyncWorker @AssistedInject constructor(
@@ -47,6 +52,7 @@ class SyncWorker @AssistedInject constructor(
     private val wordRepository: WordRepository,
     @Dispatcher(AIForumDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val analyticsHelper: AnalyticsHelper,
+    private val network: AIForumNetworkDataSource
 ) : CoroutineWorker(appContext,params), Synchronizer {
     /*
     当 WorkManager 需要把任务提升为 前台任务（尤其是 expedited 或长任务）时：
@@ -58,18 +64,25 @@ class SyncWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo =
         appContext.syncForegroundInfo()
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
+
         analyticsHelper.logSyncStarted()
-        val syncSuccessfully =
-            awaitAll(
-            async { bookmarkRepository.sync() },
-            async { likeRepository.sync() },
-            async { commentRepository.sync() },
-            async { followRepository.sync() },
-            async { notificationRepository.sync() },
-            async { profileRepository.sync() },
-            async { treeholeRepository.sync() },
-            async { wordRepository.sync() }
-        ).all { it }
+
+        val repositories = listOf(
+            treeholeRepository, wordRepository, profileRepository,notificationRepository,
+            commentRepository, bookmarkRepository, likeRepository,followRepository
+
+        )
+        val syncSuccessfully = performGlobalSync(
+            repos = repositories,
+            versionReader = ChangeVersion::syncVersion,
+            changeFetcher = {sinceVersion ->
+                network.getChangelogs(since = sinceVersion)
+            },
+            versionUpdater = {lastVersion ->
+                ChangeVersion(syncVersion = 1L * lastVersion)
+            }
+            )
+
         Log.e("SYnc do work",syncSuccessfully.toString())
         analyticsHelper.logSyncFinished(syncSuccessfully)
         if (syncSuccessfully) {
@@ -83,6 +96,38 @@ class SyncWorker @AssistedInject constructor(
 
     override suspend fun updateChangeVersion(update: ChangeVersion.() -> ChangeVersion)  =
         aiForumPreferences.updateChangeVersion(update)
+
+    override suspend fun performGlobalSync(
+        repos : List<Syncable>,
+        versionReader: (ChangeVersion) -> Long,
+        changeFetcher: suspend (Long) -> GetChangeLogResponse?,
+        versionUpdater: ChangeVersion.(Int) -> ChangeVersion
+    ) : Boolean = suspendRunCatching{
+        val currentVersion = 0L//TODO:versionReader(getChangeVersion())
+        val nextVersion = currentVersion + 1
+        val resp = changeFetcher(nextVersion) ?: return@suspendRunCatching false
+        Log.e(SYNC_LOG_TAG," changeFetcher start")
+        Log.e(SYNC_LOG_TAG,"${resp.changes}")
+        val changes = resp.changes
+        val lastVersion = resp.latestVersion
+        repos.chunked(3).forEach { batch ->
+            batch.map { repo ->
+                val sf = repo.sync(
+                    changeList = changes.filter {
+                        it.entityType.trim().lowercase() == repo.tableName
+                    }
+                )
+                if (!sf) {
+                    return@suspendRunCatching false
+                }
+            }
+        }
+
+
+        updateChangeVersion {
+            versionUpdater(lastVersion)
+        }
+    }.isSuccess
 
     companion object {
         fun startSyncWork() = OneTimeWorkRequestBuilder<DelegatorWorker>()
