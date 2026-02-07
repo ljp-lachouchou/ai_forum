@@ -40,7 +40,7 @@ data class SyncTreeholeItem(
     val authorId : String?,
     val content : String,
     val anonymous : Boolean,
-    val createdAt : Instant,
+    val createdAt : Long,
 )
 
 data class SyncNotificationItem(
