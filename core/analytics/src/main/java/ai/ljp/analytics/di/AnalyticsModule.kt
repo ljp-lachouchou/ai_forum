@@ -1,7 +1,7 @@
 package ai.ljp.analytics.di
 
 import ai.ljp.analytics.AnalyticsHelper
-import ai.ljp.analytics.FirebaseAnalyticsHelper
+import ai.ljp.analytics.LogAnalyticsHelper
 import android.content.Context
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
@@ -29,10 +29,10 @@ internal abstract class AnalyticsModule {
             }
             return Firebase.analytics
         }
+        @Provides
+        fun bindsAnalyticsHelper(
+        ) : AnalyticsHelper = LogAnalyticsHelper()
     }
 
-    @Binds
-    abstract fun bindsAnalyticsHelper(
-        firebaseAnalyticsHelper: FirebaseAnalyticsHelper
-    ) : AnalyticsHelper
+
 }

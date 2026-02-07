@@ -5,7 +5,6 @@ import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import cn.jpush.android.api.JPushInterface
-import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
 import android.app.ActivityManager
 import android.content.Context
@@ -15,7 +14,6 @@ class AIForumApp : Application() {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate() {
         super.onCreate()
-        FirebaseApp.initializeApp(this)
         JPushInterface.setDebugMode(true)
         JPushInterface.init(this)
         if (isMainProcess()) {

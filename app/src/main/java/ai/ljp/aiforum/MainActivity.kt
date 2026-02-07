@@ -15,18 +15,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.google.firebase.FirebaseApp
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 
 
-import io.ljp.simapi.ExampleViewModel
 import javax.inject.Inject
 import kotlin.getValue
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val vm by viewModels<ExampleViewModel>()
         super.onCreate(savedInstanceState)
 
         setContent {
