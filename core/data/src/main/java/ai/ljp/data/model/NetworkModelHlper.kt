@@ -7,6 +7,7 @@ import ai.ljp.database.model.LikeEntity
 import ai.ljp.database.model.NotificationEntity
 import ai.ljp.database.model.ProfileEntity
 import ai.ljp.database.model.TreeholeEntity
+import ai.ljp.database.model.WordEntity
 import ai.ljp.database.model.help.SyncState
 import ai.ljp.network.model.SyncBookmarkItem
 import ai.ljp.network.model.SyncCommentItem
@@ -15,6 +16,7 @@ import ai.ljp.network.model.SyncLikeItem
 import ai.ljp.network.model.SyncNotificationItem
 import ai.ljp.network.model.SyncProfileItem
 import ai.ljp.network.model.SyncTreeholeItem
+import ai.ljp.network.model.SyncWordItem
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 private fun Long?.toInstant() = this?.let(Instant::fromEpochMilliseconds) ?: Clock.System.now()
@@ -83,4 +85,16 @@ fun SyncTreeholeItem.asDBModel() =
         content = content,
         anonymous = anonymous,
         createdAt = createdAt.toInstant()
+    )
+fun SyncWordItem.asDBModel() =
+    WordEntity(
+        wordId = wordId,
+        authorId = authorId,
+        wordTags = wordTags,
+        wordUrl = wordUrl,
+        category = category,
+        createdAt = createdAt.toInstant(),
+        updatedAt = updatedAt.toInstant(),
+        wordName = wordName,
+        status = status
     )

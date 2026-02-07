@@ -22,8 +22,8 @@ data class SyncWordItem(
     val wordUrl : String,
     val category : String,
     val status : String,
-    val createdAt : Instant,
-    val updatedAt : Instant,
+    val createdAt : Long,
+    val updatedAt : Long,
     val wordName : String
 )
 

@@ -43,12 +43,12 @@ interface AIForumNetworkDataSource {
     suspend fun submitWord(
         wordId : String,
         authorId : String
-    )
+    ) : Boolean
 
     suspend fun publishWord(
         wordId : String,
         adminId : String
-    )
+    ) : Boolean
 
     suspend fun rejectWord(
         wordId : String,

@@ -173,26 +173,28 @@ class KtorAIForumNetwork @Inject constructor(
             }
         }
 
-    override suspend fun submitWord(wordId: String, authorId: String) =
-        client.apiClient<Unit> {
-            post<Unit> {
+    override suspend fun submitWord(wordId: String, authorId: String) : Boolean =
+        client.apiClient {
+            val rw = post<Unit> {
                 apiRequest("/api/v1/words/$wordId/submit") {
                     params = simApiMapOf(
                         "author_id" to authorId
                     )
                 }
             }
+            rw is ResultWrapper.Success
         }
 
-    override suspend fun publishWord(wordId: String, adminId: String) =
-        client.apiClient<Unit> {
-            post<Unit> {
+    override suspend fun publishWord(wordId: String, adminId: String) : Boolean =
+        client.apiClient {
+            val rw = post<Unit> {
                 apiRequest("/api/v1/words/$wordId/publish") {
                     params = simApiMapOf(
                         "admin_id" to adminId
                     )
                 }
             }
+            rw is ResultWrapper.Success
         }
 
     override suspend fun rejectWord(
