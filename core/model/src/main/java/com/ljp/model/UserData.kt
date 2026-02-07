@@ -8,8 +8,8 @@ data class UserData(
     val themeBrand: ThemeBrand,
     val useDynamicColor: Boolean,
     val shouldHideOnboarding: Boolean, // 打开时，是否需要选择一些东西，作为画像进行文章推荐
-    val currentUserId: String? = null,
-    val authToken: String? = null,
+    val currentUserId: String,
+    val authToken: String,
     val lastSyncVersion: Long = 0L,
     val moodThemeConfig : MoodThemeConfig
 

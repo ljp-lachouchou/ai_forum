@@ -7,7 +7,7 @@ import ai.ljp.data.model.Like
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.LikeRepository
 import ai.ljp.database.dao.LikeDao
-import ai.ljp.database.model.BookmarkEntity
+import ai.ljp.database.model.LikeEntity
 import ai.ljp.database.model.help.SyncState
 import ai.ljp.database.model.roomTableName
 import ai.ljp.datastore.ChangeVersion
@@ -40,7 +40,7 @@ class OfflineFistLikeRepository @Inject constructor(
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
         synchronizer.changeSync(
-            networkEntity = BookmarkEntity::class,
+            networkEntity = LikeEntity::class,
             versionReader = ChangeVersion::syncVersion,
             changeFetcher = {sinceVersion ->
                 network.getChangelogs(since = sinceVersion)

@@ -279,7 +279,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun aiAssistPost(content: String): AIAssistPostResponse? =
-        client.apiClient<AIAssistPostResponse?> {
+        client.apiClient {
             post<AIAssistPostResponse?> {
                 apiRequest("/api/v1/ai/assist/post") {
                     body = simApiMapOf("content" to content)
@@ -292,7 +292,7 @@ class KtorAIForumNetwork @Inject constructor(
         authorId: String,
         content: String
     ): CommentCreateResponse? =
-        client.apiClient<CommentCreateResponse?> {
+        client.apiClient {
             post<CommentCreateResponse?> {
                 apiRequest(" /api/v1/posts/$postId/comments") {
                     body = simApiMapOf("author_id" to authorId,"content" to content)
@@ -301,7 +301,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun getComments(postId: String): List<CommentItem>? =
-        client.apiClient<List<CommentItem>?> {
+        client.apiClient {
             get<List<CommentItem>?> {
                 apiRequest(" /api/v1/posts/$postId/comments")
             }.getOrNull()
@@ -322,7 +322,7 @@ class KtorAIForumNetwork @Inject constructor(
         postId: String,
         userId: String
     ): LikeResponse? =
-        client.apiClient<LikeResponse?> {
+        client.apiClient {
             post<LikeResponse?> {
                 apiRequest("/api/v1/posts/$postId/like") {
                     body = simApiMapOf("user_id" to userId)
@@ -343,7 +343,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun getLikes(userId: String): List<UserLikeItem>? =
-        client.apiClient<List<UserLikeItem>?> {
+        client.apiClient {
             get<List<UserLikeItem>?> {
                 apiRequest("/api/v1/user/likes") {
                     params = simApiMapOf("user_id" to userId)
@@ -406,7 +406,7 @@ class KtorAIForumNetwork @Inject constructor(
         refType: String?,
         refId: String?
     ): NotificationCreateResponse? =
-        client.apiClient<NotificationCreateResponse?> {
+        client.apiClient {
             post<NotificationCreateResponse?> {
                 apiRequest("/api/v1/notifications") {
                     body = simApiMapOf(
@@ -425,7 +425,7 @@ class KtorAIForumNetwork @Inject constructor(
         unreadOnly: Boolean?,
         limit: Int?
     ): List<NotificationItem>? =
-        client.apiClient<List<NotificationItem>?> {
+        client.apiClient {
               get<List<NotificationItem>?> {
                   apiRequest("/api/v1/notifications") {
                       params = simApiMapOf(
@@ -441,7 +441,7 @@ class KtorAIForumNetwork @Inject constructor(
         userId: String,
         notificationIds: List<String>
     ): NotificationReadResponse? =
-        client.apiClient<NotificationReadResponse?> {
+        client.apiClient {
             post<NotificationReadResponse?> {
                 apiRequest("/api/v1/notifications/read") {
                     body = simApiMapOf(
@@ -453,7 +453,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun readAllNotification(userId: String): NotificationReadAllResponse? =
-        client.apiClient<NotificationReadAllResponse?> {
+        client.apiClient {
             post<NotificationReadAllResponse?> {
                 apiRequest("/api/v1/notifications/read_all") {
                     body = simApiMapOf(
@@ -543,7 +543,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun syncComments(ids: List<String>): List<SyncCommentItem>? =
-        client.apiClient<List<SyncCommentItem>?> {
+        client.apiClient {
             post<List<SyncCommentItem>?> {
                 apiRequest("/api/v1/sync/comments") {
                     body = simApiMapOf(
@@ -565,7 +565,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun syncSyncNotifications(userId: String, ids: List<String>): List<SyncNotificationItem>? =
-        client.apiClient<List<SyncNotificationItem>?> {
+        client.apiClient {
             post<List<SyncNotificationItem>?> {
                 apiRequest("/api/v1/sync/notifications") {
                     body = simApiMapOf(

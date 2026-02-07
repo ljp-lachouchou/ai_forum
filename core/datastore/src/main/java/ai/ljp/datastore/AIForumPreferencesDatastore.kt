@@ -39,8 +39,12 @@ class AIForumPreferencesDatastore @Inject constructor(
                 },
                 useDynamicColor = it.useDynamicColor,
                 shouldHideOnboarding = it.shouldHideOnboarding, // 是否展示初次设置时的界面
-                currentUserId = it.currentUserId,
-                authToken = it.authToken,
+                currentUserId = if (it.currentUserId==null || it.currentUserId.isEmpty()) {
+                    error("current user id is empty")
+                }else it.currentUserId,
+                authToken = if (it.authToken==null || it.authToken.isEmpty()) {
+                    error("current user token is empty")
+                }else it.authToken,
                 lastSyncVersion = it.lastSyncVersion,
                 moodThemeConfig = when (it.moodThemeConfig) {
                     null,

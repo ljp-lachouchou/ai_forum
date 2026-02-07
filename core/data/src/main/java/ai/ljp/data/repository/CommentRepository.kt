@@ -7,7 +7,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface CommentRepository : Syncable {
 
-    suspend fun insertAll(comments : List<Comment>)
+    suspend fun createComment(
+        postId: String,
+        content: String
+    )
 
     fun getComments(postId : String) : Flow<PagingData<Comment>>
 

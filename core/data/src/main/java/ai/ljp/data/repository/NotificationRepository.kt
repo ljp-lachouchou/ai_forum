@@ -6,9 +6,14 @@ import com.ljp.model.Notification
 import kotlinx.coroutines.flow.Flow
 
 interface NotificationRepository : Syncable {
-    suspend fun markAsRead(notificationId : String)
+    suspend fun markAsRead(notificationIds : List<String>)
 
-    suspend fun upsertNotifications(notifications : List<Notification>)
+    suspend fun createNotification(
+        type: String,
+        content : String,
+        refType : String?,
+        refId : String?
+    )
 
     fun getNotifications(userId : String) : Flow<PagingData<Notification>>
 

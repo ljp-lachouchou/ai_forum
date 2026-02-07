@@ -7,13 +7,12 @@ import ai.ljp.data.model.Follow
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.FollowRepository
 import ai.ljp.database.dao.FollowDao
-import ai.ljp.database.model.BookmarkEntity
+import ai.ljp.database.model.FollowEntity
 import ai.ljp.database.model.help.SyncState
 import ai.ljp.database.model.roomTableName
 import ai.ljp.datastore.ChangeVersion
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncFollowItem
-import ai.ljp.network.model.SyncLikeItem
 import kotlinx.datetime.Instant
 import javax.inject.Inject
 import kotlin.collections.chunked
@@ -38,7 +37,7 @@ class OfflineFirstFollowRepository @Inject constructor(
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
         synchronizer.changeSync(
-            networkEntity = BookmarkEntity::class,
+            networkEntity = FollowEntity::class,
             versionReader = ChangeVersion::syncVersion,
             changeFetcher = {sinceVersion ->
                 network.getChangelogs(since = sinceVersion)

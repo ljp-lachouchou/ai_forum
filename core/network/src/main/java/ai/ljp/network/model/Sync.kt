@@ -32,7 +32,7 @@ data class SyncCommentItem(
     val postId : String,
     val authorId : String,
     val content : String,
-    val createdAt : Instant
+    val createdAt : Long
 )
 
 data class SyncTreeholeItem(
@@ -51,7 +51,7 @@ data class SyncNotificationItem(
     val refType : String?,
     val refId : String?,
     val read : Boolean,
-    val createdAt : Instant
+    val createdAt : Long
 )
 
 
