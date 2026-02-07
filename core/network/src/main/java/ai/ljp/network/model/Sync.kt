@@ -75,3 +75,13 @@ data class SyncFollowItem(
     val followId: String,
     val createdAt: Long
 )
+
+data class SyncProfileItem(
+    val id : String,
+    val userName : String,
+    val avatarUrl : String?,
+    val bio : String?,
+    val role : String,
+    val createdAt : Instant,
+    val profileCount : String?
+)

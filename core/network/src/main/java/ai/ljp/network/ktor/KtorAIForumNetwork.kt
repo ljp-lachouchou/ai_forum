@@ -26,6 +26,7 @@ import ai.ljp.network.model.SyncCommentItem
 import ai.ljp.network.model.SyncFollowItem
 import ai.ljp.network.model.SyncLikeItem
 import ai.ljp.network.model.SyncNotificationItem
+import ai.ljp.network.model.SyncProfileItem
 import ai.ljp.network.model.SyncTreeholeItem
 import ai.ljp.network.model.SyncWordItem
 import ai.ljp.network.model.TreeholeAiReplyResponse
@@ -79,7 +80,7 @@ class KtorAIForumNetwork @Inject constructor(
         }
 
     override suspend fun getProfile(profileId: String): ProfileResponse? =
-        client.apiClient<ProfileResponse?> {
+        client.apiClient {
             get<ProfileResponse?> {
                 apiRequest("/api/v1/profile/get_profile") {
                     params = mapOf("id" to profileId,)
@@ -93,7 +94,7 @@ class KtorAIForumNetwork @Inject constructor(
         avatarUrl: String?,
         bio: String?
     ): ProfileResponse? =
-        client.apiClient<ProfileResponse?> {
+        client.apiClient {
             put<ProfileResponse?> {
                 apiRequest("/api/v1/profile/update_profile") {
                     body = simApiMapOf(
@@ -612,5 +613,17 @@ class KtorAIForumNetwork @Inject constructor(
                 }
             }.getOrNull()
         }
+
+    override suspend fun syncProfiles(profileIds: List<String>): List<SyncProfileItem>? =
+        client.apiClient {
+            post<List<SyncProfileItem>?> {
+                apiRequest("/api/v1/sync/profiles") {
+                    body = simApiMapOf(
+                        "ids" to profileIds,
+                    )
+                }
+            }.getOrNull()
+        }
+
 
 }

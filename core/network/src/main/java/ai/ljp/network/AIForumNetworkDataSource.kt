@@ -215,7 +215,7 @@ interface AIForumNetworkDataSource {
         ids : List<String>
     ) : List< SyncFollowItem>?
 
-
+    suspend fun syncProfiles(profileIds : List<String>) : List<SyncProfileItem>?
 
 
 }
