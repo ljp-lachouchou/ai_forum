@@ -1,5 +1,6 @@
 package ai.ljp.designsystem.component
 
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
@@ -10,7 +11,9 @@ import io.ktor.client.statement.readRawBytes
 @Composable
 fun DynamicContent(
     url : String,
-    loadingPlaceholder : @Composable () -> Unit,
+    loadingPlaceholder : @Composable () -> Unit = {
+        CircularProgressIndicator()
+    },
     errorPlaceholder: @Composable (String) -> Unit = {Text("出错: $it")},
     text : @Composable (String) -> Unit,
 ) {

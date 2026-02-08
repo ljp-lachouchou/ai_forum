@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import ai.ljp.designsystem.R
+import ai.ljp.designsystem.icon.AIForumIcon
 import ai.ljp.designsystem.theme.LocalTintTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -26,7 +27,7 @@ import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun DynamicAsyncImage(
-    imageUrl : String,
+    imageUrl : String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
     placeholder: Painter = painterResource(R.drawable.core_designsystem_ic_placeholder_default)
@@ -36,7 +37,7 @@ fun DynamicAsyncImage(
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
     val loader = rememberAsyncImagePainter(
-        model = imageUrl,
+        model = imageUrl ?: AIForumIcon.User,
         onState = {state ->
             isLoading = state is AsyncImagePainter.State.Loading
             isError = state is AsyncImagePainter.State.Error
