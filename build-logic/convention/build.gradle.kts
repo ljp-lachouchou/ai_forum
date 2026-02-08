@@ -79,6 +79,10 @@ gradlePlugin {
             id = libs.plugins.aiforum.android.feature.api.get().pluginId
             implementationClass = "AndroidFeatureApiConventionPlugin"
         }
+        register("supabase") {
+            id = libs.plugins.aiforum.supabase.get().pluginId
+            implementationClass = "SupabaseConventionPlugin"
+        }
         register("androidRoom") {
             id = libs.plugins.aiforum.android.room.get().pluginId
             implementationClass = "AndroidRoomConventionPlugin"

@@ -239,5 +239,6 @@ aiforum-hilt = { id = "aiforum.hilt" }
 aiforum-ktor = { id = "aiforum.ktor" }
 aiforum-jvm-library = { id = "aiforum.jvm.library" }
 aiforum-root = { id = "aiforum.root" }
+aiforum-supabase = {id = "aiforum.supabase"}
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
