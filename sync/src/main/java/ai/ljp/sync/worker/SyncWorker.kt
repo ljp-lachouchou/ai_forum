@@ -103,9 +103,8 @@ class SyncWorker @AssistedInject constructor(
         changeFetcher: suspend (Long) -> GetChangeLogResponse?,
         versionUpdater: ChangeVersion.(Int) -> ChangeVersion
     ) : Boolean = suspendRunCatching{
-        val currentVersion = 0L//TODO:versionReader(getChangeVersion())
-        val nextVersion = currentVersion + 1
-        val resp = changeFetcher(nextVersion) ?: return@suspendRunCatching false
+        val currentVersion = versionReader(getChangeVersion())
+        val resp = changeFetcher(currentVersion) ?: return@suspendRunCatching false
         Log.e(SYNC_LOG_TAG," changeFetcher start")
         Log.e(SYNC_LOG_TAG,"${resp.changes}")
         val changes = resp.changes

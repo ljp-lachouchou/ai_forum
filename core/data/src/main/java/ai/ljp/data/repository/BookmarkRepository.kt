@@ -5,7 +5,7 @@ import ai.ljp.data.UserSync
 import ai.ljp.data.model.Bookmark
 import kotlinx.datetime.Instant
 
-interface BookmarkRepository : Syncable, UserSync {
+interface BookmarkRepository : Syncable {
 
     suspend fun insertAll(bookmarks : List<Bookmark>)
 

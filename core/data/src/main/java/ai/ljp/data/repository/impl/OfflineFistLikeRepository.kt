@@ -5,9 +5,9 @@ import ai.ljp.data.model.Like
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.LikeRepository
 import ai.ljp.database.dao.LikeDao
-import ai.ljp.database.model.help.SyncState
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncLikeItem
+import kotlinx.coroutines.delay
 import kotlinx.datetime.Instant
 import javax.inject.Inject
 import kotlin.collections.chunked
@@ -27,11 +27,20 @@ class OfflineFistLikeRepository @Inject constructor(
         postId: String,
         deleted: Boolean,
         updatedAt: Instant
-    ) =
+    ) {
         likeDao.toggleLike(userId,
             postId,
             deleted,
             updatedAt)
+        delay(20)
+        if (!network.toggleLike(postId,userId)) {
+            likeDao.toggleLike(userId,
+                postId,
+                !deleted,
+                updatedAt)
+        }
+    }
+
 
     override val tableName: String
         get() = "likes"
@@ -47,12 +56,5 @@ class OfflineFistLikeRepository @Inject constructor(
         }
     }
 
-    override suspend fun updateSync(
-        userId: String,
-        postId: String,
-        syncState: SyncState,
-        updatedAt: Instant
-    ) {
-        TODO("Not yet implemented")
-    }
+
 }

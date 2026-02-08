@@ -5,7 +5,7 @@ import ai.ljp.data.UserSync
 import ai.ljp.data.model.Follow
 import kotlinx.datetime.Instant
 
-interface FollowRepository : Syncable, UserSync{
+interface FollowRepository : Syncable{
     suspend fun insertAll(follows : List<Follow>)
 
     suspend fun delete(userId : String,followId : String)

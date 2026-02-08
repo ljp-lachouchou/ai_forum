@@ -5,7 +5,7 @@ import ai.ljp.data.UserSync
 import ai.ljp.data.model.Like
 import kotlinx.datetime.Instant
 
-interface LikeRepository : Syncable, UserSync {
+interface LikeRepository : Syncable {
     suspend fun insertAll(likes : List<Like>)
 
     suspend fun delete(userId : String,postId : String)

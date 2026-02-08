@@ -106,12 +106,12 @@ interface AIForumNetworkDataSource {
     suspend fun toggleLike(
         postId : String,
         userId : String
-    ) : LikeResponse?
+    ) : Boolean
 
     suspend fun toggleBookmark(
         postId : String,
         userId : String
-    ) : CollectResponse?
+    ) : Boolean
 
     suspend fun getLikes(
         userId : String,

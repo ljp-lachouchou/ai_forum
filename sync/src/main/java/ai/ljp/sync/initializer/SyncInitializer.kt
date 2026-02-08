@@ -10,7 +10,7 @@ object Sync {
         WorkManager.getInstance(context).apply {
             enqueueUniqueWork(
                 SYNC_WORK_NAME,
-                ExistingWorkPolicy.REPLACE,
+                ExistingWorkPolicy.KEEP,
                 SyncWorker.startSyncWork()
                 )
         }

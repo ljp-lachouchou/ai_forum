@@ -323,25 +323,27 @@ class KtorAIForumNetwork @Inject constructor(
     override suspend fun toggleLike(
         postId: String,
         userId: String
-    ): LikeResponse? =
+    ): Boolean =
         client.apiClient {
-            post<LikeResponse?> {
+            val resp = post<LikeResponse?> {
                 apiRequest("/api/v1/posts/$postId/like") {
                     body = simApiMapOf("user_id" to userId)
                 }
-            }.getOrNull()
+            }
+            resp is ResultWrapper.Success
         }
 
     override suspend fun toggleBookmark(
         postId: String,
         userId: String
-    ): CollectResponse? =
-        client.apiClient<CollectResponse?> {
-            post<CollectResponse?> {
+    ): Boolean =
+        client.apiClient {
+            val resp = post<CollectResponse?> {
                 apiRequest("/api/v1/posts/$postId/collect") {
                     body = simApiMapOf("user_id" to userId)
                 }
-            }.getOrNull()
+            }
+            resp is ResultWrapper.Success
         }
 
     override suspend fun getLikes(userId: String): List<UserLikeItem>? =

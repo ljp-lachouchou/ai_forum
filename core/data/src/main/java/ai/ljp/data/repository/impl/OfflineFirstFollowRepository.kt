@@ -5,7 +5,6 @@ import ai.ljp.data.model.Follow
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.FollowRepository
 import ai.ljp.database.dao.FollowDao
-import ai.ljp.database.model.help.SyncState
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncFollowItem
 import kotlinx.datetime.Instant
@@ -44,12 +43,4 @@ class OfflineFirstFollowRepository @Inject constructor(
         }
     }
 
-    override suspend fun updateSync(
-        userId: String,
-        postId: String,
-        syncState: SyncState,
-        updatedAt: Instant
-    ) {
-        TODO("Not yet implemented")
-    }
 }
