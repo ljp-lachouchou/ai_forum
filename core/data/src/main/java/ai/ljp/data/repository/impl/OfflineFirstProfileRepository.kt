@@ -38,6 +38,18 @@ class OfflineFirstProfileRepository @Inject constructor(
         ).map(ProfileEntity::asExtraModel)
     }
 
+    override suspend fun login(email: String, password: String) : Boolean {
+        val resp = network.login(email = email, password = password) ?: return false
+        preferencesDatastore.setAuthToken(resp.accessToken)
+        preferencesDatastore.setCurrentUserId(resp.userId)
+        return true
+    }
+
+    override suspend fun register(email: String, password: String) : Boolean {
+        network.register(email = email, password = password) ?: return false
+        return true
+    }
+
     override val tableName: String
         get() = "profiles"
 
