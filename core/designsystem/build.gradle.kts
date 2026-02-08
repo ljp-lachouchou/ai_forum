@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.aiforum.android.library.compose)
     alias(libs.plugins.aiforum.hilt)
     alias(libs.plugins.roborazzi)
+    alias(libs.plugins.aiforum.ktor)
 }
 
 android {
