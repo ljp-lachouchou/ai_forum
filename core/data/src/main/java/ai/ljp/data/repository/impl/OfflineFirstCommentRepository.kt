@@ -30,7 +30,7 @@ class OfflineFirstCommentRepository @Inject constructor(
         network.createComment(
             postId = postId,
             content = content,
-            authorId = userData.currentUserId
+            authorId = userData.currentUserId!!
         )
     }
 
@@ -54,7 +54,7 @@ class OfflineFirstCommentRepository @Inject constructor(
         val userData = preferencesDatastore.userData.first()
         network.deleteComment(
             commentId = commentId,
-            authorId = userData.currentUserId
+            authorId = userData.currentUserId!!
             )
     }
 

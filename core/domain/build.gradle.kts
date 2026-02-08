@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.aiforum.android.library)
     alias(libs.plugins.aiforum.hilt)
+    alias(libs.plugins.aiforum.android.paging)
 }
 
 android {

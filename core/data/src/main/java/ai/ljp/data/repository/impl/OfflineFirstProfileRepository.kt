@@ -24,7 +24,7 @@ class OfflineFirstProfileRepository @Inject constructor(
     override suspend fun updateProfile(userName: String?, avatarUrl: String?, bio: String?) {
         val userData = preferencesDatastore.userData.first()
         network.updatedProfile(
-            profileId = userData.currentUserId,
+            profileId = userData.currentUserId!!,
             userName = userName,
             avatarUrl = avatarUrl,
             bio = bio
@@ -34,7 +34,7 @@ class OfflineFirstProfileRepository @Inject constructor(
     override suspend fun getSelfProfile(): Flow<Profile> {
         val userData = preferencesDatastore.userData.first()
         return profileDao.getSelfProfile(
-            userId = userData.currentUserId
+            userId = userData.currentUserId!!
         ).map(ProfileEntity::asExtraModel)
     }
 

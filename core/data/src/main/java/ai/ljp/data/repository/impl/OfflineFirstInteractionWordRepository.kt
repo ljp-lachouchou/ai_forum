@@ -41,7 +41,7 @@ class OfflineFirstInteractionWordRepository @Inject constructor(
     ): AISearch {
         val userData = preferencesDatastore.userData.first()
         val aiSearchResp = network.aiSearch(
-            userId = userData.currentUserId,
+            userId = userData.currentUserId!!,
             query = query
         ) ?: return AISearch(searchOk = false)
         val wordItems = aiSearchResp.referenceWords.sortedBy(SearchResult::score)

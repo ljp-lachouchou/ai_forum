@@ -30,7 +30,7 @@ class OfflineFirstNotificationRepository @Inject constructor(
     override suspend fun markAsRead(notificationIds: List<String>)  {
         val userData = preferencesDatastore.userData.first()
         network.readNotification(
-            userId = userData.currentUserId,
+            userId = userData.currentUserId!!,
             notificationIds = notificationIds
         )
     }
@@ -44,7 +44,7 @@ class OfflineFirstNotificationRepository @Inject constructor(
     ) {
         val userData = preferencesDatastore.userData.first()
         network.createNotification(
-            userId = userData.currentUserId,
+            userId = userData.currentUserId!!,
             type = type,
             content = content,
             refType = refType,

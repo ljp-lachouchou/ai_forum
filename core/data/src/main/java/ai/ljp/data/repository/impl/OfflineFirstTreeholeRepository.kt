@@ -31,7 +31,7 @@ class OfflineFirstTreeholeRepository @Inject constructor(
     ) {
         val userData = preferencesDatastore.userData.first()
         network.createTreehole(
-            authorId = userData.currentUserId,
+            authorId = userData.currentUserId!!,
             content = content,
             isAnonymous = isAnonymous
         )

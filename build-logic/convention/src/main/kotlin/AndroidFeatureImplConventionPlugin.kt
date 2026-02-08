@@ -12,6 +12,7 @@ class AndroidFeatureImplConventionPlugin : Plugin<Project> {
         with(target) {
             apply(plugin = "aiforum.android.library")
             apply(plugin = "aiforum.hilt")
+            apply(plugin = "aiforum.android.paging")
             extensions.configure<LibraryExtension> {
                 testOptions.animationsDisabled = true
                 configureGradleManagedDevices(this)

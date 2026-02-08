@@ -38,7 +38,7 @@ class OfflineFirstWordRepository @Inject constructor(
         val userData = preferencesDatastore.userData.first()
         network.apply {
             val wordDetailResponse = createWord(
-                authorId = userData.currentUserId,
+                authorId = userData.currentUserId!!,
                 wordUrl = wordUrl,
                 category = category,
                 tags = tags,
@@ -62,7 +62,7 @@ class OfflineFirstWordRepository @Inject constructor(
     ) {
         val userData = preferencesDatastore.userData.first()
         network.updateWord(
-            authorId = userData.currentUserId,
+            authorId = userData.currentUserId!!,
             wordId = wordId,
             wordUpdateRequesst = wordUpdateRequesst
         )
