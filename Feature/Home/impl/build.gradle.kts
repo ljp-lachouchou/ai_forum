@@ -11,7 +11,7 @@ android {
 dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity.compose)
-    implementation(projects.core.data)
+    implementation(projects.core.domain)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
