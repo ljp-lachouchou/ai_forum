@@ -12,7 +12,9 @@ plugins {
 
 android {
     namespace = "ai.ljp.network"
-
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {

@@ -42,5 +42,3 @@ class DebounceInterceptor @Inject constructor(
         }
     }
 }
-val LogEventInterceptorInstance =  LogEventInterceptor()
-val DebounceInterceptorInstance = DebounceInterceptor()
