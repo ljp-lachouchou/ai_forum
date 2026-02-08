@@ -2,8 +2,6 @@ package ai.ljp.data.repository.impl
 
 import ai.ljp.data.FeedPagingConfig
 import ai.ljp.data.SYNC_BATCH_SIZE
-import ai.ljp.data.SYNC_LOG_TAG
-import ai.ljp.data.Synchronizer
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.NotificationRepository
 import ai.ljp.database.dao.NotificationDao
@@ -11,10 +9,7 @@ import ai.ljp.database.model.NotificationEntity
 import ai.ljp.database.model.asExtraModel
 import ai.ljp.datastore.AIForumPreferencesDatastore
 import ai.ljp.network.AIForumNetworkDataSource
-import ai.ljp.network.model.ChangelogItem
 import ai.ljp.network.model.SyncNotificationItem
-import ai.ljp.network.model.deleted
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.map

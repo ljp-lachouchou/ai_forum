@@ -1,6 +1,7 @@
 package ai.ljp.network.model
 
 import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @OptIn(InternalSerializationApi::class)
@@ -13,6 +14,7 @@ data class SearchResult(
 @OptIn(InternalSerializationApi::class)
 @Serializable
 data class AISearchResponse(
+    @SerialName("reference_words")
     val referenceWords: List<SearchResult>,
     val answer : String
 )

@@ -151,11 +151,11 @@ interface AIForumNetworkDataSource {
     suspend fun readNotification(
         userId : String,
         notificationIds : List<String>
-    ) : NotificationReadResponse?
+    ) : List<SyncNotificationItem>?
 
     suspend fun readAllNotification(
         userId : String
-    ) : NotificationReadAllResponse?
+    ) : List<SyncNotificationItem>?
 
     suspend fun createFollow(
         userId : String,

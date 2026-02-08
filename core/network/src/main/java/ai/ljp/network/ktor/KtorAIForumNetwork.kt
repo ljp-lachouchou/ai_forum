@@ -14,7 +14,6 @@ import ai.ljp.network.model.LoginResponse
 import ai.ljp.network.model.NotificationCreateResponse
 import ai.ljp.network.model.NotificationItem
 import ai.ljp.network.model.NotificationReadAllResponse
-import ai.ljp.network.model.NotificationReadResponse
 import ai.ljp.network.model.PersonaUpdateAvailableResponse
 import ai.ljp.network.model.PersonaUpdateStatsResponse
 import ai.ljp.network.model.ProfileResponse
@@ -444,9 +443,9 @@ class KtorAIForumNetwork @Inject constructor(
     override suspend fun readNotification(
         userId: String,
         notificationIds: List<String>
-    ): NotificationReadResponse? =
+    ): List<SyncNotificationItem>? =
         client.apiClient {
-            post<NotificationReadResponse?> {
+            post<List<SyncNotificationItem>?> {
                 apiRequest("/api/v1/notifications/read") {
                     body = simApiMapOf(
                         "user_id" to userId,
@@ -456,9 +455,9 @@ class KtorAIForumNetwork @Inject constructor(
             }.getOrNull()
         }
 
-    override suspend fun readAllNotification(userId: String): NotificationReadAllResponse? =
+    override suspend fun readAllNotification(userId: String): List<SyncNotificationItem>? =
         client.apiClient {
-            post<NotificationReadAllResponse?> {
+            post<List<SyncNotificationItem>?> {
                 apiRequest("/api/v1/notifications/read_all") {
                     body = simApiMapOf(
                         "user_id" to userId
