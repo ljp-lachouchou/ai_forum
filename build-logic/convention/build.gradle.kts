@@ -71,6 +71,14 @@ gradlePlugin {
             id = libs.plugins.aiforum.ktor.get().pluginId
             implementationClass = "KtorConventionPlugin"
         }
+        register("featureImpl") {
+            id = libs.plugins.aiforum.android.feature.impl.get().pluginId
+            implementationClass = "AndroidFeatureImplConventionPlugin"
+        }
+        register("featureApi") {
+            id = libs.plugins.aiforum.android.feature.api.get().pluginId
+            implementationClass = "AndroidFeatureApiConventionPlugin"
+        }
         register("androidRoom") {
             id = libs.plugins.aiforum.android.room.get().pluginId
             implementationClass = "AndroidRoomConventionPlugin"
