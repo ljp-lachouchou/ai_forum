@@ -33,6 +33,7 @@
             <option value="$PROJECT_DIR$/core/datastore" />
             <option value="$PROJECT_DIR$/core/datastore-proto" />
             <option value="$PROJECT_DIR$/core/designsystem" />
+            <option value="$PROJECT_DIR$/core/domain" />
             <option value="$PROJECT_DIR$/core/event" />
             <option value="$PROJECT_DIR$/core/logger" />
             <option value="$PROJECT_DIR$/core/model" />
