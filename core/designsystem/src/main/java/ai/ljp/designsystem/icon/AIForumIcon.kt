@@ -1,6 +1,7 @@
 package ai.ljp.designsystem.icon
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.Bookmarks
@@ -13,4 +14,5 @@ object AIForumIcon {
     val Add = Icons.Default.Add
     val Bookmarks = Icons.Rounded.Bookmarks
     val User = Icons.Rounded.Person
+    val ArrowBack = Icons.AutoMirrored.Rounded.ArrowBack
 }

@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.core.domain)//
     implementation(projects.feature.home.api)
     implementation(projects.feature.profile.api)
+    implementation(projects.feature.post.api)
     api(projects.sync)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

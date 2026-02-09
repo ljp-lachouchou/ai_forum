@@ -48,6 +48,8 @@
             <option value="$PROJECT_DIR$/feature/Home/api" />
             <option value="$PROJECT_DIR$/feature/Home/impl" />
             <option value="$PROJECT_DIR$/feature/Me" />
+            <option value="$PROJECT_DIR$/feature/Post" />
+            <option value="$PROJECT_DIR$/feature/Post/api" />
             <option value="$PROJECT_DIR$/feature/Profile" />
             <option value="$PROJECT_DIR$/feature/Profile/api" />
             <option value="$PROJECT_DIR$/feature/Profile/impl" />
