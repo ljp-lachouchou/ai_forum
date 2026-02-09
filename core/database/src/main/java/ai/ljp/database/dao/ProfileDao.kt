@@ -20,7 +20,7 @@ interface ProfileDao {
             WHERE `profileId` = :userId
         """
     )
-    fun getSelfProfile(userId : String) : Flow<ProfileEntity>
+    fun getProfile(userId : String) : Flow<ProfileEntity>
 
     @Query(
         value = """

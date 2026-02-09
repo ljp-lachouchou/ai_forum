@@ -1,18 +1,17 @@
 package ai.ljp.ui
 
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import com.ljp.model.WordCommentsResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 fun LazyStaggeredGridScope.wordsFeed(
-    wordsSource : List<WordCommentsResource>,
+    wordsSource : LazyPagingItems<WordCommentsResource>,
     onProfileClick : (String) -> Unit,
     onPostClick : (String) -> Unit,
     onToggleLikeClick : (String) -> Unit,
@@ -20,21 +19,22 @@ fun LazyStaggeredGridScope.wordsFeed(
     isLike : (String) -> StateFlow<Boolean>,
     isBookmark : (String) -> StateFlow<Boolean>,
 ) {
-    items(wordsSource, key = {
-        it.wordId
-    }) {wordCommentsResource ->
-        val liked by isLike(wordCommentsResource.wordId).collectAsState()
-        val bookmarked by isBookmark(wordCommentsResource.wordId).collectAsState()
-        WordCard(
-            wordSource = wordCommentsResource,
-            bookmarked = bookmarked,
-            isLike = liked,
-            category = wordCommentsResource.category,
-            onToggleBookmark = onToggleBookmarkClick,
-            onClick = onPostClick,
-            onProfileClick = onProfileClick,
-            onToggleLike = onToggleLikeClick
-        )
+    items(wordsSource.itemCount, key = wordsSource.itemKey { it.wordId }) {index ->
+        val wordCommentsResource = wordsSource[index]
+        if (wordCommentsResource != null) {
+            val liked by isLike(wordCommentsResource.wordId).collectAsState()
+            val bookmarked by isBookmark(wordCommentsResource.wordId).collectAsState()
+            WordCard(
+                wordSource = wordCommentsResource,
+                bookmarked = bookmarked,
+                isLike = liked,
+                category = wordCommentsResource.category,
+                onToggleBookmark = onToggleBookmarkClick,
+                onClick = onPostClick,
+                onProfileClick = onProfileClick,
+                onToggleLike = onToggleLikeClick
+            )
+        }
 
     }
 }

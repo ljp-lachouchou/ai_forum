@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_profile_toolbar_title">用户资料</string>
+    <string name="feature_profile_recent_activity_title">最近动态</string>
+    <string name="feature_profile_select_an_post">请选择一个帖子查看</string>
+</resources>

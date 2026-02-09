@@ -31,6 +31,14 @@ interface WordDao {
     @Query("SELECT * FROM words ORDER BY createdAt DESC")
     fun getPopulatedWordResources(): PagingSource<Int, PopulatedWordCommentsResource>
 
+    @Transaction
+    @Query("""
+        SELECT * FROM words 
+        WHERE `authorId` = :profileId
+        ORDER BY createdAt DESC
+    """)
+    fun getSelfWords(profileId : String) : PagingSource<Int, PopulatedWordCommentsResource>
+
     @Query(
         value = """
             DELETE FROM words

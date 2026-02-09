@@ -54,6 +54,17 @@ class OfflineFirstInteractionWordRepository @Inject constructor(
         return AISearch(aiWordItems = wordItems,searchOk = true, answer = aiSearchResp.answer)
     }
 
+    override fun getSelfWords(profileId: String): Flow<PagingData<WordCommentsResource>> =
+        Pager(
+            config = FeedPagingConfig,
+            pagingSourceFactory = {
+                wordDao.getSelfWords(profileId)
+            }
+        )
+            .flow
+            .map { pagingData->
+                pagingData.map(PopulatedWordCommentsResource::asExtraModel)
+            }
 
 
 }

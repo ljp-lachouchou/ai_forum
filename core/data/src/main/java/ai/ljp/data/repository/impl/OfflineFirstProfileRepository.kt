@@ -33,7 +33,7 @@ class OfflineFirstProfileRepository @Inject constructor(
 
     override suspend fun getSelfProfile(): Flow<Profile> {
         val userData = preferencesDatastore.userData.first()
-        return profileDao.getSelfProfile(
+        return profileDao.getProfile(
             userId = userData.currentUserId!!
         ).map(ProfileEntity::asExtraModel)
     }
@@ -49,6 +49,9 @@ class OfflineFirstProfileRepository @Inject constructor(
         network.register(email = email, password = password) ?: return false
         return true
     }
+
+    override fun getProfile(profileId: String): Flow<Profile> =
+        profileDao.getProfile(profileId).map(ProfileEntity::asExtraModel)
 
     override val tableName: String
         get() = "profiles"

@@ -17,4 +17,6 @@ interface ProfileRepository : Syncable {
     suspend fun login(email : String, password : String) : Boolean
     suspend fun register(email : String, password : String): Boolean
 
+    fun getProfile(profileId : String) : Flow<Profile>
+
 }

@@ -87,7 +87,7 @@ fun WordCard(
 }
 
 @Composable
-internal fun WordCardHead(
+private fun WordCardHead(
     category : String,
     bookmarked: Boolean,
     onToggleBookmark :() -> Unit,
@@ -128,7 +128,7 @@ internal fun WordCardHead(
     }
 }
 @Composable
-internal fun WordCardTail(
+private fun WordCardTail(
     author : Profile,
     isLike : Boolean,
     onToggleLike: () -> Unit,

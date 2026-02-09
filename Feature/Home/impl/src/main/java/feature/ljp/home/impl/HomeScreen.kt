@@ -85,7 +85,6 @@ internal fun HomeScreen(
             WordsFeedUiState.Loading -> Unit
             is WordsFeedUiState.Success -> {
                 val items = wordsFeedState.feed.collectAsLazyPagingItems()
-                val list = items.itemSnapshotList.filterNotNull()
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Adaptive(300.dp),
                     state = state,
@@ -94,7 +93,7 @@ internal fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     wordsFeed(
-                        wordsSource = list,
+                        wordsSource = items,
                         onProfileClick = onProfileClick,
                         onPostClick = onPostClick,
                         onToggleLikeClick = onToggleLikeClick,
