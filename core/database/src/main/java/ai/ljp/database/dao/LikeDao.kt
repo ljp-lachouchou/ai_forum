@@ -6,6 +6,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 
 @Dao
@@ -52,4 +53,14 @@ interface LikeDao {
         """,
     )
     suspend fun deleteAll(ids : List<String>)
+    @Query(
+        """
+            SELECT 1
+            FROM likes
+            WHERE `postId` = :postId AND `userId` = :userId AND `deleted` = 0
+            LIMIT 1;
+
+        """
+    )
+    fun markLike(postId: String,userId: String) : Flow<Boolean>
 }

@@ -7,38 +7,55 @@ import ai.ljp.data.repository.BookmarkRepository
 import ai.ljp.database.dao.BookmarkDao
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncBookmarkItem
-import kotlinx.coroutines.delay
-import kotlinx.datetime.Instant
+import androidx.room.Transaction
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.datetime.Clock
 import javax.inject.Inject
 
 class OfflineFirstBookmarkRepository @Inject constructor(
     private val bookmarkDao: BookmarkDao,
     private val network: AIForumNetworkDataSource
 ) : BookmarkRepository {
+    private val mutex = Mutex()
     override suspend fun insertAll(bookmarks: List<Bookmark>) =
         bookmarkDao.insertAll(bookmarks.asDBModel())
 
     override suspend fun delete(userId: String, postId: String) =
         bookmarkDao.delete(userId,postId)
-
+    @Transaction
     override suspend fun toggleBookmark(
         userId: String,
-        postId: String,
-        deleted: Boolean,
-        updatedAt: Instant
+        postId: String
     ) {
-        bookmarkDao.toggleBookmark(userId,
-            postId,
-            deleted,
-            updatedAt)
-        delay(20)
-        if (!network.toggleBookmark(postId,userId)) {
+        val isBookmarked = bookmarkDao.markBookmark(postId = postId, userId = userId).first()
+        mutex.withLock {
+            val instant = Clock.System.now()
             bookmarkDao.toggleBookmark(userId,
                 postId,
-                !deleted,
-                updatedAt)
+                !isBookmarked,
+                instant)
+            val networkSuccess =  network.toggleBookmark(postId,userId)
+            if (!networkSuccess) {
+                bookmarkDao.toggleBookmark(userId,
+                    postId,
+                    isBookmarked,
+                    instant)
+            }
         }
+
     }
+
+    override fun markBookmark(
+        postId: String,
+        userId: String
+    ): Flow<Boolean> =
+        bookmarkDao.markBookmark(
+            postId = postId,
+            userId = userId
+        )
 
     override val tableName: String
         get() = "bookmarks"

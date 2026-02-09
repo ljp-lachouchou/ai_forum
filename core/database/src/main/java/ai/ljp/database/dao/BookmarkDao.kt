@@ -7,6 +7,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 
 
@@ -53,4 +54,17 @@ interface BookmarkDao {
     suspend fun updateSync(userId: String,
                                postId: String,syncState: SyncState,
                                updatedAt : Instant)
+    @Query(
+        """
+            SELECT 1 
+            FROM bookmarks
+            WHERE `postId` = :postId AND `userId` = :userId AND `deleted` = 0
+            LIMIT 1;
+
+        """
+    )
+    fun markBookmark(
+        postId: String,
+        userId: String
+    ): Flow<Boolean>
 }

@@ -7,7 +7,12 @@ import ai.ljp.data.repository.LikeRepository
 import ai.ljp.database.dao.LikeDao
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncLikeItem
+import androidx.room.Transaction
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.Instant
 import javax.inject.Inject
 import kotlin.collections.chunked
@@ -16,30 +21,35 @@ class OfflineFistLikeRepository @Inject constructor(
     private val likeDao: LikeDao,
     private val network: AIForumNetworkDataSource
 ) : LikeRepository {
+    private val mutex = Mutex()
     override suspend fun insertAll(likes: List<Like>)  =
         likeDao.insertAll(likes.map(Like::asDBModel))
 
     override suspend fun delete(userId: String, postId: String) =
         likeDao.delete(userId,postId)
-
+    @Transaction
     override suspend fun toggleLike(
         userId: String,
         postId: String,
-        deleted: Boolean,
         updatedAt: Instant
     ) {
-        likeDao.toggleLike(userId,
-            postId,
-            deleted,
-            updatedAt)
-        delay(20)
-        if (!network.toggleLike(postId,userId)) {
-            likeDao.toggleLike(userId,
-                postId,
-                !deleted,
-                updatedAt)
+        val isLiked = likeDao.markLike(postId = postId, userId = userId).first()
+        mutex.withLock {
+            likeDao.toggleLike(userId, postId, !isLiked, updatedAt)
+
+            val networkSuccess = network.toggleLike(postId, userId)
+
+            if (!networkSuccess) {
+                likeDao.toggleLike(userId, postId, isLiked, updatedAt)
+            }
         }
     }
+
+    override fun markLike(
+        postId: String,
+        userId: String
+    ): Flow<Boolean> =
+        likeDao.markLike(postId,userId)
 
 
     override val tableName: String
