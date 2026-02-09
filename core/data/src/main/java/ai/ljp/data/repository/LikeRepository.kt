@@ -3,7 +3,6 @@ package ai.ljp.data.repository
 import ai.ljp.data.Syncable
 import ai.ljp.data.model.Like
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Instant
 
 interface LikeRepository : Syncable {
     suspend fun insertAll(likes : List<Like>)
@@ -12,8 +11,7 @@ interface LikeRepository : Syncable {
 
     suspend fun toggleLike(
         userId : String,
-        postId: String,
-        updatedAt : Instant
+        postId: String
     )
 
     fun markLike(postId : String,userId: String) : Flow<Boolean>

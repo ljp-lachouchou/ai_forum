@@ -41,21 +41,25 @@ fun WordCard(
     bookmarked : Boolean,
     isLike : Boolean,
     category : String,
-    onToggleBookmark :(Boolean) -> Unit,
-    onClick : () -> Unit,
-    onProfileClick : () -> Unit,
-    onToggleLike : (Boolean) -> Unit,
+    onToggleBookmark :(String) -> Unit,
+    onClick : (String) -> Unit,
+    onProfileClick : (String) -> Unit,
+    onToggleLike : (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
-        onClick = onClick,
+        onClick = {
+            onClick(wordSource.wordId)
+        },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = modifier
     ) {
         Column {
             WordCardHead(category = category, bookmarked = bookmarked,
-                onToggleBookmark = onToggleBookmark)
+                onToggleBookmark = {
+                    onToggleBookmark(wordSource.wordId)
+                })
             Spacer(Modifier.height(3.dp))
             ProvideTextStyle(MaterialTheme.typography.headlineLarge) {
                 Text(text = wordSource.wordName)
@@ -73,8 +77,10 @@ fun WordCard(
             HorizontalDivider()
             WordCardTail(author = wordSource.author,
                 isLike = isLike,
-                onToggleLike = onToggleLike,
-                onProfileClick = onProfileClick
+                onToggleLike = {
+                    onToggleLike(wordSource.wordId)
+                },
+                onProfileClick = onProfileClick,
             )
         }
     }
@@ -84,7 +90,7 @@ fun WordCard(
 internal fun WordCardHead(
     category : String,
     bookmarked: Boolean,
-    onToggleBookmark :(Boolean) -> Unit,
+    onToggleBookmark :() -> Unit,
 ) {
     val tint = LocalTintTheme.current.iconTint
     Row(
@@ -96,7 +102,9 @@ internal fun WordCardHead(
         }
         AIForumToggleButton(
             checked = bookmarked,
-            onCheckedChange = onToggleBookmark,
+            onCheckedChange = {
+                onToggleBookmark()
+            },
             icon = {
                 Icon(
                     imageVector = AIForumIcon.Bookmarks,
@@ -123,10 +131,10 @@ internal fun WordCardHead(
 internal fun WordCardTail(
     author : Profile,
     isLike : Boolean,
-    onToggleLike: (Boolean) -> Unit,
-    onProfileClick: () -> Unit,
+    onToggleLike: () -> Unit,
+    onProfileClick: (String) -> Unit,
 
-) {
+    ) {
     val tint = LocalTintTheme.current.iconTint
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -137,7 +145,9 @@ internal fun WordCardTail(
             onProfileClick = onProfileClick)
         AIForumToggleButton(
             checked = isLike,
-            onCheckedChange = onToggleLike,
+            onCheckedChange = {
+                onToggleLike()
+            },
             icon = {
                 Icon(
                     imageVector = AIForumIcon.Bookmarks,
@@ -163,10 +173,10 @@ internal fun WordCardTail(
 internal fun ProfileHead(
     profile : Profile,
     modifier: Modifier = Modifier,
-    onProfileClick : () -> Unit
+    onProfileClick : (String) -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.clickable {
-        onProfileClick
+        onProfileClick(profile.id)
     }) {
         DynamicAsyncImage(
             imageUrl = profile.avatarUrl,

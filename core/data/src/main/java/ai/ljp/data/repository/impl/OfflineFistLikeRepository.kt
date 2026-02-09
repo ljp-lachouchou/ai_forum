@@ -8,12 +8,11 @@ import ai.ljp.database.dao.LikeDao
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncLikeItem
 import androidx.room.Transaction
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.datetime.Instant
+import kotlinx.datetime.Clock
 import javax.inject.Inject
 import kotlin.collections.chunked
 
@@ -30,10 +29,10 @@ class OfflineFistLikeRepository @Inject constructor(
     @Transaction
     override suspend fun toggleLike(
         userId: String,
-        postId: String,
-        updatedAt: Instant
+        postId: String
     ) {
         val isLiked = likeDao.markLike(postId = postId, userId = userId).first()
+        val updatedAt = Clock.System.now()
         mutex.withLock {
             likeDao.toggleLike(userId, postId, !isLiked, updatedAt)
 

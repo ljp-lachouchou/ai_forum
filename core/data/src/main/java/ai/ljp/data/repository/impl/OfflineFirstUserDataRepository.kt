@@ -17,7 +17,7 @@ class OfflineFirstUserDataRepository @Inject constructor(
     private val userDataPreferencesDatastore: AIForumPreferencesDatastore,
     private val asyncHelper: AnalyticsHelper
 ) : UserDataRepository {
-    override val userDat: Flow<UserData> = userDataPreferencesDatastore.userData
+    override val userData: Flow<UserData> = userDataPreferencesDatastore.userData
 
     override suspend fun setAuthToken(authToken: String) {
         userDataPreferencesDatastore.setAuthToken(authToken)

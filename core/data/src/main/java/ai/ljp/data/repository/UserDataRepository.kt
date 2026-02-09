@@ -7,7 +7,7 @@ import com.ljp.model.UserData
 import kotlinx.coroutines.flow.Flow
 
 interface UserDataRepository {
-    val userDat : Flow<UserData>
+    val userData : Flow<UserData>
     suspend fun setAuthToken (authToken : String)
     suspend fun setMoodThemeConfig(moodThemeConfig: MoodThemeConfig)
     suspend fun setCurrentUserId(currentUserId : String)
