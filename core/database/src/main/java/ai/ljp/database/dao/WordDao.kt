@@ -55,4 +55,11 @@ interface WordDao {
         """,
     )
     suspend fun deleteAll(ids : List<String>)
+    @Transaction
+    @Query("""
+        SELECT * FROM words 
+        WHERE `wordId` IN (:wordIds)
+        ORDER BY `createdAt` DESC
+    """)
+    fun getPostByIds(wordIds : List<String>) : PagingSource<Int, PopulatedWordCommentsResource>
 }

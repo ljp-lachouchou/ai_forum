@@ -69,5 +69,17 @@ class OfflineFirstInteractionWordRepository @Inject constructor(
     override fun getPost(wordId: String): Flow<WordCommentsResource> =
         wordDao.getPost(wordId).map(PopulatedWordCommentsResource::asExtraModel)
 
+    override fun getPosts(wordIds: List<String>): Flow<PagingData<WordCommentsResource>>  =
+        Pager(
+            config = FeedPagingConfig,
+            pagingSourceFactory = {
+                wordDao.getPostByIds(wordIds)
+            }
+        )
+            .flow
+            .map { pagingData->
+                pagingData.map(PopulatedWordCommentsResource::asExtraModel)
+            }
+
 
 }

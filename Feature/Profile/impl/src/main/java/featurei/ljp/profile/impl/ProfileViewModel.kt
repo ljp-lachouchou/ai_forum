@@ -2,6 +2,7 @@ package featurei.ljp.profile.impl
 
 import ai.ljp.data.repository.InteractionWordRepository
 import ai.ljp.data.repository.ProfileRepository
+import ai.ljp.ui.ProfileUiState
 import ai.ljp.ui.WordsUiState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -60,12 +61,12 @@ private fun profileUiState(
     return profileStream.asResult()
         .map { profileResult ->
             when(profileResult) {
-                is Result.Success -> {
+                is com.ljp.common.result.Result.Success -> {
                     val result = profileResult.data
                     ProfileUiState.Success(profile = result)
                 }
-                is Result.Loading -> ProfileUiState.Loading
-                is Result.Error -> ProfileUiState.Error
+                is com.ljp.common.result.Result.Loading -> ProfileUiState.Loading
+                is com.ljp.common.result.Result.Error -> ProfileUiState.Error
             }
 
         }
@@ -89,8 +90,4 @@ private fun wordsUiState(
         }
 
 }
-sealed interface ProfileUiState {
-    data class Success(val profile : Profile) : ProfileUiState
-    data object Loading : ProfileUiState
-    data object Error : ProfileUiState
-}
+

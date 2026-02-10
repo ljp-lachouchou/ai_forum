@@ -13,4 +13,6 @@ interface InteractionWordRepository  {
     fun getSelfWords(profileId : String) : Flow<PagingData<WordCommentsResource>>
 
     fun getPost(wordId : String) : Flow<WordCommentsResource>
+
+    fun getPosts(wordIds : List<String>) : Flow<PagingData<WordCommentsResource>>
 }
