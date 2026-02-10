@@ -13,6 +13,7 @@ interface LikeRepository : Syncable {
         userId : String,
         postId: String
     )
+    fun getLikesPostId(profileId : String) : List<String>
 
     fun markLike(postId : String,userId: String) : Flow<Boolean>
 

@@ -28,6 +28,12 @@ interface WordDao {
 
     fun getWords() : PagingSource<Int, WordEntity>
 
+    @Query("""
+        SELECT `wordId` FROM words 
+        WHERE `authorId` = :profileId
+    """)
+    fun getWordIds(profileId : String) : List<String>
+
     @Transaction
     @Query("SELECT * FROM words ORDER BY createdAt DESC")
     fun getPopulatedWordResources(): PagingSource<Int, PopulatedWordCommentsResource>

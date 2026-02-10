@@ -15,4 +15,6 @@ interface BookmarkRepository : Syncable {
         postId: String
     )
     fun markBookmark(postId : String,userId : String) : Flow<Boolean>
+
+    fun getBookmarksPostId(profileId : String) : List<String>
 }

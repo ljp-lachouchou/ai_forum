@@ -67,4 +67,13 @@ interface BookmarkDao {
         postId: String,
         userId: String
     ): Flow<Boolean>
+
+    @Query(
+        """
+            SELECT `postId` FROM bookmarks 
+            WHERE `userId` = :profileId 
+            ORDER BY `createdAt` DESC
+        """
+    )
+    fun getBookmarksWordId(profileId : String) : List<String>
 }

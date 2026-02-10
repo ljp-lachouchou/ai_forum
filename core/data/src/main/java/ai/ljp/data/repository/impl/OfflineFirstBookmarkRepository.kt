@@ -57,6 +57,9 @@ class OfflineFirstBookmarkRepository @Inject constructor(
             userId = userId
         )
 
+    override fun getBookmarksPostId(profileId: String): List<String> =
+        bookmarkDao.getBookmarksWordId(profileId)
+
     override val tableName: String
         get() = "bookmarks"
 

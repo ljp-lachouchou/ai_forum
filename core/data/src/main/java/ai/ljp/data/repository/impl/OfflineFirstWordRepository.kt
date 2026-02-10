@@ -84,6 +84,9 @@ class OfflineFirstWordRepository @Inject constructor(
                 pagingData.map(WordEntity::asExtraModel)
             }
 
+    override fun getPostIds(profileId: String): List<String> =
+        wordDao.getWordIds(profileId)
+
     override suspend fun aiAssistPost(content: String): AIPost =
         network.aiAssistPost(content)?.asExtraModel() ?: AIPost(
             content = "",

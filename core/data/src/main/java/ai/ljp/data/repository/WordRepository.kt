@@ -24,6 +24,8 @@ interface WordRepository : Syncable {
 
     fun getWords() : Flow<PagingData<Word>>
 
+    fun getPostIds(profileId : String) : List<String>
+
     suspend fun aiAssistPost(
         content : String
     ) : AIPost

@@ -44,6 +44,9 @@ class OfflineFistLikeRepository @Inject constructor(
         }
     }
 
+    override fun getLikesPostId(profileId: String): List<String> =
+        likeDao.getLikesWordId(profileId)
+
     override fun markLike(
         postId: String,
         userId: String

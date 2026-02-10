@@ -63,4 +63,13 @@ interface LikeDao {
         """
     )
     fun markLike(postId: String,userId: String) : Flow<Boolean>
+
+    @Query(
+        """
+            SELECT `postId` FROM LIKES 
+            WHERE `userId` = :profileId 
+            ORDER BY `createdAt` DESC
+        """
+    )
+    fun getLikesWordId(profileId : String) : List<String>
 }

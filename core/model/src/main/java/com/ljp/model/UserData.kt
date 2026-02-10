@@ -14,3 +14,14 @@ data class UserData(
     val moodThemeConfig : MoodThemeConfig
 
 )
+data class Settings(
+    val darkThemeConfig: DarkThemeConfig,
+    val themeBrand: ThemeBrand,
+    val useDynamicColor: Boolean,
+)
+fun UserData.asSetting() =
+    Settings(
+        darkThemeConfig = darkThemeConfig,
+        themeBrand = themeBrand,
+        useDynamicColor = useDynamicColor
+    )
