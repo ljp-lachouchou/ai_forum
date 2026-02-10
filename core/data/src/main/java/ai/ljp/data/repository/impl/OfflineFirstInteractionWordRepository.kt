@@ -66,5 +66,8 @@ class OfflineFirstInteractionWordRepository @Inject constructor(
                 pagingData.map(PopulatedWordCommentsResource::asExtraModel)
             }
 
+    override fun getPost(wordId: String): Flow<WordCommentsResource> =
+        wordDao.getPost(wordId).map(PopulatedWordCommentsResource::asExtraModel)
+
 
 }

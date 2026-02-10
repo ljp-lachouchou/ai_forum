@@ -11,4 +11,6 @@ interface InteractionWordRepository  {
         query : String
     ) : AISearch
     fun getSelfWords(profileId : String) : Flow<PagingData<WordCommentsResource>>
+
+    fun getPost(wordId : String) : Flow<WordCommentsResource>
 }

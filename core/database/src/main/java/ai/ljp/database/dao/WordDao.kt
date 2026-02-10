@@ -7,6 +7,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WordDao {
@@ -38,6 +39,14 @@ interface WordDao {
         ORDER BY createdAt DESC
     """)
     fun getSelfWords(profileId : String) : PagingSource<Int, PopulatedWordCommentsResource>
+
+    @Transaction
+    @Query("""
+        SELECT * FROM words 
+        WHERE `wordId` = :wordId
+        LIMIT 1
+    """)
+    fun getPost(wordId : String) : Flow<PopulatedWordCommentsResource>
 
     @Query(
         value = """

@@ -3,6 +3,7 @@ package featurei.ljp.profile.impl
 import ai.ljp.data.repository.InteractionWordRepository
 import ai.ljp.data.repository.ProfileRepository
 import ai.ljp.ui.WordsUiState
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ljp.common.result.Result
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel(assistedFactory = ProfileViewModel.Factory::class)
 class ProfileViewModel @AssistedInject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val profileRepository: ProfileRepository,
     private val interactionWordRepository: InteractionWordRepository,
     @Assisted val profileId : String

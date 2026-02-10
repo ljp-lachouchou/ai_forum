@@ -1,6 +1,7 @@
 package ai.ljp.database.dao
 
 import ai.ljp.database.model.CommentEntity
+import ai.ljp.database.model.PopulateCommentProfileResource
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
@@ -44,4 +45,12 @@ interface CommentDao {
         """,
     )
     suspend fun deleteAll(ids : List<String>)
+
+    @Query("""
+        SELECT * FROM comments
+        WHERE `postId` = :postId 
+        ORDER BY `createdAt` DESC
+    """)
+    fun getCommentsProfileResource(postId: String) :
+            PagingSource<Int, PopulateCommentProfileResource>
 }

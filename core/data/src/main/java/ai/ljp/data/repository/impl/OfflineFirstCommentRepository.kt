@@ -6,6 +6,7 @@ import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.CommentRepository
 import ai.ljp.database.dao.CommentDao
 import ai.ljp.database.model.CommentEntity
+import ai.ljp.database.model.PopulateCommentProfileResource
 import ai.ljp.database.model.asExtraModel
 import ai.ljp.datastore.AIForumPreferencesDatastore
 import ai.ljp.network.AIForumNetworkDataSource
@@ -14,6 +15,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.ljp.model.Comment
+import com.ljp.model.CommentProfileResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -57,6 +59,18 @@ class OfflineFirstCommentRepository @Inject constructor(
             authorId = userData.currentUserId!!
             )
     }
+
+    override fun getCommentsProfileResource(postId: String): Flow<PagingData<CommentProfileResource>> =
+        Pager(
+            config = FeedPagingConfig,
+            pagingSourceFactory = {
+                commentDao.getCommentsProfileResource(postId)
+            }
+        ).flow
+            .map{pagingData ->
+                pagingData.map(PopulateCommentProfileResource::asExtraModel)
+            }
+
 
 
     override val tableName: String

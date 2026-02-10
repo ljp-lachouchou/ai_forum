@@ -1,8 +1,8 @@
 package ai.ljp.ui
 
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
@@ -22,8 +22,8 @@ fun LazyStaggeredGridScope.wordsFeed(
     items(wordsSource.itemCount, key = wordsSource.itemKey { it.wordId }) {index ->
         val wordCommentsResource = wordsSource[index]
         if (wordCommentsResource != null) {
-            val liked by isLike(wordCommentsResource.wordId).collectAsState()
-            val bookmarked by isBookmark(wordCommentsResource.wordId).collectAsState()
+            val liked by isLike(wordCommentsResource.wordId).collectAsStateWithLifecycle()
+            val bookmarked by isBookmark(wordCommentsResource.wordId).collectAsStateWithLifecycle()
             WordCard(
                 wordSource = wordCommentsResource,
                 bookmarked = bookmarked,
