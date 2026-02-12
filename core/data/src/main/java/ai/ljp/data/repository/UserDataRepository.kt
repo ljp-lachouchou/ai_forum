@@ -16,4 +16,5 @@ interface UserDataRepository {
     suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig)
 
     suspend fun setShouldHideOnboarding(shouldHideOnboarding : Boolean)
+
 }

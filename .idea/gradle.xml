@@ -46,6 +46,8 @@
             <option value="$PROJECT_DIR$/feature/Home" />
             <option value="$PROJECT_DIR$/feature/Home/api" />
             <option value="$PROJECT_DIR$/feature/Home/impl" />
+            <option value="$PROJECT_DIR$/feature/Login" />
+            <option value="$PROJECT_DIR$/feature/Login/api" />
             <option value="$PROJECT_DIR$/feature/Me" />
             <option value="$PROJECT_DIR$/feature/Me/api" />
             <option value="$PROJECT_DIR$/feature/Me/impl" />

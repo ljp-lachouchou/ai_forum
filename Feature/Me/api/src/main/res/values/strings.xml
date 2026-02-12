@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_me_api_current_mood">今天是什么心情?</string>
+    <string name="feature_me_api_personal">个人的</string>
+    <string name="feature_me_api_my_posts">我的帖子</string>
+    <string name="feature_me_api_my_bookmarks">我收藏的</string>
+    <string name="feature_me_api_my_likes">我喜欢的</string>
+    <string name="feature_me_api_settings">设置</string>
+    <string name="feature_me_api_happy">开心</string>
+    <string name="feature_me_api_normal">平常</string>
+    <string name="feature_me_api_sad">伤心</string>
+    <string name="feature_me_api_anxiety">焦虑</string>
+    <string name="feature_me_api_update_profile">更新个人信息</string>
+    <string name="feature_me_api_personal_username">个人昵称</string>
+    <string name="feature_me_api_personal_bio">个人简介</string>
+    <string name="feature_me_api_dark_mode">深色模式</string>
+    <string name="feature_me_api_dynamic_color">动态主题</string>
+    <string name="feature_me_api_theme_brand">主题风格</string>
+</resources>

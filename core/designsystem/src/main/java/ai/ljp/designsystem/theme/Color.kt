@@ -3,25 +3,25 @@ package ai.ljp.designsystem.theme
 import androidx.compose.ui.graphics.Color
 internal val Blue20 = Color(0x333B82F6)
 internal val Amber20 = Color(0x33FBBF24)
-internal val Blue100 = Color(0xFF3B82F6)
+val Blue100 = Color(0xFF3B82F6)
 
 internal val Blue10 = Color(0x1A3B82F6)
 
 internal val Slate50 = Color(0xFFF8FAFC)
 
-internal val Amber100 = Color(0xFFFBBF24)
+val Amber100 = Color(0xFFFBBF24)
 
 internal val Amber10 = Color(0x1AFBBF24)
 
 internal val Amber50 = Color(0xFFFFFBEB)
 
-internal val Slate600 = Color(0xFF64748B)
+val Slate600 = Color(0xFF64748B)
 
 internal val Slate20 = Color(0x3364748B)
 
 internal val Slate100 = Color(0xFFF1F5F9)
 
-internal val Purple100 = Color(0xFFA855F7)
+val Purple100 = Color(0xFFA855F7)
 
 internal val Purple10 = Color(0x1AA855F7)
 

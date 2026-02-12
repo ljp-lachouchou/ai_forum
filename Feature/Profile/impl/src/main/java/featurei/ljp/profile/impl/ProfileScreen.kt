@@ -3,6 +3,8 @@ package featurei.ljp.profile.impl
 import ai.ljp.designsystem.component.AIForumLoadingWheel
 import ai.ljp.designsystem.component.DynamicAsyncImage
 import ai.ljp.ui.AIForumToolbar
+import ai.ljp.ui.ProfileCard
+import ai.ljp.ui.ProfileUiState
 import ai.ljp.ui.WordsUiState
 import ai.ljp.ui.wordsItem
 import androidx.compose.animation.AnimatedVisibility
@@ -159,58 +161,4 @@ internal fun ProfileDetailPlaceholder(
         }
     }
 }
-@Composable
-private fun ProfileCard(
-    profileUiState: ProfileUiState,
-    modifier: Modifier = Modifier
-) {
-    val isLoading = profileUiState is ProfileUiState.Loading
-    Card(
-        modifier = modifier
-            .padding(16.dp),
-        shape = RoundedCornerShape(20.dp),
-    ) {
-        when(profileUiState) {
-            is ProfileUiState.Success -> {
-                val profile = profileUiState.profile
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                    ) {
-                        Spacer(Modifier.height(10.dp))
-                        AvatarArea(avatarUrl = profile.avatarUrl)
-                        ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
-                            Text(text = profile.userName)
-                        }
-                        ProvideTextStyle(MaterialTheme.typography.bodySmall) {
-                            Text(text = profile.bio ?:"")
-                        }
-                    }
-                }
-            }
-            is ProfileUiState.Error -> {}
-            else -> Unit
-        }
-        AnimatedVisibility(visible = isLoading) {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                AIForumLoadingWheel(Modifier.align(Alignment.Center))
-            }
-        }
-    }
 
-}
-@Composable
-private fun AvatarArea(
-    avatarUrl : String?,
-) {
-    Surface(
-        color = Color.White,
-        shape = CircleShape,
-        modifier = Modifier.padding(8.dp)
-    ) {
-        DynamicAsyncImage(imageUrl = avatarUrl, contentDescription = null)
-    }
-}

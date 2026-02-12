@@ -13,9 +13,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.ljp.common.result.Result
 import com.ljp.common.result.asResult
+import com.ljp.model.DarkThemeConfig
 import com.ljp.model.MoodThemeConfig
 import com.ljp.model.Profile
 import com.ljp.model.Settings
+import com.ljp.model.ThemeBrand
 import com.ljp.model.WordCommentsResource
 import com.ljp.model.asSetting
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -47,6 +50,27 @@ class MeViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = MoodThemeConfig.Normal
             )
+    val useDynamicColor : StateFlow<Boolean> =
+        userDataRepository.userData.map { it.useDynamicColor }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = false
+            )
+    val themeBrand : StateFlow<ThemeBrand> =
+        userDataRepository.userData.map { it.themeBrand }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = ThemeBrand.DEFAULT
+            )
+    val darkThemeConfig : StateFlow<DarkThemeConfig> =
+        userDataRepository.userData.map { it.darkThemeConfig }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = DarkThemeConfig.FOLLOW_SYSTEM
+            )
     val currentUserId : Flow<String> =
         userDataRepository.userData.map { it.currentUserId!! }
     val profileUiState : StateFlow<ProfileUiState> =
@@ -62,6 +86,34 @@ class MeViewModel @Inject constructor(
         )
     val currentActionState : StateFlow<ActionState> =
         savedStateHandle.getStateFlow(ACTION_KEY, ActionState.Empty)
+    val userName : StateFlow<String> = combine(
+        profileUiState,
+        savedStateHandle.getStateFlow(USERNAME_KEY, "")
+    ) { uiState, savedBio ->
+        val state = uiState as? ProfileUiState.Success
+        savedBio.ifEmpty {
+            state?.profile?.userName ?: ""
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        initialValue = "",
+        started = SharingStarted.WhileSubscribed(5_000)
+    )
+
+    val bio: StateFlow<String> = combine(
+        profileUiState,
+        savedStateHandle.getStateFlow(BIO_KEY, "")
+    ) { uiState, savedBio ->
+        val state = uiState as? ProfileUiState.Success
+
+        savedBio.ifEmpty {
+            state?.profile?.bio ?: ""
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        initialValue = "",
+        started = SharingStarted.WhileSubscribed(5_000)
+    )
     val currentPostIds : Flow<List<String>> = combine(
         currentActionState,
         currentUserId
@@ -114,6 +166,41 @@ class MeViewModel @Inject constructor(
     fun actionChanged(actionState: ActionState) {
         savedStateHandle[ACTION_KEY] = actionState
     }
+    fun onUpdateProfile(userName: String?,
+                        avatarUrl: String?,
+                        bio: String?) {
+        viewModelScope.launch {
+            profileRepository.updateProfile(
+                userName = userName,
+                avatarUrl = avatarUrl,
+                bio = bio
+            )
+        }
+    }
+    fun darkModeChanged(darkThemeConfig: DarkThemeConfig) {
+        viewModelScope.launch {
+            userDataRepository
+                .setDarkThemeConfig(darkThemeConfig)
+        }
+    }
+    fun themeBrandChanged(themeBrand: ThemeBrand) {
+        viewModelScope.launch {
+            userDataRepository
+                .setThemeBrand(themeBrand)
+        }
+    }
+    fun dynamicColorPreferenceChanged(useDynamicColor : Boolean) {
+        viewModelScope.launch {
+            userDataRepository
+                .setDynamicColorPreference(useDynamicColor)
+        }
+    }
+    fun onUsernameChanged(input: String) {
+        savedStateHandle[USERNAME_KEY] = input
+    }
+    fun onBioChanged(input: String) {
+        savedStateHandle[BIO_KEY] = input
+    }
 
 
 }
@@ -125,12 +212,12 @@ private fun profileUiState(
     return profileStream.asResult()
         .map { profileResult ->
             when(profileResult) {
-                is com.ljp.common.result.Result.Success -> {
+                is Result.Success -> {
                     val result = profileResult.data
                     ProfileUiState.Success(profile = result)
                 }
-                is com.ljp.common.result.Result.Loading -> ProfileUiState.Loading
-                is com.ljp.common.result.Result.Error -> ProfileUiState.Error
+                is Result.Loading -> ProfileUiState.Loading
+                is Result.Error -> ProfileUiState.Error
             }
 
         }
@@ -187,6 +274,8 @@ private fun sheetContentUiState(
     }
 }
 private const val ACTION_KEY = "actionKey"
+private const val USERNAME_KEY = "usernameKey"
+private const val BIO_KEY = "bioKey"
 sealed interface ActionState {
     data object Empty : ActionState
     data object MyPost : ActionState

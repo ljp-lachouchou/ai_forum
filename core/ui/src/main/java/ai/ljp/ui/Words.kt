@@ -40,32 +40,9 @@ sealed interface WordsUiState {
     data class Success(val wordsSource : Flow<PagingData<WordCommentsResource>>) : WordsUiState
 }
 
-fun LazyListScope.wordsItem(
-    wordsLazyItems : LazyPagingItems<WordCommentsResource>,
-    onPostClick : (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    items(wordsLazyItems.itemCount, key = wordsLazyItems.itemKey { it.wordId }) {index ->
-        val word = wordsLazyItems[index]
-        if (word != null) {
-            WordCardItem(
-                wordId = word.wordId,
-                category = word.category,
-                createdAt = word.createdAt,
-                wordName = word.wordName,
-                wordUrl = word.wordUrl,
-                likes = word.likes.size,
-                comments = word.comments.size,
-                bookmarks = word.bookMarks.size,
-                onPostClick = onPostClick,
-                modifier = modifier
-                    .fillMaxWidth()
-            )
-        }
-    }
-}
+
 @Composable
-private fun WordCardItem(
+fun WordCardItem(
     wordId : String,
     category: String,
     createdAt: Instant,

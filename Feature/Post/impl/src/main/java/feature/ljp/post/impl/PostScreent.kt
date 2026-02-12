@@ -421,7 +421,7 @@ private fun SendCommentTextField(
                     false
                 }
             },
-        shape = RoundedCornerShape(32.dp),
+        shape = RoundedCornerShape(16.dp),
         keyboardActions = KeyboardActions(
             onSend = {
                 if (commentContent.isBlank()) return@KeyboardActions
