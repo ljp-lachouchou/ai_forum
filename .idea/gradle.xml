@@ -62,6 +62,7 @@
             <option value="$PROJECT_DIR$/feature/Search" />
             <option value="$PROJECT_DIR$/feature/Treehole" />
             <option value="$PROJECT_DIR$/feature/Treehole/api" />
+            <option value="$PROJECT_DIR$/feature/Treehole/impl" />
             <option value="$PROJECT_DIR$/feature/TreeholeCreate" />
             <option value="$PROJECT_DIR$/sync" />
           </set>
