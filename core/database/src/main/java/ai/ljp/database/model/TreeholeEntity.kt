@@ -33,6 +33,8 @@ data class TreeholeEntity(
     val anonymous : Boolean,
     @ColumnInfo(name = "createdAt")
     val createdAt : Instant,
+    @ColumnInfo(defaultValue = "平常")
+    val mood : String = "平常",
 ) : BaseEntity
 
 fun TreeholeEntity.asExtraModel() =
@@ -41,5 +43,6 @@ fun TreeholeEntity.asExtraModel() =
         authorId = authorId,
         content = content,
         anonymous = anonymous,
-        createdAt = createdAt
+        createdAt = createdAt,
+        mood = mood
     )
