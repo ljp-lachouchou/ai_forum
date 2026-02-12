@@ -48,6 +48,7 @@
             <option value="$PROJECT_DIR$/feature/Home/impl" />
             <option value="$PROJECT_DIR$/feature/Login" />
             <option value="$PROJECT_DIR$/feature/Login/api" />
+            <option value="$PROJECT_DIR$/feature/Login/impl" />
             <option value="$PROJECT_DIR$/feature/Me" />
             <option value="$PROJECT_DIR$/feature/Me/api" />
             <option value="$PROJECT_DIR$/feature/Me/impl" />
@@ -60,6 +61,7 @@
             <option value="$PROJECT_DIR$/feature/Profile/impl" />
             <option value="$PROJECT_DIR$/feature/Search" />
             <option value="$PROJECT_DIR$/feature/Treehole" />
+            <option value="$PROJECT_DIR$/feature/Treehole/api" />
             <option value="$PROJECT_DIR$/feature/TreeholeCreate" />
             <option value="$PROJECT_DIR$/sync" />
           </set>
