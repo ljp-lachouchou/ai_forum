@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_treehole_create_api_title">创建树洞</string>
+    <string name="feature_treehole_create_api_public">公共</string>
+    <string name="feature_treehole_create_api_anonymous">匿名</string>
+    <string name="feature_treehole_create_api_treehole_content_placeholder">发泄你现在的心情吧</string>
+    <string name="feature_treehole_create_api_treehole_created_success">创建树洞成功</string>
+    <string name="feature_treehole_create_api_treehole_created_error">创建树洞失败</string>
+</resources>

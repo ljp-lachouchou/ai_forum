@@ -21,10 +21,10 @@ import androidx.compose.ui.res.stringResource
 fun AIForumTopAppBar(
     @StringRes titleRes :Int,
     navigationIcon : ImageVector,
-    navigationIconDescription: String,
-    actionIcon : ImageVector,
-    actionIconDescription : String,
     modifier: Modifier = Modifier,
+    navigationIconDescription: String? = null,
+    actionIcon : ImageVector,
+    actionIconDescription : String? = null,
     colors : TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     onNavigationClick :() -> Unit = {},
     onActionClick : () -> Unit = {}

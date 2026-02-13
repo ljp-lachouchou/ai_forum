@@ -10,7 +10,7 @@ interface TreeholeRepository : Syncable {
     suspend fun createTreehole(
         content: String,
         isAnonymous: Boolean
-    )
+    ) : Boolean
 
     fun getTreeholes() : Flow<PagingData<TreeholeProfileSource>>
 }

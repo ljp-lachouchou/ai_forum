@@ -98,7 +98,7 @@ internal fun LoginScreen(
                     onHomeClick()
                 }
                 is LoginEvent.Error -> {
-                    Toast.makeText(context,event.msg, Toast.LENGTH_SHORT)
+                    Toast.makeText(context,event.msg, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -113,7 +113,7 @@ internal fun LoginScreen(
             when(event) {
                 is RegisterEvent.Success -> Unit
                 is RegisterEvent.Error -> {
-                    Toast.makeText(context,event.msg, Toast.LENGTH_SHORT)
+                    Toast.makeText(context,event.msg, Toast.LENGTH_SHORT).show()
                 }
             }
         }

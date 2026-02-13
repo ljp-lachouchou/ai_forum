@@ -15,6 +15,7 @@ import androidx.compose.material.icons.rounded.Bookmarks
 import androidx.compose.material.icons.rounded.ChatBubble
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Publish
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Soap
@@ -38,4 +39,5 @@ object AIForumIcon {
     val ChevronRight = Icons.Rounded.ChevronRight
     val Post = Icons.AutoMirrored.Rounded.Article
     val Settings = Icons.Rounded.Settings
+    val Publish = Icons.Rounded.Publish
 }

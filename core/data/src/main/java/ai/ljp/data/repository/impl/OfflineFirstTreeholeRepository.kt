@@ -30,13 +30,14 @@ class OfflineFirstTreeholeRepository @Inject constructor(
     override suspend fun createTreehole(
         content: String,
         isAnonymous: Boolean
-    ) {
+    ) : Boolean {
         val userData = preferencesDatastore.userData.first()
-        network.createTreehole(
+        val response = network.createTreehole(
             authorId = userData.currentUserId!!,
             content = content,
             isAnonymous = isAnonymous
         )
+        return response != null
     }
 
     override fun getTreeholes(): Flow<PagingData<TreeholeProfileSource>> =
