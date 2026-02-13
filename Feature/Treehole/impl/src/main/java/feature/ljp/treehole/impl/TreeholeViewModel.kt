@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import com.ljp.common.result.Result
 import com.ljp.common.result.asResult
 import com.ljp.model.Treehole
+import com.ljp.model.TreeholeProfileSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -51,7 +52,7 @@ private fun treeholeFeedUiState(
         }
 }
 sealed interface TreeholeFeedUiState {
-    data class Success(val feed : Flow<PagingData<Treehole>>) : TreeholeFeedUiState
+    data class Success(val feed : Flow<PagingData<TreeholeProfileSource>>) : TreeholeFeedUiState
     data object Loading : TreeholeFeedUiState
     data object Error : TreeholeFeedUiState
 }

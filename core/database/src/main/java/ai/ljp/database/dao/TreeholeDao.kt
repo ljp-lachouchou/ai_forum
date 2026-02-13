@@ -1,5 +1,6 @@
 package ai.ljp.database.dao
 
+import ai.ljp.database.model.PopulateTreeholeEntity
 import ai.ljp.database.model.TreeholeEntity
 import androidx.paging.PagingSource
 import androidx.room.Dao
@@ -19,7 +20,7 @@ interface TreeholeDao {
         SELECT * FROM treeholes
         ORDER BY createdAt DESC
     """)
-    fun getTreeholes() : PagingSource<Int, TreeholeEntity>
+    fun getTreeholes() : PagingSource<Int, PopulateTreeholeEntity>
 
     @Query(
         value = """

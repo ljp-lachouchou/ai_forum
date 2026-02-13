@@ -5,6 +5,7 @@ import ai.ljp.data.SYNC_BATCH_SIZE
 import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.TreeholeRepository
 import ai.ljp.database.dao.TreeholeDao
+import ai.ljp.database.model.PopulateTreeholeEntity
 import ai.ljp.database.model.TreeholeEntity
 import ai.ljp.database.model.asExtraModel
 import ai.ljp.datastore.AIForumPreferencesDatastore
@@ -14,6 +15,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.ljp.model.Treehole
+import com.ljp.model.TreeholeProfileSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -37,7 +39,7 @@ class OfflineFirstTreeholeRepository @Inject constructor(
         )
     }
 
-    override fun getTreeholes(): Flow<PagingData<Treehole>> =
+    override fun getTreeholes(): Flow<PagingData<TreeholeProfileSource>> =
         Pager(
             config = FeedPagingConfig,
             pagingSourceFactory = {
@@ -46,7 +48,7 @@ class OfflineFirstTreeholeRepository @Inject constructor(
         )
             .flow
             .map { pagingData->
-                pagingData.map(TreeholeEntity::asExtraModel)
+                pagingData.map(PopulateTreeholeEntity::asExtraModel)
             }
 
     override val tableName: String

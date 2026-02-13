@@ -3,6 +3,7 @@ package ai.ljp.data.repository
 import ai.ljp.data.Syncable
 import androidx.paging.PagingData
 import com.ljp.model.Treehole
+import com.ljp.model.TreeholeProfileSource
 import kotlinx.coroutines.flow.Flow
 
 interface TreeholeRepository : Syncable {
@@ -11,5 +12,5 @@ interface TreeholeRepository : Syncable {
         isAnonymous: Boolean
     )
 
-    fun getTreeholes() : Flow<PagingData<Treehole>>
+    fun getTreeholes() : Flow<PagingData<TreeholeProfileSource>>
 }
