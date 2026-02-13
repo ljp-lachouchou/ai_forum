@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_login_api_ai_community">AI社区</string>
+    <string name="feature_login_api_login">登录</string>
+    <string name="feature_login_api_register">注册</string>
+    <string name="feature_login_api_email_placeholder">请输入邮箱</string>
+    <string name="feature_login_api_password_placeholder">请输入密码</string>
+</resources>

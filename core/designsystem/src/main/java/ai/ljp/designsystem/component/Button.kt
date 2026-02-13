@@ -28,7 +28,7 @@ fun AIForumButton(
         modifier = modifier,
         enabled = enable,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.primary
         ),
         contentPadding = contentPadding,
         content = content
