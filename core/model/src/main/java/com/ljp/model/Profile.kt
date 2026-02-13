@@ -11,6 +11,10 @@ data class Profile(
     val createdAt : Instant,
     val profileCount : String?
 )
+val Profile.hashId
+    get() = id.reversed().hashCode()
+val Profile.anonymousName
+    get() = "匿名#$hashId"
 data class ProfileWithFollows internal constructor(
     val id : String,
     val userName : String,

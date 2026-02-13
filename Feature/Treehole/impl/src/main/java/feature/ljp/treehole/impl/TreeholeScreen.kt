@@ -43,6 +43,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.ljp.model.Profile
 import com.ljp.model.TreeholeProfileSource
+import com.ljp.model.anonymousName
 import kotlinx.datetime.Instant
 @Composable
 internal fun TreeholeScreen(
@@ -161,7 +162,11 @@ private fun TreeholeItem(
             ListItem(
                 headlineContent = {
                     ProvideTextStyle(MaterialTheme.typography.bodyMedium) {
-                        Text(text = author.userName)
+                        if (anonymous) {
+                            Text(text = "匿名#${ author.anonymousName }")
+                        }else {
+                            Text(text = author.userName)
+                        }
                     }
                 },
                 supportingContent = {
