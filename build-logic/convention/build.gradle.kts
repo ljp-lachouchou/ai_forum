@@ -61,7 +61,7 @@ gradlePlugin {
         }
         register("androidLibrary") {
             id = libs.plugins.aiforum.android.library.asProvider().get().pluginId
-            implementationClass = "AndroidLibraryConventionPlugin"
+            implementationClass = "AndroidLibraryConventionPlugin"//
         }
         register("hilt") {
             id = libs.plugins.aiforum.hilt.get().pluginId

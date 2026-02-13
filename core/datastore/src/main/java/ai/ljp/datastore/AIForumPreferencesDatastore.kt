@@ -2,6 +2,7 @@ package ai.ljp.datastore
 
 import android.util.Log
 import androidx.datastore.core.DataStore
+import com.ljp.common.token.TokenProvider
 import com.ljp.model.DarkThemeConfig
 import com.ljp.model.MoodThemeConfig
 import com.ljp.model.ThemeBrand
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 class AIForumPreferencesDatastore @Inject constructor(
     private val userPreferences : DataStore<UserPreferences>
-) {
+) : TokenProvider{
     val userData = userPreferences.data
         .map {
             UserData(
@@ -56,13 +57,6 @@ class AIForumPreferencesDatastore @Inject constructor(
                 }
             )
         }
-    suspend fun setAuthToken (authToken : String) {
-        userPreferences.updateData {
-            it.copy {
-                this.authToken = authToken
-            }
-        }
-    }
     suspend fun setMoodThemeConfig(moodThemeConfig: MoodThemeConfig) {
         userPreferences.updateData {
             it.copy {
@@ -141,6 +135,18 @@ class AIForumPreferencesDatastore @Inject constructor(
         }
     }
 
+    override suspend fun getToken(): String? =
+        userPreferences.data.map {
+            it.authToken
+        }.firstOrNull()
+
+    override suspend fun setAuthToken(token: String?) {
+        userPreferences.updateData {
+            it.copy {
+                this.authToken = token ?: ""
+            }
+        }
+    }
 
 
 }

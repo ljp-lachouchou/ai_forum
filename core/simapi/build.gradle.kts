@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.ktor.client.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(projects.core.common)
+    implementation(projects.core.datastore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 }

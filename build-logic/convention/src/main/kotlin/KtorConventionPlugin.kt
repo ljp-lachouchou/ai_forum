@@ -11,6 +11,7 @@ class KtorConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findLibrary("ktor.client.cio").get())
                 "implementation"(libs.findLibrary("ktor.client.okhttp").get())
                 "implementation"(libs.findLibrary("ktor.client.websockets").get())
+                "implementation"(libs.findLibrary("ktor.client.auth").get())
                 "implementation"(libs.findLibrary("ktor.content.negotiation").get())
                 "implementation"(libs.findLibrary("ktor.serialization.kotlinx.json").get())
                 "implementation"(libs.findLibrary("ktor.serialization.kotlinx.xml").get())

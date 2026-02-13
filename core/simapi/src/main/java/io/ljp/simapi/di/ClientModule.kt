@@ -1,5 +1,6 @@
 package io.ljp.simapi.di
 
+import ai.ljp.datastore.AIForumPreferencesDatastore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,9 +29,13 @@ internal object ClientModule {
     @Provides
     @Singleton
     fun providersClientFactory(
-        @HttpModule(ModuleType.Logging) loggingModule : HttpClientModule
+        @HttpModule(ModuleType.Logging) loggingModule : HttpClientModule,
+        aiForumPreferencesDatastore: AIForumPreferencesDatastore
     ) : HttpClientFactory =
-        HttpClientFactory(listOf(loggingModule))
+        HttpClientFactory(
+                modules = listOf(loggingModule),
+                tokenProvider = aiForumPreferencesDatastore
+            )
 
     @Provides
     @Singleton

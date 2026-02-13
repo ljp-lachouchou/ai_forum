@@ -22,7 +22,8 @@ interface WordDao {
     )
     suspend fun deleteWord(wordId : String)
     @Query("""
-        SELECT * FROM words
+        SELECT * FROM words 
+        WHERE `status` = 'published'
         ORDER BY updatedAt DESC
     """)
 
@@ -30,18 +31,23 @@ interface WordDao {
 
     @Query("""
         SELECT `wordId` FROM words 
-        WHERE `authorId` = :profileId
+        WHERE `authorId` = :profileId and 
+        `status` = 'published'
     """)
     fun getWordIds(profileId : String) : List<String>
 
     @Transaction
-    @Query("SELECT * FROM words ORDER BY createdAt DESC")
+    @Query("""
+        SELECT * FROM words 
+        WHERE `status` = 'published' 
+        ORDER BY createdAt DESC
+        """)
     fun getPopulatedWordResources(): PagingSource<Int, PopulatedWordCommentsResource>
 
     @Transaction
     @Query("""
         SELECT * FROM words 
-        WHERE `authorId` = :profileId
+        WHERE `authorId` = :profileId and `status` = 'published'
         ORDER BY createdAt DESC
     """)
     fun getSelfWords(profileId : String) : PagingSource<Int, PopulatedWordCommentsResource>
@@ -49,7 +55,7 @@ interface WordDao {
     @Transaction
     @Query("""
         SELECT * FROM words 
-        WHERE `wordId` = :wordId
+        WHERE `wordId` = :wordId and `status` = 'published'
         LIMIT 1
     """)
     fun getPost(wordId : String) : Flow<PopulatedWordCommentsResource>
@@ -64,7 +70,7 @@ interface WordDao {
     @Transaction
     @Query("""
         SELECT * FROM words 
-        WHERE `wordId` IN (:wordIds)
+        WHERE `wordId` IN (:wordIds) and `status` = 'published' 
         ORDER BY `createdAt` DESC
     """)
     fun getPostByIds(wordIds : List<String>) : PagingSource<Int, PopulatedWordCommentsResource>
