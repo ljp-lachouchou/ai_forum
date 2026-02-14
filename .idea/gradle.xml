@@ -60,6 +60,8 @@
             <option value="$PROJECT_DIR$/feature/Profile/api" />
             <option value="$PROJECT_DIR$/feature/Profile/impl" />
             <option value="$PROJECT_DIR$/feature/Search" />
+            <option value="$PROJECT_DIR$/feature/Search/api" />
+            <option value="$PROJECT_DIR$/feature/Search/impl" />
             <option value="$PROJECT_DIR$/feature/Treehole" />
             <option value="$PROJECT_DIR$/feature/Treehole/api" />
             <option value="$PROJECT_DIR$/feature/Treehole/impl" />
