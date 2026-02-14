@@ -10,3 +10,8 @@ data class AIPost(
 
 
 data class AISearch(val aiWordItems : List<Word>? = null, val searchOk : Boolean,val answer : String? = null)
+fun AISearch.isNotOk() =
+    !searchOk || (answer == null && aiWordItems == null)
+
+fun AISearch.isEmpty() =
+    answer == null && aiWordItems == null

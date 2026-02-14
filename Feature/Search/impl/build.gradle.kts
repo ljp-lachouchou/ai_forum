@@ -12,6 +12,7 @@ dependencies {
 
     implementation(projects.core.domain)//
     implementation(projects.feature.search.api)
+    implementation(projects.feature.post.api)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
