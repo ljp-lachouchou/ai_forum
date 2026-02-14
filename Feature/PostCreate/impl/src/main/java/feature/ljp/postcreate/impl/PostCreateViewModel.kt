@@ -14,7 +14,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.InputStream
+import java.lang.Exception
 import javax.inject.Inject
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @HiltViewModel
 class PostCreateViewModel @Inject constructor(
@@ -24,10 +28,11 @@ class PostCreateViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _textValue = MutableStateFlow(
-        TextFieldValue("# ")
+        TextFieldValue("")
     )
     val textValue: StateFlow<TextFieldValue> = _textValue.asStateFlow()
-
+    val title : StateFlow<String> =
+        savedStateHandle.getStateFlow(TITLE_KEY,"")
     val postCreateUiState : StateFlow<PostCreateUiState> =
         savedStateHandle.getStateFlow(POST_CREATE_STATE_KEY,
             PostCreateUiState.Empty)
@@ -46,28 +51,41 @@ class PostCreateViewModel @Inject constructor(
     private fun changePostUiState(uiState : PostCreateUiState) {
         savedStateHandle[POST_CREATE_STATE_KEY] = uiState
     }
+    fun onTitleChanged(title : String) {
+        savedStateHandle[TITLE_KEY] = title
+    }
+    @OptIn(ExperimentalTime::class)
     fun onCreatePost(
-        fileName : String,
-        bytes : ByteArray,
+        inputStream: InputStream?,
         category : String,
         tags : List<WordTag> = emptyList(),
         wordName : String,
     ) {
+
         viewModelScope.launch {
-            val wordUrl = uploadWordDomain(fileName = fileName,bytes = bytes)
-            if (wordUrl == null) {
-                return@launch
-            }
-            val isSuccess = wordRepository.createWord(
-                wordUrl = wordUrl,
-                category = category,
-                tags = tags,
-                wordName = wordName
-            )
-            if (isSuccess) {
-                changePostUiState(PostCreateUiState.Success)
-            }else {
-                changePostUiState(PostCreateUiState.Error)
+            val fileName = "word_${Clock.System.now()}.md"
+            try {
+                inputStream?.use {ist ->
+                    val bytes = ist.readBytes()
+                    val wordUrl = uploadWordDomain(fileName = fileName,bytes = bytes)
+                    if (wordUrl == null) {
+                        return@launch
+                    }
+                    val isSuccess = wordRepository.createWord(
+                        wordUrl = wordUrl,
+                        category = category,
+                        tags = tags,
+                        wordName = wordName
+                    )
+                    if (isSuccess) {
+                        changePostUiState(PostCreateUiState.Success)
+                    }else {
+                        changePostUiState(PostCreateUiState.Error)
+                    }
+                }
+
+            }catch (e : Exception) {
+
             }
         }
     }
@@ -79,3 +97,4 @@ sealed interface PostCreateUiState {
 }
 
 private const val POST_CREATE_STATE_KEY = "postCreateStateKey"
+private const val TITLE_KEY = "titleKey"

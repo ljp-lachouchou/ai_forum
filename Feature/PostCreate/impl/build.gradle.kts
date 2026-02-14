@@ -15,4 +15,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
+    implementation(libs.androidx.activity.compose)
 }

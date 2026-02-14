@@ -14,7 +14,7 @@ dependencies {
     api(projects.core.analytics)
     api(projects.core.designsystem)
     api(projects.core.model)
-
+    implementation(libs.androidx.activity.compose)
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.compose)
 
