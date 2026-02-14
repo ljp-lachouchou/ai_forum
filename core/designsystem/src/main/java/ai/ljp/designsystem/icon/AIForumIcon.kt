@@ -13,6 +13,7 @@ import androidx.compose.material.icons.rounded.Article
 import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.material.icons.rounded.Bookmarks
 import androidx.compose.material.icons.rounded.ChatBubble
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Publish
@@ -40,4 +41,5 @@ object AIForumIcon {
     val Post = Icons.AutoMirrored.Rounded.Article
     val Settings = Icons.Rounded.Settings
     val Publish = Icons.Rounded.Publish
+    val Check = Icons.Rounded.Check
 }
