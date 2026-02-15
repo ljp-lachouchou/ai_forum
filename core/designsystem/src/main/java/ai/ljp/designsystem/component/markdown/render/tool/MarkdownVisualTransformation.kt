@@ -26,8 +26,7 @@ class MarkdownVisualTransformation(
             val start = currentOffset
             val end = currentOffset + line.length
             builder.append(line)
-            val hMatch = headMatch(line)
-            if(hMatch != null) {
+            headMatch(line) {hMatch ->
                 val level = hMatch.groupValues[1].length
                 val style = getHeadingStyle(level)
                 builder.addStyle(
@@ -57,16 +56,14 @@ class MarkdownVisualTransformation(
                     start, start + 2
                 )
             }
-            val lMatch = listMatch(line)
-            if (lMatch != null) {
+            listMatch(line) {lMatch->
                 builder.addStyle(
                     SpanStyle(color = colorScheme.primary, fontWeight = FontWeight.Bold),
                     start + lMatch.range.first,
                     start + lMatch.range.last + 1
                 )
             }
-            linkMatch(line)
-            .forEach { match ->
+            linkMatch(line) {match ->
                 val textPart = match.groupValues[1]
                 val fullMatchStart = start + match.range.first
 
@@ -81,7 +78,6 @@ class MarkdownVisualTransformation(
                     fullMatchStart + textPart.length + 2, start + match.range.last + 1
                 )
             }
-
             if (index < lines.size - 1) {
                 builder.append("\n")
                 currentOffset = end + 1
@@ -97,14 +93,25 @@ class MarkdownVisualTransformation(
         else -> tpy.titleMedium
     }
 }
-fun headMatch(line : String) =
-    Regex("^(#{1,6})\\s+").find(line)
+fun headMatch(line : String,block :(MatchResult) -> Unit) {
+    val hMatch = Regex("^(#{1,6})\\s+").find(line)
+    if (hMatch == null) return
+    block(hMatch)
+}
 
-fun listMatch(line : String) =
-    Regex("^(\\s*)([*\\-+]|\\d+\\.)\\s+").find(line)
+fun listMatch(line : String,block :(MatchResult) -> Unit) {
+    val lMatch = Regex("^(\\s*)([*\\-+]|\\d+\\.)\\s+")
+        .find(line)
+    if (lMatch == null) return
+    block(lMatch)
+}
 
-fun linkMatch(line: String) =
-    Regex("\\[(.*?)]\\((.*?)\\)").findAll(line)
+
+fun linkMatch(line: String,action : (MatchResult) -> Unit) {
+    val matches = Regex("\\[(.*?)]\\((.*?)\\)").findAll(line)
+    matches.forEach(action)
+}
+
 
 
 
