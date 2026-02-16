@@ -56,6 +56,8 @@
             <option value="$PROJECT_DIR$/feature/Post/api" />
             <option value="$PROJECT_DIR$/feature/Post/impl" />
             <option value="$PROJECT_DIR$/feature/PostCreate" />
+            <option value="$PROJECT_DIR$/feature/PostCreate/api" />
+            <option value="$PROJECT_DIR$/feature/PostCreate/impl" />
             <option value="$PROJECT_DIR$/feature/Profile" />
             <option value="$PROJECT_DIR$/feature/Profile/api" />
             <option value="$PROJECT_DIR$/feature/Profile/impl" />

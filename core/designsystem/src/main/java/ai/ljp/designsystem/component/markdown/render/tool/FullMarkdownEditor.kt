@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
@@ -35,8 +36,6 @@ fun FullMarkdownEditor(initialContent: String) {
     }
     val focusRequesters = remember { mutableMapOf<String, FocusRequester>() }
     Column(Modifier.fillMaxSize().imePadding()) {
-        //TODO 工具栏
-
 
         // 编辑区
         LazyColumn(
@@ -49,17 +48,16 @@ fun FullMarkdownEditor(initialContent: String) {
                 MarkdownBlockItem(index, block, manager, vt,requester)
             }
         }
-
-        // 保存按钮查看源码
-        Button(onClick = {
-            println(manager.exportMarkdown())
-            println(manager.blocks.size)
-        }) {
-            Text("打印 Markdown 源码")
+        MarkdownToolbar(
+            modifier = Modifier.fillMaxWidth()
+        ) { markdownStyle ->
+            manager.updateBlockContent(
+                index = manager.focusedIndex,
+                newValue = markdownStyle.apply(
+                    manager.focusBlock.content)
+            )
         }
-        Spacer(Modifier
-            .windowInsetsBottomHeight(WindowInsets.safeDrawing)
-        )
+        Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
     }
 }
 @Preview

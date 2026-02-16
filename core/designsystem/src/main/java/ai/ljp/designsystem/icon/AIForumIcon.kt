@@ -3,6 +3,7 @@ package ai.ljp.designsystem.icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.Article
+import androidx.compose.material.icons.automirrored.rounded.FormatListBulleted
 import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -15,11 +16,22 @@ import androidx.compose.material.icons.rounded.Bookmarks
 import androidx.compose.material.icons.rounded.ChatBubble
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material.icons.rounded.Code
+import androidx.compose.material.icons.rounded.FormatBold
+import androidx.compose.material.icons.rounded.FormatItalic
+import androidx.compose.material.icons.rounded.FormatListBulleted
+import androidx.compose.material.icons.rounded.FormatListNumbered
+import androidx.compose.material.icons.rounded.FormatQuote
+import androidx.compose.material.icons.rounded.FormatStrikethrough
+import androidx.compose.material.icons.rounded.FormatUnderlined
+import androidx.compose.material.icons.rounded.Image
+import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Publish
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Soap
+import androidx.compose.material.icons.rounded.Title
 
 object AIForumIcon {
     val Search = Icons.Rounded.Search
@@ -42,4 +54,15 @@ object AIForumIcon {
     val Settings = Icons.Rounded.Settings
     val Publish = Icons.Rounded.Publish
     val Check = Icons.Rounded.Check
+    val Bold = Icons.Rounded.FormatBold
+    val Italic = Icons.Rounded.FormatItalic
+    val Quote = Icons.Rounded.FormatQuote
+    val ListNumbered = Icons.Rounded.FormatListNumbered
+    val ListBulleted = Icons.AutoMirrored.Rounded.FormatListBulleted
+    val Link = Icons.Rounded.Link
+    val Strikethrough = Icons.Rounded.FormatStrikethrough
+    val Title = Icons.Rounded.Title
+    val Code = Icons.Rounded.Code
+
+    val Image = Icons.Rounded.Image
 }

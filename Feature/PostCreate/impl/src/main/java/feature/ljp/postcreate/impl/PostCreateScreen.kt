@@ -1,17 +1,21 @@
 package feature.ljp.postcreate.impl
 
+import ai.ljp.designsystem.component.markdown.render.tool.FullMarkdownEditor
 import ai.ljp.designsystem.component.markdown.render.tool.MarkdownStyle
+import ai.ljp.designsystem.component.markdown.render.tool.MarkdownToolbar
 import ai.ljp.ui.AIForumToolbar
 import ai.ljp.ui.Category
 import ai.ljp.ui.CategoryFlowRow
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
@@ -123,5 +127,13 @@ private fun PostContentEditArea(
     modifier: Modifier = Modifier,
     onContentChange : (TextFieldValue) -> Unit,
 ) {
+    Box(
+        modifier = modifier.fillMaxSize().imePadding(),
+    ) {
+        FullMarkdownEditor()
+        MarkdownToolbar {markdownStyle->
+            onContentChange(markdownStyle.apply(textValue))
+        }
+    }
 
 }

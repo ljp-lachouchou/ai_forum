@@ -71,24 +71,11 @@ private fun MarkdownTextBlock(
     vt: VisualTransformation,
     focusRequester: FocusRequester
 ) {
-    var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
-
-    // 基础配置常量
-    val barWidth = 4.dp
-    val spacing = 8.dp // 每一层嵌套之间的间距
-    val primaryColor = MaterialTheme.colorScheme.primary
-
-    fun getNestedMetrics(line: String): Pair<Int, Boolean> {
-        val quoteDepth = Regex("""^(>\s*)+""").find(line)?.value?.count { it == '>' } ?: 0
-        val hasList = line.unOrderListMatchFound()
-        return quoteDepth to hasList
-    }
 
     BasicTextField(
         value = block.content,
         onValueChange = { manager.updateBlockContent(index, it) },
         visualTransformation = vt,
-        onTextLayout = { textLayoutResult = it },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
@@ -97,55 +84,7 @@ private fun MarkdownTextBlock(
         textStyle = MaterialTheme.typography.bodyLarge.copy(
             color = MaterialTheme.colorScheme.onSurface,
             lineHeight = 30.sp
-        ),
-        decorationBox = { innerTextField ->
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Canvas(modifier = Modifier.matchParentSize()) {
-                    val layout = textLayoutResult ?: return@Canvas
-                    val rawText = block.content.text
-                    val lines = rawText.split("\n")
-                    val unitPx = (barWidth + spacing).toPx()
-
-                    var currentOffset = 0
-                    lines.forEach { lineContent ->
-                        val (depth, hasList) = getNestedMetrics(lineContent)
-
-                        repeat(depth) { i ->
-                            drawQuoteBar(
-                                layout = layout,
-                                offset = currentOffset,
-                                startX = i * unitPx,
-                                width = barWidth.toPx(),
-                                color = primaryColor
-                            )
-                        }
-
-                        if (hasList) {
-                            drawListDot(
-                                layout = layout,
-                                offset = currentOffset,
-                                startX = depth * unitPx,
-                                radius = 3.dp.toPx(), // 圆点稍微小一点更精致
-                                color = primaryColor
-                            )
-                        }
-
-                        currentOffset += lineContent.length + 1
-                    }
-                }
-
-                val maxPadding = remember(block.content.text) {
-                    block.content.text.lines().maxOfOrNull { line ->
-                        val (depth, hasList) = getNestedMetrics(line)
-                        (depth + if (hasList) 1 else 0) * (barWidth + spacing)
-                    } ?: 0.dp
-                }
-
-                Box(modifier = Modifier.padding(start = maxPadding)) {
-                    innerTextField()
-                }
-            }
-        }
+        )
     )
 }
 

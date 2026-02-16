@@ -4,7 +4,6 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Typography
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -13,31 +12,39 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 class MarkdownVisualTransformation(
     private val colorScheme: ColorScheme,
     private val tpy: Typography,
 ) : VisualTransformation {
+
+    // 定义“似有似无”的样式符样式
+    private val symbolStyle = SpanStyle(
+        color = Color.Gray.copy(alpha = 0.3f), // 低透明度灰色
+        fontSize = 11.sp,                     // 较小的字号
+        fontFamily = FontFamily.Monospace,    // 代码质感的等宽字体
+        fontWeight = FontWeight.Normal
+    )
+
     override fun filter(text: AnnotatedString): TransformedText {
         val rawText = text.text
         val builder = AnnotatedString.Builder()
 
         val lines = rawText.split("\n")
         var currentOffset = 0
-        lines.forEachIndexed { index,line ->
+        lines.forEachIndexed { index, line ->
             val start = currentOffset
             val end = currentOffset + line.length
             builder.append(line)
+
             inlineFilter(
                 builder = builder,
                 rawText = line,
                 currentOffset = currentOffset
             )
-            headMatch(line) {hMatch ->
+
+            headMatch(line) { hMatch ->
                 val level = hMatch.groupValues[1].length
                 val style = getHeadingStyle(level)
                 builder.addStyle(
@@ -45,17 +52,10 @@ class MarkdownVisualTransformation(
                     start,
                     end
                 )
-//                builder.addStyle(
-//                    style = ParagraphStyle(lineHeight = 38.sp),
-//                    start = start,
-//                    end = end
-//                )
-                builder.addStyle(
-                    SpanStyle(color = Color.Transparent, fontSize = 0.sp),
-                    start,
-                    start + level + 1
-                )
+                // 展现标题符号 #
+                builder.addStyle(symbolStyle, start, start + level + 1)
             }
+
             quoteAction(line) {
                 builder.addStyle(
                     SpanStyle(
@@ -66,14 +66,14 @@ class MarkdownVisualTransformation(
                     start,
                     end
                 )
-                builder.addStyle(
-                    SpanStyle(color = Color.Transparent, fontSize = 0.sp),
-                    start, start + 2
-                )
+                // 展现引用符号 >
+                builder.addStyle(symbolStyle, start, start + 2)
             }
-            unOrderListMatch(line) {lMatch->
+
+            unOrderListMatch(line) { lMatch ->
+                // 展现无序列表符号 -
                 builder.addStyle(
-                    SpanStyle(color = Color.Transparent, fontSize = 0.sp),
+                    symbolStyle,
                     start + lMatch.range.first,
                     start + lMatch.range.last + 1
                 )
@@ -91,10 +91,11 @@ class MarkdownVisualTransformation(
                 val textPart = match.groupValues[1]
                 val fullMatchStart = start + match.range.first
                 builder.apply {
-                    addStyle(SpanStyle(color = Color.Transparent, fontSize = 0.sp), fullMatchStart, fullMatchStart + 1)
-                    addStyle(SpanStyle(color = Color.Transparent, fontSize = 0.sp), fullMatchStart + 1 + textPart.length, fullMatchStart + 2 + textPart.length)
+                    // 展现链接符号 [ ] ( )
+                    addStyle(symbolStyle, fullMatchStart, fullMatchStart + 1)
+                    addStyle(symbolStyle, fullMatchStart + 1 + textPart.length, fullMatchStart + 2 + textPart.length)
                     addStyle(SpanStyle(color = colorScheme.primary, textDecoration = TextDecoration.Underline), fullMatchStart + 1, fullMatchStart + 1 + textPart.length)
-                    addStyle(SpanStyle(color = Color.Transparent, fontSize = 0.sp), fullMatchStart + textPart.length + 2, start + match.range.last + 1)
+                    addStyle(symbolStyle, fullMatchStart + textPart.length + 2, start + match.range.last + 1)
                 }
             }
 
@@ -140,7 +141,7 @@ class MarkdownVisualTransformation(
         val contentEndInFull = currentOffset + contentGroup.range.last + 1
 
         builder.addStyle(style, contentStartInFull, contentEndInFull)
-        val symbolStyle = SpanStyle(color = Color.Transparent, fontSize = 0.sp)
+        // 展现行内样式符号如 ** , * , ~~ , `
         builder.addStyle(symbolStyle, startInFull, contentStartInFull)
         builder.addStyle(symbolStyle, contentEndInFull, endInFull)
     }

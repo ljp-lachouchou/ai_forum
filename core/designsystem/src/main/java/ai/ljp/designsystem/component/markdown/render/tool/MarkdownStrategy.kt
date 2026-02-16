@@ -1,7 +1,16 @@
 package ai.ljp.designsystem.component.markdown.render.tool
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 
 /**
  *需换行的
@@ -62,5 +71,25 @@ sealed interface MarkdownStyle : MarkdownStrategy {
             }
         }
 
+    }
+}
+@Composable
+fun ToolbarButton(
+    imageVector: ImageVector,
+    contentDescription: String? = null,
+    onClick: () -> Unit
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier
+            .size(40.dp) // 调整大小以适应 48.dp 高度的 Toolbar
+            .padding(4.dp)
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = contentDescription,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(24.dp)
+        )
     }
 }

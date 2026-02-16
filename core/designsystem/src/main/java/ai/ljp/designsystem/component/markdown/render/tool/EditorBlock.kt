@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import java.util.UUID
 
@@ -54,13 +55,18 @@ class MarkdownEditorManager(initialMarkdown : String) {
         if (index in blocks.indices) {
             val currentBlock = blocks[index]
             if (currentBlock is EditorBlock.Text) {
-                // 只有内容真的变化时才赋值，防止死循环重组
-                if (currentBlock.content != newValue) {
-                    blocks[index] = currentBlock.copy(content = newValue)
+                val oldValue = currentBlock.content
+
+                val smartValue = handleSmartBreak(oldValue, newValue)
+                val finalValue = smartValue ?: newValue
+
+                if (oldValue != finalValue) {
+                    blocks[index] = currentBlock.copy(content = finalValue)
                 }
             }
         }
     }
+
     fun insertImage(currentIndex: Int, url: String) {
         val currentBlock = blocks[currentIndex] as? EditorBlock.Text ?: return
         val text = currentBlock.content.text
@@ -74,4 +80,89 @@ class MarkdownEditorManager(initialMarkdown : String) {
         blocks.add(currentIndex + 1, EditorBlock.Image(url))
         blocks.add(currentIndex + 2, EditorBlock.Text(TextFieldValue(after)))
     }
+
+    private fun handleSmartBreak(oldValue: TextFieldValue, newValue: TextFieldValue): TextFieldValue? {
+        fun continueListMode(newValue: TextFieldValue, prefix: String): TextFieldValue {
+            val insertPos = newValue.selection.start
+            return newValue.copy(
+                text = newValue.text.replaceRange(
+                    insertPos,
+                    insertPos,
+                    prefix
+                ),
+                selection = TextRange(insertPos + prefix.length)
+            )
+        }
+
+        fun exitListMode(
+            oldValue: TextFieldValue,
+            lineStart: Int,
+            cursor: Int
+        ): TextFieldValue {
+            return oldValue.copy(
+                text = oldValue.text.replaceRange(
+                    lineStart,
+                    cursor,
+                    ""
+                ),
+            ).let {
+                val finalDocs = it.text.replaceRange(lineStart, lineStart, "")
+                it.copy(text = finalDocs, selection = TextRange(lineStart))
+            }
+        }
+        if (newValue.text.length != oldValue.text.length + 1) return null
+
+        val cursor = newValue.selection.start
+        if (cursor <= 0) return null
+
+        val lastChar = newValue.text[cursor - 1]
+        if (lastChar != '\n') return null
+
+        val text = oldValue.text
+        val oldCursor = oldValue.selection.start
+
+        val lineStart = text.lastIndexOf('\n', oldCursor - 1).let { if (it == -1) 0 else it + 1 }
+        if (lineStart > oldCursor) return null
+
+        val currentLine = text.substring(lineStart, oldCursor)
+
+        val unorderListRegex = Regex("""^(\s*[-*+]\s+)""")
+        val orderListRegex = Regex("""^(\s*)(\d+)\.\s+""")
+        val quoteRegex = Regex("""^((>\s*)+)""")
+
+        return when {
+            unorderListRegex.find(currentLine) != null -> {
+                val prefix = unorderListRegex.find(currentLine)!!.value
+                if (currentLine.trim() == prefix.trim()) {
+                    exitListMode(oldValue, lineStart, oldCursor)
+                } else {
+                    continueListMode(newValue, prefix)
+                }
+            }
+            orderListRegex.find(currentLine) != null -> {
+                val match = orderListRegex.find(currentLine)!!
+                val prefix = match.value
+                if (currentLine.trim() == prefix.trim().removeSuffix(".")) {
+                    exitListMode(oldValue, lineStart, oldCursor)
+                } else {
+                    val nextNum = (match.groupValues[2].toIntOrNull() ?: 0) + 1
+                    val nextPrefix = "${match.groupValues[1]}$nextNum. "
+                    continueListMode(newValue, nextPrefix)
+                }
+            }
+            quoteRegex.find(currentLine) != null -> {
+                val prefix = quoteRegex.find(currentLine)!!.value
+                if (currentLine.trim() == ">" || currentLine.trim().isEmpty()) {
+                    exitListMode(oldValue, lineStart, oldCursor)
+                } else {
+                    continueListMode(newValue, prefix)
+                }
+            }
+            else -> null
+        }
+    }
+
+
 }
+val MarkdownEditorManager.focusBlock
+    get() = blocks[focusedIndex] as? EditorBlock.Text ?: EditorBlock.Text()
