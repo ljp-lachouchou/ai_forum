@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -21,16 +20,15 @@ fun MarkdownToolbar(
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 2.dp, // 给一点提升感，区分编辑器区域
+        tonalElevation = 2.dp,
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
-
     ) {
         LazyRow(
             verticalAlignment = Alignment.CenterVertically,
             contentPadding = PaddingValues(horizontal = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp) // 按钮间距
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
                 ToolbarButton(AIForumIcon.ListBulleted) {

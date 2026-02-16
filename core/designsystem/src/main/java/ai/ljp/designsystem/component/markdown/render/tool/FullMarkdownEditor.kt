@@ -17,12 +17,10 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -33,8 +31,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun FullMarkdownEditor(initialContent: String,onImageClick : (MarkdownEditorManager) -> Unit) {
-    val manager = remember { MarkdownEditorManager(initialContent) }
+fun FullMarkdownEditor(
+    initialContent: String = "",
+    manager: MarkdownEditorManager = rememberMarkdownEditorManager(initialContent),
+    onImageClick : MarkdownEditorManager.() -> Unit,
+) {
     val colorScheme = MaterialTheme.colorScheme
     val typography = MaterialTheme.typography
 
@@ -92,8 +93,8 @@ fun FullMarkdownEditor(initialContent: String,onImageClick : (MarkdownEditorMana
 @Composable
 fun Preview() {
     AIForumTheme {
-        FullMarkdownEditor("") {manager ->
-            manager.insertImage(manager.focusedIndex,"https://gips1.baidu.com/it/u=2241356208,2317577872&fm=3042&app=3042&f=JPEG&wm=1,baiduai3,0,0,13,9&wmo=5,5&w=1024&h=1024")
+        FullMarkdownEditor("") {
+            insertImage(focusedIndex,"https://gips1.baidu.com/it/u=2241356208,2317577872&fm=3042&app=3042&f=JPEG&wm=1,baiduai3,0,0,13,9&wmo=5,5&w=1024&h=1024")
 
         }
     }

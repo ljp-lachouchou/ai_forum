@@ -1,9 +1,11 @@
 package ai.ljp.designsystem.component.markdown.render.tool
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -17,7 +19,7 @@ sealed interface EditorBlock {
     data class Image(val url : String, override val id: String =
         UUID.randomUUID().toString()
     ) : EditorBlock
-    }
+}
 
 @Stable
 class MarkdownEditorManager(initialMarkdown : String) {
@@ -206,6 +208,10 @@ class MarkdownEditorManager(initialMarkdown : String) {
     }
 
 
+}
+@Composable
+fun rememberMarkdownEditorManager(initialContent : String= "") : MarkdownEditorManager {
+    return remember { MarkdownEditorManager(initialContent) }
 }
 val MarkdownEditorManager.focusBlock
     get() = blocks[focusedIndex] as? EditorBlock.Text ?: EditorBlock.Text()

@@ -3,8 +3,11 @@ package feature.ljp.postcreate.impl
 import ai.ljp.data.repository.UserDataRepository
 import ai.ljp.data.repository.WordRepository
 import ai.ljp.designsystem.component.markdown.render.tool.MarkdownStyle
+import ai.ljp.domain.UploadProfileDomain
 import ai.ljp.domain.UploadWordDomain
 import ai.ljp.ui.Category
+import android.content.Context
+import android.net.Uri
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -25,13 +28,10 @@ import kotlin.time.ExperimentalTime
 class PostCreateViewModel @Inject constructor(
     private val wordRepository: WordRepository,
     private val uploadWordDomain: UploadWordDomain,
+    private val uploadProfileDomain: UploadProfileDomain,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
-    private val _textValue = MutableStateFlow(
-        TextFieldValue("")
-    )
-    val textValue: StateFlow<TextFieldValue> = _textValue.asStateFlow()
+    val curImageUrl : StateFlow<String> = savedStateHandle.getStateFlow(CUR_IMAGE_KEY,"")
     val title : StateFlow<String> =
         savedStateHandle.getStateFlow(TITLE_KEY,"")
     val postCreateUiState : StateFlow<PostCreateUiState> =
@@ -40,24 +40,19 @@ class PostCreateViewModel @Inject constructor(
     val category : StateFlow<Category> =
         savedStateHandle.getStateFlow(CATEGORY_KEY, Category.Tech)
     // 2. 当用户输入或点击工具栏时，调用此方法
-    fun onContentChange(newVal: TextFieldValue) {
-        _textValue.value = newVal
-    }
+
     fun onCategoryChanged(category: Category) {
         savedStateHandle[CATEGORY_KEY] = category
     }
 
-    // 4. 应用你之前的 MarkdownStyle
-    fun applyMarkdownStyle(style: MarkdownStyle) {
-        val current = _textValue.value
-        val next = style.apply(current)
-        onContentChange(next)
-    }
     private fun changePostUiState(uiState : PostCreateUiState) {
         savedStateHandle[POST_CREATE_STATE_KEY] = uiState
     }
     fun onTitleChanged(title : String) {
         savedStateHandle[TITLE_KEY] = title
+    }
+    fun onImageUrlChanged(imageUrl : String) {
+        savedStateHandle[CUR_IMAGE_KEY] = imageUrl
     }
 
     @OptIn(ExperimentalTime::class)
@@ -96,6 +91,23 @@ class PostCreateViewModel @Inject constructor(
             }
         }
     }
+
+    @OptIn(ExperimentalTime::class)
+    fun onUploadImage(context : Context, uri : Uri) {
+        val fileName = "image_${Clock.System.now()}.jpg"
+        viewModelScope.launch {
+            try {
+                context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    val url = uploadProfileDomain(fileName,inputStream.readBytes())
+                    url?.let {
+                        onImageUrlChanged(it)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }
 sealed interface PostCreateUiState {
     data object Empty : PostCreateUiState
@@ -107,3 +119,4 @@ sealed interface PostCreateUiState {
 private const val POST_CREATE_STATE_KEY = "postCreateStateKey"
 private const val TITLE_KEY = "titleKey"
 private const val CATEGORY_KEY = "categoryKey"
+private const val CUR_IMAGE_KEY = "curImageKey"

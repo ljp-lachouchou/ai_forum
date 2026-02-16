@@ -1,21 +1,22 @@
 package feature.ljp.postcreate.impl
 
+import ai.ljp.designsystem.component.AIForumLoadingWheel
 import ai.ljp.designsystem.component.markdown.render.tool.FullMarkdownEditor
-import ai.ljp.designsystem.component.markdown.render.tool.MarkdownStyle
-import ai.ljp.designsystem.component.markdown.render.tool.MarkdownToolbar
+import ai.ljp.designsystem.component.markdown.render.tool.rememberMarkdownEditorManager
 import ai.ljp.ui.AIForumToolbar
 import ai.ljp.ui.Category
 import ai.ljp.ui.CategoryFlowRow
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContract
+import ai.ljp.ui.PickOnly
+import ai.ljp.ui.rememberLauncherImageForActivityResult
+import android.content.Context
+import android.net.Uri
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
@@ -26,37 +27,72 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ljp.model.WordTag
 import feature.ljp.postcreate.api.R
 import java.io.InputStream
 
-
+@Composable
+internal fun PostCreateScreen(
+    modifier: Modifier = Modifier,
+    onBackClick : () -> Unit,
+    viewModel: PostCreateViewModel = hiltViewModel()
+) {
+    val postCreateUiState by viewModel.postCreateUiState.collectAsStateWithLifecycle()
+    val title by viewModel.title.collectAsStateWithLifecycle()
+    val curImageUrl by viewModel.curImageUrl.collectAsStateWithLifecycle()
+    val category by viewModel.category.collectAsStateWithLifecycle()
+    PostCreateScreen(
+        postCreateUiState = postCreateUiState,
+        title = title,
+        curImageUrl = curImageUrl,
+        category = category,
+        onBackClick = onBackClick,
+        onTitleChanged = viewModel::onTitleChanged,
+        onCreatePost = viewModel::onCreatePost,
+        onCategoryChanged = viewModel::onCategoryChanged,
+        onUploadImage = viewModel::onUploadImage,
+        modifier = modifier
+    )
+}
 @Composable
 private fun PostCreateScreen(
     postCreateUiState: PostCreateUiState,
-    textValue : TextFieldValue,
     title : String,
+    curImageUrl : String,
     category: Category,
     onBackClick : () -> Unit,
     onTitleChanged : (String) -> Unit,
     onCreatePost : (InputStream?, String, List<WordTag>, String) -> Unit,
-    applyMarkdownStyle : (MarkdownStyle) -> Unit,
-    onContentChange : (TextFieldValue) -> Unit,
     onCategoryChanged : (Category)-> Unit,
+    onUploadImage : (Context, Uri) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
+    val manager = rememberMarkdownEditorManager()
+    val context = LocalContext.current
+    val picLauncher = rememberLauncherImageForActivityResult {uri ->
+         onUploadImage(context,uri)
+         manager.apply {
+            insertImage(
+                currentIndex = focusedIndex,
+                url = curImageUrl
+            )
+        }
+    }
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -67,14 +103,18 @@ private fun PostCreateScreen(
                 actionIcon = {
                     OutlinedButton(onClick = {
                         onCreatePost(
-                            textValue.text.byteInputStream(),
-                            "",//TODO
+                            manager.exportMarkdown().byteInputStream(),
+                            category.name,
                             emptyList(),
                             title
                         )
                     }) {
-                        ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
-                            Text(text = stringResource(R.string.feature_post_create_api_create))
+                        if (postCreateUiState is PostCreateUiState.Loading) {
+                            AIForumLoadingWheel(Modifier.align(Alignment.CenterVertically))
+                        }else {
+                            ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
+                                Text(text = stringResource(R.string.feature_post_create_api_create))
+                            }
                         }
                     }
                 }
@@ -95,6 +135,14 @@ private fun PostCreateScreen(
                 onCategoryChanged = onCategoryChanged,
                 modifier = Modifier.fillMaxWidth()
             )
+            FullMarkdownEditor(
+                manager = manager
+            ) {
+                picLauncher.launch(
+                    PickOnly
+                )
+
+            }
             Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
         }
     }
