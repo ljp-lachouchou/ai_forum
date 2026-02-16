@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
+import com.ljp.common.baseui.markdown.render.actual.MarkdownView
 import com.ljp.model.WordCommentsResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -79,9 +80,7 @@ fun WordCardItem(
                 DynamicContent(
                     url = wordUrl,
                     text = {
-                        ProvideTextStyle(MaterialTheme.typography.bodySmall) {
-                            Text(text = it)
-                        }
+                        MarkdownView(input = it)
                     }
                 )
             }

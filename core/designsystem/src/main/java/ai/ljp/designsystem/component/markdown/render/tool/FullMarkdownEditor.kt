@@ -62,11 +62,7 @@ fun FullMarkdownEditor(initialContent: String) {
         )
     }
 }
-@Preview(
-    showBackground = true,
-    showSystemUi = true, // 必须开启
-    device = "spec:width=1080px,height=2340px,navigation=buttons"
-)
+@Preview
 @Composable
 fun Preview() {
     AIForumTheme {

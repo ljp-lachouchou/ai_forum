@@ -54,6 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.ljp.common.baseui.markdown.render.actual.MarkdownView
 import com.ljp.model.CommentProfileResource
 import feature.ljp.post.api.R
 import kotlinx.coroutines.flow.StateFlow
@@ -155,11 +156,9 @@ internal fun PostScreen(
                                 DynamicContent(
                                     url = postUiState.post.wordUrl
                                 ) {
-                                    ProvideTextStyle(
-                                        MaterialTheme.typography.bodyMedium
-                                    ) {
-                                        Text(text = it)
-                                    }
+                                    MarkdownView(
+                                        input = it
+                                    )
                                 }
                             }
                             item {

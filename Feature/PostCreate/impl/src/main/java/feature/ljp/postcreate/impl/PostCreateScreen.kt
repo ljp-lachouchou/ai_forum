@@ -2,6 +2,8 @@ package feature.ljp.postcreate.impl
 
 import ai.ljp.designsystem.component.markdown.render.tool.MarkdownStyle
 import ai.ljp.ui.AIForumToolbar
+import ai.ljp.ui.Category
+import ai.ljp.ui.CategoryFlowRow
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
@@ -41,13 +43,16 @@ private fun PostCreateScreen(
     postCreateUiState: PostCreateUiState,
     textValue : TextFieldValue,
     title : String,
+    category: Category,
     onBackClick : () -> Unit,
     onTitleChanged : (String) -> Unit,
     onCreatePost : (InputStream?, String, List<WordTag>, String) -> Unit,
     applyMarkdownStyle : (MarkdownStyle) -> Unit,
     onContentChange : (TextFieldValue) -> Unit,
+    onCategoryChanged : (Category)-> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusRequester = remember { FocusRequester() }
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -77,8 +82,14 @@ private fun PostCreateScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TitleTextField(
-                textValue = textValue,
-                onContentChange = onContentChange
+                title = title,
+                onTitleChanged = onTitleChanged,
+                focusRequester = focusRequester
+            )
+            CategoryFlowRow(
+                currentCategory = category,
+                onCategoryChanged = onCategoryChanged,
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
         }
@@ -86,13 +97,14 @@ private fun PostCreateScreen(
 }
 @Composable
 private fun TitleTextField(
-    textValue : TextFieldValue,
-    onContentChange : (TextFieldValue) -> Unit,
+    title : String,
+    focusRequester : FocusRequester,
+    onTitleChanged : (String) -> Unit,
 ) {
-    val focusRequester = remember { FocusRequester() }
+
     TextField(
-        value = textValue,
-        onValueChange = onContentChange,
+        value = title,
+        onValueChange = onTitleChanged,
         textStyle = TextStyle(
             color = Color.Black,
             fontSize = 20.sp,           // 决定了文字和光标的大小
@@ -103,4 +115,13 @@ private fun TitleTextField(
         modifier = Modifier
             .focusRequester(focusRequester)
     )
+}
+
+@Composable
+private fun PostContentEditArea(
+    textValue : TextFieldValue,
+    modifier: Modifier = Modifier,
+    onContentChange : (TextFieldValue) -> Unit,
+) {
+
 }

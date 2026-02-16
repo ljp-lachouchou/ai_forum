@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.ljp.common.baseui.markdown.render.actual.MarkdownView
 import com.ljp.model.Profile
 import com.ljp.model.WordCommentsResource
 
@@ -68,10 +69,9 @@ fun WordCard(
                 DynamicContent(
                     url = wordSource.wordUrl,
                 ) {content ->
-                    ProvideTextStyle(MaterialTheme.typography.bodySmall) {
-                        Text(text = content,
-                            maxLines = 3, overflow = TextOverflow.Ellipsis)
-                    }
+                    MarkdownView(
+                        input = content
+                    )
                 }
             }
             HorizontalDivider()

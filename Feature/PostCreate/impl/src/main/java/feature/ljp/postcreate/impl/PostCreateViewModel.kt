@@ -4,6 +4,7 @@ import ai.ljp.data.repository.UserDataRepository
 import ai.ljp.data.repository.WordRepository
 import ai.ljp.designsystem.component.markdown.render.tool.MarkdownStyle
 import ai.ljp.domain.UploadWordDomain
+import ai.ljp.ui.Category
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -36,10 +37,14 @@ class PostCreateViewModel @Inject constructor(
     val postCreateUiState : StateFlow<PostCreateUiState> =
         savedStateHandle.getStateFlow(POST_CREATE_STATE_KEY,
             PostCreateUiState.Empty)
-
+    val category : StateFlow<Category> =
+        savedStateHandle.getStateFlow(CATEGORY_KEY, Category.Tech)
     // 2. 当用户输入或点击工具栏时，调用此方法
     fun onContentChange(newVal: TextFieldValue) {
         _textValue.value = newVal
+    }
+    fun onCategoryChanged(category: Category) {
+        savedStateHandle[CATEGORY_KEY] = category
     }
 
     // 4. 应用你之前的 MarkdownStyle
@@ -54,6 +59,7 @@ class PostCreateViewModel @Inject constructor(
     fun onTitleChanged(title : String) {
         savedStateHandle[TITLE_KEY] = title
     }
+
     @OptIn(ExperimentalTime::class)
     fun onCreatePost(
         inputStream: InputStream?,
@@ -63,6 +69,7 @@ class PostCreateViewModel @Inject constructor(
     ) {
 
         viewModelScope.launch {
+            changePostUiState(PostCreateUiState.Loading)
             val fileName = "word_${Clock.System.now()}.md"
             try {
                 inputStream?.use {ist ->
@@ -85,7 +92,7 @@ class PostCreateViewModel @Inject constructor(
                 }
 
             }catch (e : Exception) {
-
+                changePostUiState(PostCreateUiState.Error)
             }
         }
     }
@@ -93,8 +100,10 @@ class PostCreateViewModel @Inject constructor(
 sealed interface PostCreateUiState {
     data object Empty : PostCreateUiState
     data object Error : PostCreateUiState
+    data object Loading : PostCreateUiState
     data object Success : PostCreateUiState
 }
 
 private const val POST_CREATE_STATE_KEY = "postCreateStateKey"
 private const val TITLE_KEY = "titleKey"
+private const val CATEGORY_KEY = "categoryKey"

@@ -71,16 +71,24 @@ private fun MarkdownTextBlock(
     vt: VisualTransformation,
     focusRequester: FocusRequester
 ) {
-    // 关键状态：存储文本布局结果，用于 Canvas 定位
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
+
+    // 基础配置常量
     val barWidth = 4.dp
-    val barSpacing = 2.dp
+    val spacing = 8.dp // 每一层嵌套之间的间距
     val primaryColor = MaterialTheme.colorScheme.primary
+
+    fun getNestedMetrics(line: String): Pair<Int, Boolean> {
+        val quoteDepth = Regex("""^(>\s*)+""").find(line)?.value?.count { it == '>' } ?: 0
+        val hasList = line.unOrderListMatchFound()
+        return quoteDepth to hasList
+    }
+
     BasicTextField(
         value = block.content,
         onValueChange = { manager.updateBlockContent(index, it) },
         visualTransformation = vt,
-        onTextLayout = { textLayoutResult = it }, // 获取布局信息
+        onTextLayout = { textLayoutResult = it },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
@@ -88,93 +96,102 @@ private fun MarkdownTextBlock(
             .onFocusChanged { if (it.isFocused) manager.focusedIndex = index },
         textStyle = MaterialTheme.typography.bodyLarge.copy(
             color = MaterialTheme.colorScheme.onSurface,
-            lineHeight = 24.sp // 固定行高有助于视觉对齐
+            lineHeight = 30.sp
         ),
         decorationBox = { innerTextField ->
             Box(modifier = Modifier.fillMaxWidth()) {
-                // 1. 绘制层：根据每一行的内容决定是否画线
                 Canvas(modifier = Modifier.matchParentSize()) {
                     val layout = textLayoutResult ?: return@Canvas
                     val rawText = block.content.text
                     val lines = rawText.split("\n")
+                    val unitPx = (barWidth + spacing).toPx()
 
-                    var currentLineStartOffset = 0
-                    lines.forEachIndexed { i, lineContent ->
-                        // 检查当前行是否以引用符开头
-                        quoteAction(lineContent) {line->
-                            quote(
+                    var currentOffset = 0
+                    lines.forEach { lineContent ->
+                        val (depth, hasList) = getNestedMetrics(lineContent)
+
+                        repeat(depth) { i ->
+                            drawQuoteBar(
                                 layout = layout,
-                                currentLineStartOffset =
-                                    currentLineStartOffset,
-                                lineContent = line,
-                                quoteColor = primaryColor
+                                offset = currentOffset,
+                                startX = i * unitPx,
+                                width = barWidth.toPx(),
+                                color = primaryColor
                             )
                         }
-                        unOrderListMatch(lineContent) {match->
-                            unorderListItem(
-                                unorderListItemColor = primaryColor,
-                                barWidth = barWidth,
-                                layout = layout,
-                                currentLineStartOffset = currentLineStartOffset,
-                            )
 
+                        if (hasList) {
+                            drawListDot(
+                                layout = layout,
+                                offset = currentOffset,
+                                startX = depth * unitPx,
+                                radius = 3.dp.toPx(), // 圆点稍微小一点更精致
+                                color = primaryColor
+                            )
                         }
-                        currentLineStartOffset += lineContent.length + 1 // +1 是换行符
+
+                        currentOffset += lineContent.length + 1
                     }
                 }
 
-                // 2. 输入层：为了给左侧竖线留出空间，动态增加 Padding
-                // 如果整块没有任何引用，就不留间距；如果有，则留出竖线宽度+间距
-                val hasPadding = remember(block.content.text) {
-                    block.content.text.lines().any { it.startsWith("> ") }
-                    block.content.text.lines().any() {
-                        it.unOrderListMatchFound()
-                    }
+                val maxPadding = remember(block.content.text) {
+                    block.content.text.lines().maxOfOrNull { line ->
+                        val (depth, hasList) = getNestedMetrics(line)
+                        (depth + if (hasList) 1 else 0) * (barWidth + spacing)
+                    } ?: 0.dp
                 }
 
-                Box(modifier = Modifier.padding(start = if (hasPadding) {
-                    1.5 * barWidth + barSpacing
-                } else 0.dp)) {
+                Box(modifier = Modifier.padding(start = maxPadding)) {
                     innerTextField()
                 }
             }
         }
     )
 }
-private fun DrawScope.quote(
-    layout : TextLayoutResult,
-    lineContent : String,
-    currentLineStartOffset : Int,
-    barWidth : Dp= 4.dp,
-    quoteColor : Color,
-) {
-    val lineIndex = layout.getLineForOffset(currentLineStartOffset)
-    val lastLineIndex = layout.getLineForOffset(currentLineStartOffset + lineContent.length)
 
+/**
+ * 绘制引用竖线，支持传入 startX 偏移
+ */
+private fun DrawScope.drawQuoteBar(
+    layout: TextLayoutResult,
+    offset: Int,
+    startX: Float,
+    width: Float,
+    color: Color
+) {
+    val lineIndex = layout.getLineForOffset(offset)
     val top = layout.getLineTop(lineIndex)
-    val bottom = layout.getLineBottom(lastLineIndex)
+    val bottom = layout.getLineBottom(lineIndex)
 
     drawRoundRect(
-        color = quoteColor,
-        topLeft = Offset(0f, top + 2.dp.toPx()), // 微调顶部间距
-        size = Size(barWidth.toPx(), (bottom - top) - 4.dp.toPx()), // 微调高度
+        color = color,
+        topLeft = Offset(startX, top + 2.dp.toPx()),
+        size = Size(width, (bottom - top) - 4.dp.toPx()),
         cornerRadius = CornerRadius(2.dp.toPx())
     )
 }
 
-private fun DrawScope.unorderListItem(
+/**
+ * 绘制列表圆点，支持传入 startX 偏移
+ */
+private fun DrawScope.drawListDot(
     layout: TextLayoutResult,
-    unorderListItemColor: Color,
-    currentLineStartOffset: Int,
-    barWidth: Dp,
+    offset: Int,
+    startX: Float,
+    radius: Float,
+    color: Color
 ) {
-    val lineIndex = layout.getLineForOffset(currentLineStartOffset)
+    val lineIndex = layout.getLineForOffset(offset)
     val lineTop = layout.getLineTop(lineIndex)
     val lineBottom = layout.getLineBottom(lineIndex)
-    val centerY = (lineTop + lineBottom) / 2f + 3.5.dp.toPx() // Y 在行高中间
+
+    // Y 轴中心对齐文字基线感官中心
+    val centerY = (lineTop + lineBottom) / 2f
+
     drawCircle(
-        color = unorderListItemColor,
-        radius = barWidth.toPx(),
-        center = Offset(barWidth.toPx() /2,centerY)
+        color = color,
+        radius = radius,
+        // 圆心 X 坐标 = 起始偏移 + 居中修正
+        center = Offset(startX + radius, centerY)
     )
 }

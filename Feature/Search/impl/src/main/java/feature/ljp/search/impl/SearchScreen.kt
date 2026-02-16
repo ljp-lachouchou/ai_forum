@@ -214,9 +214,7 @@ private fun SearchResultBody(
                         DynamicContent(
                             url = word.wordUrl
                         ) {
-                            ProvideTextStyle(MaterialTheme.typography.bodySmall) {
-                                Text(text = word.category, color = MaterialTheme.colorScheme.onPrimary)
-                            }
+                            MarkdownView(input = it)
                         }
                     }
 

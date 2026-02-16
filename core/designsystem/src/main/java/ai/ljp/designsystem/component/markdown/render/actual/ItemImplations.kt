@@ -433,7 +433,7 @@ fun MarkdownBlockItem(
         is MarkNode.Block.BlockQuote -> MarkdownBlockQuote(node, modifier,onLinkClick)
         is MarkNode.Block.ListItem -> MarkdownListItem(node,modifier, onLinkClick)
         is MarkNode.Block.Table -> MarkdownTable(node,modifier)
-        is MarkNode.Block.ThematicBreak -> HorizontalDivider(
+        MarkNode.Block.ThematicBreak -> HorizontalDivider(
             modifier = Modifier.padding(vertical = 16.dp),
             color = MaterialTheme.colorScheme.outlineVariant
         )
@@ -460,7 +460,7 @@ fun MarkdownRenderer(
 }
 @Composable
 fun MarkdownView(input: String,
-                 configBlock: InlineStyleConfigBuilder.()-> Unit,
+                 configBlock: InlineStyleConfigBuilder.()-> Unit = {},
 
                  urlSigner:String.()-> String = {this},
                  onLinkClick: (String) -> Unit = {}) {
