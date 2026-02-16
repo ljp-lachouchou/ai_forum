@@ -7,15 +7,17 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.IGNORE
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 
 @Dao
 interface TreeholeDao {
     @Upsert
     suspend fun upsertTreeholes(treeholes : List<TreeholeEntity>)
-
     @Insert(onConflict = IGNORE)
     suspend fun insertTreehole(treehole : TreeholeEntity)
+    @Transaction
+
     @Query("""
         SELECT * FROM treeholes
         ORDER BY createdAt DESC

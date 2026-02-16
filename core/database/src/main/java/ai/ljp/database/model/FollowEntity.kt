@@ -10,7 +10,10 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 @Entity (
     tableName = "follows",
-
+    indices = [
+        Index("userId"),
+        Index("followId"),
+    ]
 )
 data class FollowEntity(
     @PrimaryKey

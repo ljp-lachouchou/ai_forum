@@ -26,7 +26,7 @@ data class TreeholeEntity(
     @ColumnInfo(name = "treeholeId")
     val id : String,
     @ColumnInfo(name = "authorId")
-    val authorId : String?,
+    val authorId : String,
     @ColumnInfo(name = "content")
     val content : String,
     @ColumnInfo(name = "anonymous")

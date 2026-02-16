@@ -10,7 +10,8 @@ import kotlinx.datetime.Instant
 @Entity (
     tableName = "likes",
     indices = [
-        Index(value = ["postId"])
+        Index(value = ["postId"]),
+        Index(value = ["userId"])
     ]
 )
 data class LikeEntity(

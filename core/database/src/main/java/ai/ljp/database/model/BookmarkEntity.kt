@@ -11,7 +11,8 @@ import kotlinx.datetime.Instant
 @Entity(
     tableName = "bookmarks",
     indices = [
-        Index(value = ["postId"])
+        Index(value = ["postId"]),
+        Index(value = ["userId"])
     ]
 )
 data class BookmarkEntity(
