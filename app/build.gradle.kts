@@ -52,20 +52,38 @@ android {
 
 dependencies {
 
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.ktor.client.websockets)
-    implementation(libs.ktor.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.serialization.kotlinx.xml)
-    implementation(libs.ktor.logging)
+    implementation(projects.feature.home.api)
+    implementation(projects.feature.home.impl)
+    implementation(projects.feature.post.api)
+    implementation(projects.feature.post.impl)
+    implementation(projects.feature.profile.api)
+    implementation(projects.feature.profile.impl)
+    implementation(projects.feature.login.api)
+    implementation(projects.feature.login.impl)
+    implementation(projects.feature.search.api)
+    implementation(projects.feature.search.impl)
+    implementation(projects.feature.me.api)
+    implementation(projects.feature.me.impl)
+    implementation(projects.feature.treehole.api)
+    implementation(projects.feature.treehole.impl)
+    implementation(projects.feature.treeholeCreate.api)
+    implementation(projects.feature.treeholeCreate.impl)
+    implementation(projects.feature.postCreate.api)
+    implementation(projects.feature.postCreate.impl)
+
+
+
+    implementation(projects.core.common)
+    implementation(projects.core.ui)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.data)
+    implementation(projects.core.model)
+    implementation(projects.core.analytics)
     implementation(projects.sync)
-    api(projects.core.datastore)
+
     implementation(libs.slf4j.android)
 
 //    implementation(platform(libs.firebase.bom))
-    implementation(projects.core.analytics)
 //    implementation(libs.firebase.cloud.messaging)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

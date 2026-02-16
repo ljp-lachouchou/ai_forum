@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_home_api_post_create">创建帖子</string>
+    <string name="feature_home_api_treehole_create">创建树洞</string>
+</resources>

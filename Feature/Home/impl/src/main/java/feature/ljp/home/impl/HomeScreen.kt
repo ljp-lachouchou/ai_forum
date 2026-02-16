@@ -1,11 +1,18 @@
 package feature.ljp.home.impl
 
 import ai.ljp.designsystem.component.AIForumLoadingWheel
+import ai.ljp.designsystem.component.expandbutton.ExpandButton
+import ai.ljp.designsystem.component.expandbutton.LocalPopupItemSize
+import ai.ljp.designsystem.component.expandbutton.PopupItem
+import ai.ljp.designsystem.component.expandbutton.PopupItemSize
+import ai.ljp.designsystem.component.expandbutton.rememberExpandButtonState
 import ai.ljp.designsystem.component.scrollbar.DraggableScrollbar
 import ai.ljp.designsystem.component.scrollbar.rememberDraggableScroller
 import ai.ljp.designsystem.component.scrollbar.scrollbarState
+import ai.ljp.designsystem.icon.AIForumIcon
 import ai.ljp.ui.WordsFeedUiState
 import ai.ljp.ui.wordsFeed
+import android.R
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -15,6 +22,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -26,7 +34,9 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +51,8 @@ fun HomeScreen(
     onProfileClick: (String) -> Unit,
     onPostClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onPostCreateClick : () -> Unit,
+    onTreeholeCreateClick : () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val wordsFeedState by viewModel.feedUiState.collectAsStateWithLifecycle()
@@ -54,7 +66,9 @@ fun HomeScreen(
         onToggleBookmarkClick = viewModel::toggleBookmark,
         isLike = viewModel::isLike,
         isBookmark = viewModel::isBookmark,
-        modifier = modifier
+        modifier = modifier,
+        onPostCreateClick = onPostCreateClick,
+        onTreeholeCreateClick = onTreeholeCreateClick
     )
 }
 @Composable
@@ -67,6 +81,8 @@ internal fun HomeScreen(
     onToggleBookmarkClick : (String) -> Unit,
     isLike : (String) -> StateFlow<Boolean>,
     isBookmark : (String) -> StateFlow<Boolean>,
+    onPostCreateClick : () -> Unit,
+    onTreeholeCreateClick : () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isFeedLoading = wordsFeedState is WordsFeedUiState.Loading
@@ -76,7 +92,7 @@ internal fun HomeScreen(
     val scrollState = state.scrollbarState(
         itemCount = itemCount
     )
-
+    val expandButtonState = rememberExpandButtonState(false)
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -122,6 +138,34 @@ internal fun HomeScreen(
                 AIForumLoadingWheel(Modifier.align(Alignment.Center))
             }
         }
+        ExpandButton(
+            state = expandButtonState,
+            modifier = Modifier.align(Alignment.BottomEnd),
+            actionIcon = AIForumIcon.Add,
+            popupContent = {
+                CompositionLocalProvider(
+                    LocalPopupItemSize provides PopupItemSize(expandButtonState.size)
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        PopupItem(
+                            feature.ljp.home.api.R.string.feature_home_api_post_create,
+                            AIForumIcon.Post
+                        ) {
+                            onPostCreateClick()
+                        }
+                        PopupItem(
+                            feature.ljp.home.api.R.string.feature_home_api_treehole_create,
+                            AIForumIcon.Treehole
+                        ) {
+                            onTreeholeCreateClick()
+                        }
+                    }
+                }
+            }
+        )
         state.DraggableScrollbar(
             orientation = Orientation.Vertical,
             state = scrollState,

@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.icons.outlined.ChatBubble
 import androidx.compose.material.icons.outlined.Soap
+import androidx.compose.material.icons.rounded.AccountTree
 import androidx.compose.material.icons.rounded.Article
 import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.material.icons.rounded.Bookmarks
@@ -65,4 +66,5 @@ object AIForumIcon {
     val Code = Icons.Rounded.Code
 
     val Image = Icons.Rounded.Image
+    val Treehole = Icons.Rounded.AccountTree
 }

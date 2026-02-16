@@ -13,6 +13,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(projects.core.domain)//
     implementation(projects.feature.home.api)
+    implementation(projects.feature.postCreate.api)
+    implementation(projects.feature.treeholeCreate.api)
     implementation(projects.feature.profile.api)
     implementation(projects.feature.post.api)
     api(projects.sync)
