@@ -24,6 +24,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
@@ -79,6 +84,16 @@ private fun MarkdownTextBlock(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
+            .onPreviewKeyEvent { keyEvent ->
+                if (keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.Backspace) {
+                    val selection = block.content.selection
+                    if (selection.collapsed && selection.start == 0) {
+                        manager.handleBackspaceAtStart(index)
+                        return@onPreviewKeyEvent true
+                    }
+                }
+                false
+            }
             .focusRequester(focusRequester)
             .onFocusChanged { if (it.isFocused) manager.focusedIndex = index },
         textStyle = MaterialTheme.typography.bodyLarge.copy(

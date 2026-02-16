@@ -66,6 +66,48 @@ class MarkdownEditorManager(initialMarkdown : String) {
             }
         }
     }
+    internal fun handleBackspaceAtStart(currentIndex: Int) {
+        if (currentIndex <= 0) return // 第一块，无法向上合并
+
+        val currentBlock = blocks[currentIndex] as? EditorBlock.Text ?: return
+        val prevBlock = blocks[currentIndex - 1]
+
+        when (prevBlock) {
+            is EditorBlock.Image -> {
+                if (currentIndex >= 2 && blocks[currentIndex - 2] is EditorBlock.Image) {
+                    blocks.removeAt(currentIndex - 1)
+                    focusedIndex = currentIndex - 1
+                } else if (currentIndex >= 2 && blocks[currentIndex - 2] is EditorBlock.Text) {
+                    val targetTextBlock = blocks[currentIndex - 2] as EditorBlock.Text
+                    val combinedText = targetTextBlock.content.text + currentBlock.content.text
+
+                    val newSelection = TextRange(targetTextBlock.content.text.length)
+                    blocks[currentIndex - 2] = targetTextBlock.copy(
+                        content = TextFieldValue(combinedText, newSelection)
+                    )
+
+                    blocks.removeAt(currentIndex)
+                    blocks.removeAt(currentIndex - 1)
+
+                    focusedIndex = currentIndex - 2
+                } else {
+                    // 如果图片就是第一块（index 0），直接删掉图片
+                    blocks.removeAt(currentIndex - 1)
+                    focusedIndex = currentIndex - 1
+                }
+            }
+            is EditorBlock.Text -> {
+                val combinedText = prevBlock.content.text + currentBlock.content.text
+                val newSelection = TextRange(prevBlock.content.text.length)
+
+                blocks[currentIndex - 1] = prevBlock.copy(
+                    content = TextFieldValue(combinedText, newSelection)
+                )
+                blocks.removeAt(currentIndex)
+                focusedIndex = currentIndex - 1
+            }
+        }
+    }
 
     fun insertImage(currentIndex: Int, url: String) {
         val currentBlock = blocks[currentIndex] as? EditorBlock.Text ?: return
@@ -79,6 +121,7 @@ class MarkdownEditorManager(initialMarkdown : String) {
         blocks[currentIndex] = EditorBlock.Text(TextFieldValue(before))
         blocks.add(currentIndex + 1, EditorBlock.Image(url))
         blocks.add(currentIndex + 2, EditorBlock.Text(TextFieldValue(after)))
+        focusedIndex = currentIndex + 2
     }
 
     private fun handleSmartBreak(oldValue: TextFieldValue, newValue: TextFieldValue): TextFieldValue? {

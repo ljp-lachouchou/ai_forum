@@ -121,19 +121,3 @@ private fun TitleTextField(
     )
 }
 
-@Composable
-private fun PostContentEditArea(
-    textValue : TextFieldValue,
-    modifier: Modifier = Modifier,
-    onContentChange : (TextFieldValue) -> Unit,
-) {
-    Box(
-        modifier = modifier.fillMaxSize().imePadding(),
-    ) {
-        FullMarkdownEditor()
-        MarkdownToolbar {markdownStyle->
-            onContentChange(markdownStyle.apply(textValue))
-        }
-    }
-
-}
