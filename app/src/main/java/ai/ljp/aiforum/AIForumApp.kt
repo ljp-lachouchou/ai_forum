@@ -8,18 +8,41 @@ import cn.jpush.android.api.JPushInterface
 import dagger.hilt.android.HiltAndroidApp
 import android.app.ActivityManager
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.os.Process
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy.Builder
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import javax.inject.Inject
+
 @HiltAndroidApp
-class AIForumApp : Application() {
+class AIForumApp : Application(), ImageLoaderFactory {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate() {
         super.onCreate()
+        setStrictModePolicy()
         JPushInterface.setDebugMode(true)
         JPushInterface.init(this)
         if (isMainProcess()) {
             Sync.initialize(this)
         }
     }
+    @Inject
+    lateinit var imageLoader: dagger.Lazy<ImageLoader>
+
+    private fun isDebuggable(): Boolean {
+        return 0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE
+    }
+    private fun setStrictModePolicy() {
+        if (isDebuggable()) {
+            StrictMode.setThreadPolicy(
+                Builder().detectAll().penaltyLog().build(),
+            )
+        }
+    }
+
+    override fun newImageLoader(): ImageLoader = imageLoader.get()
 }
 
 
