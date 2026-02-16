@@ -3,8 +3,14 @@ package ai.ljp.designsystem.component.markdown.render.tool
 import ai.ljp.designsystem.theme.AIForumTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
@@ -28,7 +34,7 @@ fun FullMarkdownEditor(initialContent: String) {
         MarkdownVisualTransformation(colorScheme, typography)
     }
     val focusRequesters = remember { mutableMapOf<String, FocusRequester>() }
-    Column(Modifier.fillMaxSize()) {
+    Column(Modifier.fillMaxSize().imePadding()) {
         //TODO 工具栏
 
 
@@ -51,9 +57,16 @@ fun FullMarkdownEditor(initialContent: String) {
         }) {
             Text("打印 Markdown 源码")
         }
+        Spacer(Modifier
+            .windowInsetsBottomHeight(WindowInsets.safeDrawing)
+        )
     }
 }
-@Preview
+@Preview(
+    showBackground = true,
+    showSystemUi = true, // 必须开启
+    device = "spec:width=1080px,height=2340px,navigation=buttons"
+)
 @Composable
 fun Preview() {
     AIForumTheme {

@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 
 @Composable
 fun MarkdownBlockItem(
@@ -74,7 +75,7 @@ private fun MarkdownTextBlock(
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     val barWidth = 4.dp
     val barSpacing = 2.dp
-    val quoteColor = MaterialTheme.colorScheme.primary
+    val primaryColor = MaterialTheme.colorScheme.primary
     BasicTextField(
         value = block.content,
         onValueChange = { manager.updateBlockContent(index, it) },
@@ -100,16 +101,23 @@ private fun MarkdownTextBlock(
                     var currentLineStartOffset = 0
                     lines.forEachIndexed { i, lineContent ->
                         // 检查当前行是否以引用符开头
-                        when {
-                            lineContent.startsWith("> ") -> {
-                                quote(
-                                    layout = layout,
-                                    currentLineStartOffset =
-                                        currentLineStartOffset,
-                                    lineContent = lineContent,
-                                    quoteColor = quoteColor
-                                )
-                            }
+                        quoteAction(lineContent) {line->
+                            quote(
+                                layout = layout,
+                                currentLineStartOffset =
+                                    currentLineStartOffset,
+                                lineContent = line,
+                                quoteColor = primaryColor
+                            )
+                        }
+                        unOrderListMatch(lineContent) {match->
+                            unorderListItem(
+                                unorderListItemColor = primaryColor,
+                                barWidth = barWidth,
+                                layout = layout,
+                                currentLineStartOffset = currentLineStartOffset,
+                            )
+
                         }
                         currentLineStartOffset += lineContent.length + 1 // +1 是换行符
                     }
@@ -117,11 +125,16 @@ private fun MarkdownTextBlock(
 
                 // 2. 输入层：为了给左侧竖线留出空间，动态增加 Padding
                 // 如果整块没有任何引用，就不留间距；如果有，则留出竖线宽度+间距
-                val hasAnyQuote = remember(block.content.text) {
+                val hasPadding = remember(block.content.text) {
                     block.content.text.lines().any { it.startsWith("> ") }
+                    block.content.text.lines().any() {
+                        it.unOrderListMatchFound()
+                    }
                 }
 
-                Box(modifier = Modifier.padding(start = if (hasAnyQuote) barWidth + barSpacing else 0.dp)) {
+                Box(modifier = Modifier.padding(start = if (hasPadding) {
+                    1.5 * barWidth + barSpacing
+                } else 0.dp)) {
                     innerTextField()
                 }
             }
@@ -149,3 +162,19 @@ private fun DrawScope.quote(
     )
 }
 
+private fun DrawScope.unorderListItem(
+    layout: TextLayoutResult,
+    unorderListItemColor: Color,
+    currentLineStartOffset: Int,
+    barWidth: Dp,
+) {
+    val lineIndex = layout.getLineForOffset(currentLineStartOffset)
+    val lineTop = layout.getLineTop(lineIndex)
+    val lineBottom = layout.getLineBottom(lineIndex)
+    val centerY = (lineTop + lineBottom) / 2f + 3.5.dp.toPx() // Y 在行高中间
+    drawCircle(
+        color = unorderListItemColor,
+        radius = barWidth.toPx(),
+        center = Offset(barWidth.toPx() /2,centerY)
+    )
+}
