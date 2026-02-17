@@ -4,11 +4,13 @@ import ai.ljp.data.repository.TreeholeRepository
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.ljp.common.result.Result
 import com.ljp.common.result.asResult
 import com.ljp.model.Treehole
 import com.ljp.model.TreeholeProfileSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +24,7 @@ import javax.inject.Inject
 class TreeholeViewModel @Inject constructor(
     private val treeholeRepository: TreeholeRepository
 ) : ViewModel() {
-    val treeholeFeedUiState : StateFlow<TreeholeFeedUiState> = treeholeFeedUiState(treeholeRepository)
+    val treeholeFeedUiState : StateFlow<TreeholeFeedUiState> = treeholeFeedUiState(treeholeRepository,viewModelScope)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -36,9 +38,11 @@ class TreeholeViewModel @Inject constructor(
 
 }
 private fun treeholeFeedUiState(
-    treeholeRepository: TreeholeRepository
+    treeholeRepository: TreeholeRepository,
+    scope : CoroutineScope
 ) : Flow<TreeholeFeedUiState> {
     val feedStream = treeholeRepository.getTreeholes()
+        .cachedIn(scope)
     return feedStream.asResult()
         .map { result->
             when(result) {

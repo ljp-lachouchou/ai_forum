@@ -220,7 +220,7 @@ google-osslicenses = { id = "com.google.android.gms.oss-licenses-plugin", versio
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 room = { id = "androidx.room", version.ref = "room" }
-
+kotlin-parcelize = { id = "kotlin-parcelize" }
 
 aiforum-android-application = { id = "aiforum.android.application" }
 aiforum-android-application-compose = { id = "aiforum.android.application.compose" }

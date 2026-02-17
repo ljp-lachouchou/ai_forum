@@ -11,7 +11,7 @@ group = "ai.ljp.convention"
 // This matches the JDK used to build the project, and is not related to what runs on devices.
 java {
     sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17//
 }
 
 kotlin {

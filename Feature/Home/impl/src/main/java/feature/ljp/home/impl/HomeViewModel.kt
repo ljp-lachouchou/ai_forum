@@ -10,6 +10,7 @@ import ai.ljp.ui.WordsFeedUiState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,9 +43,11 @@ class HomeViewModel @Inject constructor(
         )
     val feedUiState =
         updateWordDomain.observerAllWords()
+            .cachedIn(viewModelScope)
             .map {
                 WordsFeedUiState.Success(flowOf(it))
             }
+
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),

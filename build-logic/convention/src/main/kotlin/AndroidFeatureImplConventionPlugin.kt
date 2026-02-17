@@ -13,6 +13,7 @@ class AndroidFeatureImplConventionPlugin : Plugin<Project> {
             apply(plugin = "aiforum.android.library")
             apply(plugin = "aiforum.hilt")
             apply(plugin = "aiforum.android.paging")
+            apply(plugin = "kotlin-parcelize")
             extensions.configure<LibraryExtension> {
                 testOptions.animationsDisabled = true
                 configureGradleManagedDevices(this)

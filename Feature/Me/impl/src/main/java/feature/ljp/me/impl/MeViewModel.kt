@@ -7,6 +7,7 @@ import ai.ljp.data.repository.ProfileRepository
 import ai.ljp.data.repository.UserDataRepository
 import ai.ljp.data.repository.WordRepository
 import ai.ljp.ui.ProfileUiState
+import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 @HiltViewModel
@@ -276,12 +278,19 @@ private fun sheetContentUiState(
 private const val ACTION_KEY = "actionKey"
 private const val USERNAME_KEY = "usernameKey"
 private const val BIO_KEY = "bioKey"
-sealed interface ActionState {
+@Parcelize
+sealed interface ActionState : Parcelable {
+    @Parcelize
     data object Empty : ActionState
+    @Parcelize
     data object MyPost : ActionState
+    @Parcelize
     data object UpdateProfile : ActionState
+    @Parcelize
     data object BookmarksPost : ActionState
+    @Parcelize
     data object LikesPost : ActionState
+    @Parcelize
     data object Settings : ActionState
 }
 sealed interface SheetContentUiState {
