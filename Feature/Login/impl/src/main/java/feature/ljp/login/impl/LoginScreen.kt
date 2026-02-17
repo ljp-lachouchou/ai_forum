@@ -8,9 +8,12 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -46,7 +49,7 @@ import kotlinx.coroutines.flow.SharedFlow
 
 
 @Composable
-internal fun LoginScreen(
+fun LoginScreen(
     onHomeClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel()
@@ -121,6 +124,7 @@ internal fun LoginScreen(
     Surface(
         color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -150,7 +154,7 @@ internal fun LoginScreen(
                     modifier = Modifier.padding(6.dp),
                     text = {
                         ProvideTextStyle(MaterialTheme.typography.bodyMedium) {
-                            Text(text = stringResource(R.string.feature_login_api_login))
+                            Text(text = stringResource(R.string.feature_login_api_register))
                         }
                     }
                 )
@@ -199,6 +203,8 @@ private fun LoginTextField(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background
         ),
         trailingIcon = {
             if (input.isNotEmpty()) {
@@ -275,7 +281,7 @@ private fun LoginButton(
         modifier = modifier.fillMaxWidth(),
         enabled = email.isNotBlank() && password.isNotBlank(),
         text = {
-            Text(text = text, color = MaterialTheme.colorScheme.onPrimary)
+            Text(text = text, color = MaterialTheme.colorScheme.background)
         }
     )
 

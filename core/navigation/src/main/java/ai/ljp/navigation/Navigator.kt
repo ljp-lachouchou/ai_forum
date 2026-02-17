@@ -20,12 +20,6 @@ class Navigator(val state: NavigationState) {
             else -> state.currentSubStack.removeLastOrNull()
         }
     }
-    fun goStart() {
-        state.topStack.run {
-            clear()
-            add(state.startKey)
-        }
-    }
 
     private fun goToKey(key: NavKey) {
         state.currentSubStack.apply {

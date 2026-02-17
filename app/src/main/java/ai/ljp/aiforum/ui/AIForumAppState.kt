@@ -6,6 +6,7 @@ import ai.ljp.data.util.NetworkMonitor
 import ai.ljp.data.util.TimezoneMonitor
 import ai.ljp.navigation.NavigationState
 import ai.ljp.navigation.rememberNavigationState
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -54,7 +55,11 @@ class AIForumAppState(
     coroutineScope: CoroutineScope,
 ) {
     val isLogin : StateFlow<Boolean> = userDataRepository.userData
-        .map { it.currentUserId != null && it.authToken != null }
+        .map {
+            Log.e("sdasdasdasd","${it.currentUserId}")
+            Log.e("sdasdasdasd","${it.authToken}")
+            it.currentUserId?.isNotBlank() == true && it.authToken?.isNotBlank() == true
+        }
         .stateIn(
             scope = coroutineScope,
             initialValue = false,

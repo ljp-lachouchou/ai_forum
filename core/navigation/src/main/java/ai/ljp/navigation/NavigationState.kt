@@ -20,21 +20,21 @@ fun rememberNavigationState(
     startKey: NavKey,
     topKeys : Set<NavKey>
 ) : NavigationState {
-    val topStack = rememberNavBackStack(startKey)
-    val subStacks = topKeys.associateWith { key -> rememberNavBackStack(key) }
+    val topStack = rememberNavBackStack(startKey,)
+    val subStacks = (topKeys).associateWith { key -> rememberNavBackStack(key) }
     return remember(startKey,topKeys) {
         NavigationState(
             startKey = startKey,
             topStack = topStack,
-            subStacks = subStacks
+            subStacks = subStacks,
         )
     }
 }
 
 class NavigationState(
-    val startKey : NavKey,
-    val topStack : NavBackStack<NavKey>,
-    val subStacks : Map<NavKey, NavBackStack<NavKey>>
+    val startKey: NavKey,
+    val topStack: NavBackStack<NavKey>,
+    val subStacks: Map<NavKey, NavBackStack<NavKey>>,
 ) {
     //会被 @Composable 直接读取
     val currentTopKey : NavKey by derivedStateOf { topStack.last() }

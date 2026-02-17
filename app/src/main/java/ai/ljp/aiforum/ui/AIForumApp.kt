@@ -11,6 +11,7 @@ import ai.ljp.designsystem.theme.GradientColors
 import ai.ljp.designsystem.theme.LocalGradientColors
 import ai.ljp.navigation.Navigator
 import ai.ljp.navigation.toEntries
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -48,7 +49,9 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import feature.ljp.home.api.HomeKey
+import feature.ljp.home.api.navigateToHome
 import feature.ljp.home.impl.navigation.homeEntry
+import feature.ljp.login.impl.LoginScreen
 import feature.ljp.login.impl.navigation.loginEntry
 import feature.ljp.me.impl.navigation.meEntry
 import feature.ljp.post.impl.navigation.postEntry
@@ -109,6 +112,12 @@ private fun AIForumApp(
     val snackbarHostState = LocalSnackbarHostState.current
     val isLogin by appState.isLogin.collectAsStateWithLifecycle()
     val navigator = remember { Navigator(appState.navigationState) }
+    if (!isLogin) {
+        LoginScreen(
+            onHomeClick = navigator::navigateToHome
+        )
+        return
+    }
     AIForumNavigationSuiteScaffold(
         navigationSuiteItems = {
             TOP_LEVEL_NAV_ITEMS.forEach { (navKey,navItem) ->
@@ -152,11 +161,6 @@ private fun AIForumApp(
                 )
             }
         ) {padding->
-            LaunchedEffect(isLogin) {
-                if (!isLogin) {
-                    navigator.goStart()
-                }
-            }
             Column(
                 Modifier
                     .fillMaxSize()

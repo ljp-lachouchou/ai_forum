@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class LoginViewModel @Inject constructor(
+class LoginViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val userDataRepository: UserDataRepository,
     private val profileRepository: ProfileRepository,
