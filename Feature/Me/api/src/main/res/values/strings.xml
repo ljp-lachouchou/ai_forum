@@ -2,6 +2,7 @@
 <resources>
     <string name="feature_me_api_current_mood">今天是什么心情?</string>
     <string name="feature_me_api_personal">个人的</string>
+    <string name="feature_me_api_person_title">个人</string>
     <string name="feature_me_api_my_posts">我的帖子</string>
     <string name="feature_me_api_my_bookmarks">我收藏的</string>
     <string name="feature_me_api_my_likes">我喜欢的</string>

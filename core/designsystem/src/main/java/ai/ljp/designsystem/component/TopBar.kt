@@ -2,6 +2,8 @@ package ai.ljp.designsystem.component
 
 import android.accessibilityservice.GestureDescription
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -14,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,7 +26,7 @@ fun AIForumTopAppBar(
     navigationIcon : ImageVector,
     modifier: Modifier = Modifier,
     navigationIconDescription: String? = null,
-    actionIcon : ImageVector,
+    actionIcon : ImageVector? = null,
     actionIconDescription : String? = null,
     colors : TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     onNavigationClick :() -> Unit = {},
@@ -39,12 +42,16 @@ fun AIForumTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = onActionClick) {
-                Icon(
-                    imageVector = actionIcon,
-                    contentDescription = actionIconDescription,
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
+            if (actionIcon != null) {
+                IconButton(onClick = onActionClick) {
+                    Icon(
+                        imageVector = actionIcon,
+                        contentDescription = actionIconDescription,
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }else {
+                Spacer(Modifier.height(10.dp))
             }
         },
         modifier = modifier,

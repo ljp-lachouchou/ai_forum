@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feature_post_api_toolbar_title">is %$1s</string>
+    <string name="feature_post_api_toolbar_title">is %1$s</string>
     <string name="feature_post_api_loading">加载中...</string>
     <string name="feature_post_api_username">默认用户名</string>
     <string name="feature_post_api_community_insights">评论区</string>

@@ -87,10 +87,17 @@ internal fun HomeScreen(
 ) {
     val isFeedLoading = wordsFeedState is WordsFeedUiState.Loading
     ReportDrawnWhen { !isSyncing &&  !isFeedLoading}
-    val itemCount = feedItemSize(wordsFeedState)
     val state = rememberLazyStaggeredGridState()
+    val items = when(wordsFeedState) {
+        is WordsFeedUiState.Success -> {
+            wordsFeedState.feed.collectAsLazyPagingItems()
+        }
+        else -> {
+            null
+        }
+    }
     val scrollState = state.scrollbarState(
-        itemCount = itemCount
+        itemCount = items?.itemCount ?: 0
     )
     val expandButtonState = rememberExpandButtonState(false)
     Box(
@@ -100,7 +107,6 @@ internal fun HomeScreen(
         when(wordsFeedState) {
             WordsFeedUiState.Loading -> Unit
             is WordsFeedUiState.Success -> {
-                val items = wordsFeedState.feed.collectAsLazyPagingItems()
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Adaptive(300.dp),
                     state = state,
@@ -109,7 +115,7 @@ internal fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     wordsFeed(
-                        wordsSource = items,
+                        wordsSource = items!!,
                         onProfileClick = onProfileClick,
                         onPostClick = onPostClick,
                         onToggleLikeClick = onToggleLikeClick,
@@ -170,7 +176,7 @@ internal fun HomeScreen(
             orientation = Orientation.Vertical,
             state = scrollState,
             onThumbMoved = state.rememberDraggableScroller(
-                itemsCount = itemCount
+                itemsCount = items?.itemCount ?: 0
             ),
             modifier = Modifier
                 .fillMaxHeight()

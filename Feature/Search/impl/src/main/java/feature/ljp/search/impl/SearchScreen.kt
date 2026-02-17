@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -142,8 +143,8 @@ private fun SearchScreen(
                     }
                     else {
                         SearchResultBody(
-                            answer = searchResultUiState.aiSearch.answer,
-                            items = searchResultUiState.aiSearch.aiWordItems,
+                            answer = searchResultUiState.aiSearch.answer ?: "",
+                            items = searchResultUiState.aiSearch.aiWordItems ?: emptyList(),
                             onPostClick = onPostClick
                         )
                     }
@@ -193,7 +194,7 @@ private fun SearchResultBody(
                 color = MaterialTheme.colorScheme.primary
             ) {
                 Card(
-                    border = BorderStroke(width = 1.dp),
+                    border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.onSurface

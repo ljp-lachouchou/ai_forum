@@ -66,7 +66,7 @@ data class SyncCommentItem(
 data class SyncTreeholeItem(
     val id : String,
     @SerialName("author_id")
-    val authorId : String?,
+    val authorId : String,
     val content : String,
     @SerialName("is_anonymous")
     val anonymous : Boolean,

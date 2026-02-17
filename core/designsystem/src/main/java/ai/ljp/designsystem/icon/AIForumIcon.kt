@@ -11,6 +11,7 @@ import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.icons.outlined.ChatBubble
 import androidx.compose.material.icons.outlined.Soap
 import androidx.compose.material.icons.rounded.AccountTree
+import androidx.compose.material.icons.rounded.AddHomeWork
 import androidx.compose.material.icons.rounded.Article
 import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.material.icons.rounded.Bookmarks
@@ -25,13 +26,16 @@ import androidx.compose.material.icons.rounded.FormatListNumbered
 import androidx.compose.material.icons.rounded.FormatQuote
 import androidx.compose.material.icons.rounded.FormatStrikethrough
 import androidx.compose.material.icons.rounded.FormatUnderlined
+import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.PersonOutline
 import androidx.compose.material.icons.rounded.Publish
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Soap
+import androidx.compose.material.icons.rounded.Streetview
 import androidx.compose.material.icons.rounded.Title
 
 object AIForumIcon {
@@ -67,4 +71,11 @@ object AIForumIcon {
 
     val Image = Icons.Rounded.Image
     val Treehole = Icons.Rounded.AccountTree
+    val Streetview = Icons.Rounded.Streetview
+
+    val Home = Icons.Rounded.Home
+    val AddHomeWork = Icons.Rounded.AddHomeWork
+
+    val PersonOutline = Icons.Rounded.PersonOutline
+    val Person = Icons.Rounded.Person
 }

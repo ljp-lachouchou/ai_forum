@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AIForum</string>
+    <string name="not_connected">⚠️ 你未连接到网络</string>
 </resources>
