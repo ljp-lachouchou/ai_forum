@@ -1,5 +1,6 @@
 package ai.ljp.network.supabase
 
+import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.storage.storage
 import javax.inject.Inject
@@ -18,7 +19,8 @@ class SupabaseActor @Inject constructor(
         }
         val publicUrl = bucket.publicUrl(fileName)
         publicUrl
-    }catch (_ : Exception) {
+    }catch (e : Exception) {
+        Log.e("SupabaseActor Exception","$e")
         null
     }
 }

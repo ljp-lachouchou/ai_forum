@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,6 +56,9 @@ import com.ljp.common.baseui.markdown.node.ParagraphElement
 import com.ljp.common.baseui.markdown.node.TableCellData
 
 import com.ljp.common.baseui.markdown.render.devered.CheckBoxIcon
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.statement.readRawBytes
 import org.commonmark.ext.gfm.tables.TablesExtension
 import org.commonmark.ext.task.list.items.TaskListItemsExtension
 import org.commonmark.parser.Parser
@@ -472,6 +476,25 @@ fun MarkdownView(input: String,
     val visitor = MarkConverter(urlSigner,config)
     rootNode.accept(visitor)
     MarkdownRenderer(modifier = Modifier, nodes = visitor.blocks, onLinkClick = onLinkClick)
+}
+fun LazyListScope.itemsMarkdownView(
+    input: String,
+    modifier: Modifier = Modifier,
+    configBlock: InlineStyleConfigBuilder.()-> Unit = {},
+    urlSigner:String.()-> String = {this},
+    onLinkClick: (String) -> Unit = {}
+) {
+
+    val content = preprocessMarkdown(input)
+    val config = InlineStyleConfigBuilder().apply(configBlock).build()
+    val extensions = listOf(TablesExtension.create(), TaskListItemsExtension.create())
+    val parse = Parser.builder().extensions(extensions).build()
+    val rootNode = parse.parse(content)
+    val visitor = MarkConverter(urlSigner,config)
+    rootNode.accept(visitor)
+    items(visitor.blocks) { node ->
+        MarkdownBlockItem(node, modifier,onLinkClick)
+    }
 }
 fun preprocessMarkdown(input: String): String {
     // 正则逻辑：找到所有以 --- 开头且上方不是空行的位置，插入一个换行

@@ -10,11 +10,10 @@ import ai.ljp.ui.PickOnly
 import ai.ljp.ui.rememberLauncherImageForActivityResult
 import android.content.Context
 import android.net.Uri
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -59,11 +58,11 @@ internal fun PostCreateScreen(
         postCreateUiState = postCreateUiState,
         title = title,
         curImageUrl = curImageUrl,
-        category = category,
+        categoryOrdinal = category,
         onBackClick = onBackClick,
         onTitleChanged = viewModel::onTitleChanged,
         onCreatePost = viewModel::onCreatePost,
-        onCategoryChanged = viewModel::onCategoryChanged,
+        onCategoryOrdinalChanged = viewModel::onCategoryOrdinalChanged,
         onUploadImage = viewModel::onUploadImage,
         modifier = modifier
     )
@@ -73,17 +72,18 @@ private fun PostCreateScreen(
     postCreateUiState: PostCreateUiState,
     title : String,
     curImageUrl : String,
-    category: Category,
+    categoryOrdinal: Int,
     onBackClick : () -> Unit,
     onTitleChanged : (String) -> Unit,
     onCreatePost : (InputStream?, String, List<WordTag>, String) -> Unit,
-    onCategoryChanged : (Category)-> Unit,
+    onCategoryOrdinalChanged : (Category)-> Unit,
     onUploadImage : (Context, Uri) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
     val manager = rememberMarkdownEditorManager()
     val context = LocalContext.current
+    val category = Category.fromOrdinal(categoryOrdinal) ?: Category.Tech
     val picLauncher = rememberLauncherImageForActivityResult {uri ->
          onUploadImage(context,uri)
          manager.apply {
@@ -122,7 +122,8 @@ private fun PostCreateScreen(
         }
     ) {innerPadding->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            modifier = Modifier.fillMaxSize().padding(innerPadding)
+                .consumeWindowInsets(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TitleTextField(
@@ -132,7 +133,7 @@ private fun PostCreateScreen(
             )
             CategoryFlowRow(
                 currentCategory = category,
-                onCategoryChanged = onCategoryChanged,
+                onCategoryChanged = onCategoryOrdinalChanged,
                 modifier = Modifier.fillMaxWidth()
             )
             FullMarkdownEditor(

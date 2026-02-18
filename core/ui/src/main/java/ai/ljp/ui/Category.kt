@@ -14,10 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-
 enum class Category {
     Tech,
-    Gaming
+    Gaming;
+    companion object {
+        fun fromOrdinal(ordinal: Int): Category? {
+            return entries.getOrNull(ordinal)
+        }
+    }
+
 }
 @Composable
 fun CategoryChip(

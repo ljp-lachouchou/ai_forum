@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,12 +44,20 @@ class HomeViewModel @Inject constructor(
             initialValue = false
         )
     val feedUiState =
-        updateWordDomain.observerAllWords()
-            .cachedIn(viewModelScope)
-            .map {
-                WordsFeedUiState.Success(flowOf(it))
+        isSyncing
+            .flatMapLatest { syncing ->
+                if (syncing) {
+                    println("DEBUG: 正在同步中，挂起数据查询")
+                    flowOf(WordsFeedUiState.Loading)
+                } else {
+                    println("DEBUG: 同步已完成，开始加载数据库数据")
+                    updateWordDomain.observerAllWords()
+                        .cachedIn(viewModelScope)
+                        .map { pagingData ->
+                            WordsFeedUiState.Success(flowOf(pagingData))
+                        }
+                }
             }
-
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),

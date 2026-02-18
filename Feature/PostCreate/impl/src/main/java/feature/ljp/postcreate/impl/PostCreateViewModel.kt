@@ -1,23 +1,20 @@
 package feature.ljp.postcreate.impl
 
-import ai.ljp.data.repository.UserDataRepository
 import ai.ljp.data.repository.WordRepository
-import ai.ljp.designsystem.component.markdown.render.tool.MarkdownStyle
 import ai.ljp.domain.UploadProfileDomain
 import ai.ljp.domain.UploadWordDomain
 import ai.ljp.ui.Category
 import android.content.Context
 import android.net.Uri
-import androidx.compose.ui.text.input.TextFieldValue
+import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ljp.model.WordTag
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import java.io.InputStream
 import java.lang.Exception
 import javax.inject.Inject
@@ -37,12 +34,12 @@ class PostCreateViewModel @Inject constructor(
     val postCreateUiState : StateFlow<PostCreateUiState> =
         savedStateHandle.getStateFlow(POST_CREATE_STATE_KEY,
             PostCreateUiState.Empty)
-    val category : StateFlow<Category> =
-        savedStateHandle.getStateFlow(CATEGORY_KEY, Category.Tech)
+    val category : StateFlow<Int> =
+        savedStateHandle.getStateFlow(CATEGORY_KEY, Category.Tech.ordinal)
     // 2. 当用户输入或点击工具栏时，调用此方法
 
-    fun onCategoryChanged(category: Category) {
-        savedStateHandle[CATEGORY_KEY] = category
+    fun onCategoryOrdinalChanged(category: Category) {
+        savedStateHandle[CATEGORY_KEY] = category.ordinal
     }
 
     private fun changePostUiState(uiState : PostCreateUiState) {
@@ -71,6 +68,7 @@ class PostCreateViewModel @Inject constructor(
                     val bytes = ist.readBytes()
                     val wordUrl = uploadWordDomain(fileName = fileName,bytes = bytes)
                     if (wordUrl == null) {
+                        changePostUiState(PostCreateUiState.Error)
                         return@launch
                     }
                     val isSuccess = wordRepository.createWord(
@@ -109,10 +107,15 @@ class PostCreateViewModel @Inject constructor(
         }
     }
 }
-sealed interface PostCreateUiState {
+@Parcelize
+sealed interface PostCreateUiState : Parcelable {
+    @Parcelize
     data object Empty : PostCreateUiState
+    @Parcelize
     data object Error : PostCreateUiState
+    @Parcelize
     data object Loading : PostCreateUiState
+    @Parcelize
     data object Success : PostCreateUiState
 }
 

@@ -1,9 +1,12 @@
 package ai.ljp.designsystem.component
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
+import androidx.compose.ui.Modifier
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.readRawBytes
@@ -11,6 +14,7 @@ import io.ktor.client.statement.readRawBytes
 @Composable
 fun DynamicContent(
     url : String,
+    modifier: Modifier = Modifier,
     loadingPlaceholder : @Composable () -> Unit = {
         CircularProgressIndicator()
     },
@@ -25,7 +29,12 @@ fun DynamicContent(
         null -> loadingPlaceholder()
         else -> result.fold(
             onSuccess = {data ->
-                text(data)
+                Box(
+                    modifier = modifier
+                ) {
+                    text(data)
+                }
+
             },
             onFailure = {
                 errorPlaceholder(it.message ?: "未知错误")

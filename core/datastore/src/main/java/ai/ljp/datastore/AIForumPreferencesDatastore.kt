@@ -148,5 +148,14 @@ class AIForumPreferencesDatastore @Inject constructor(
         }
     }
 
+    override suspend fun clearToken() {
+        userPreferences.updateData {
+            it.copy {
+                this.authToken = ""
+                this.currentUserId = ""
+            }
+        }
+    }
+
 
 }

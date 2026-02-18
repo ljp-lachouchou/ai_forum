@@ -1,11 +1,13 @@
 package feature.ljp.post.impl
 
+import ai.ljp.designsystem.UrlLoadingState
 import ai.ljp.designsystem.component.AIForumLoadingWheel
 import ai.ljp.designsystem.component.DynamicAsyncImage
-import ai.ljp.designsystem.component.DynamicContent
 import ai.ljp.designsystem.icon.AIForumIcon
+import ai.ljp.designsystem.rememberLoadUrlState
 import ai.ljp.ui.AIForumToolbar
 import ai.ljp.ui.InteractionArea
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
@@ -31,7 +34,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -54,7 +57,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.ljp.common.baseui.markdown.render.actual.MarkdownView
+import com.ljp.common.baseui.markdown.render.actual.itemsMarkdownView
 import com.ljp.model.CommentProfileResource
 import feature.ljp.post.api.R
 import kotlinx.coroutines.flow.StateFlow
@@ -98,7 +101,17 @@ internal fun PostScreen(
     onBackClick : () -> Unit,
 
 ) {
-    val isLoading = postUiState is PostUiState.Loading
+
+
+    val word = when(postUiState) {
+        is PostUiState.Success -> {
+            postUiState.post
+        }
+        else -> null
+    }
+    val urlState = rememberLoadUrlState(word?.wordUrl)
+    val urlLoadState = urlState.state
+    val isLoading = postUiState is PostUiState.Loading || (urlLoadState is UrlLoadingState.Loading)
     val pageItems = when(commentsFeedUiState) {
         is CommentsFeedUiState.Success -> commentsFeedUiState.feed.collectAsLazyPagingItems()
         else -> null
@@ -138,7 +151,6 @@ internal fun PostScreen(
                                 .fillMaxSize()
                                 .padding(innerPadding),
                             verticalArrangement = Arrangement.spacedBy(4.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             item {
                                 ProvideTextStyle(MaterialTheme.typography.headlineLarge) {
@@ -152,14 +164,17 @@ internal fun PostScreen(
                                     username = postUiState.post.author.userName,
                                 )
                             }
-                            item {
-                                DynamicContent(
-                                    url = postUiState.post.wordUrl
-                                ) {
-                                    MarkdownView(
-                                        input = it
-                                    )
+                            when(urlLoadState) {
+                                is UrlLoadingState.Error -> {
+                                    item {
+                                        Text(text = "出现了一些小问题")
+                                    }
                                 }
+                                is UrlLoadingState.Success -> {
+                                    itemsMarkdownView(input = urlLoadState.content)
+                                }
+                                is UrlLoadingState.Loading,
+                                is UrlLoadingState.Idle-> Unit
                             }
                             item {
                                 InteractionArea(
@@ -192,7 +207,8 @@ internal fun PostScreen(
                             commentContent = commentContent,
                             postId = postUiState.post.wordId,
                             onCommentContentChanged = onCommentContentChanged,
-                            onCommentTriggered = onCommentTriggered
+                            onCommentTriggered = onCommentTriggered,
+                            modifier = Modifier.align(Alignment.BottomEnd)
                         )
                     }
                 }
@@ -214,6 +230,7 @@ private fun AuthorArea(
     username : String,
     modifier: Modifier = Modifier
 ) {
+    Log.e("sdas2222321",avatarUrl ?: "")
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(
@@ -225,8 +242,7 @@ private fun AuthorArea(
         DynamicAsyncImage(
             imageUrl = avatarUrl,
             contentDescription = null,
-            modifier = modifier
-                .background(color = Color.Transparent,shape = CircleShape)
+            modifier = Modifier.size(48.dp).clip(CircleShape)
         )
         AuthorContent(
             createdAt = createdAt,
@@ -271,8 +287,9 @@ private fun CommentItem(
         DynamicAsyncImage(
             imageUrl = avatarUrl,
             contentDescription = null,
-            modifier = modifier
-                .background(color = Color.Transparent,shape = CircleShape)
+            modifier = Modifier.
+                size(48.dp)
+                .clip(shape = CircleShape)
         )
         CommentContent(username = username,
             createdAt = createdAt,
@@ -332,22 +349,24 @@ private fun CommentContent(
 private fun CommentSendBottombar(
     commentContent: String,
     postId: String,
-    onCommentContentChanged :(String) -> Unit,
-    onCommentTriggered : (String,String) -> Unit
+    onCommentContentChanged: (String) -> Unit,
+    onCommentTriggered: (String, String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         SendCommentTextField(
             commentContent = commentContent,
             postId = postId,
             onCommentTriggered = onCommentTriggered,
             focusRequester = focusRequester,
-            onCommentContentChanged = onCommentContentChanged
+            onCommentContentChanged = onCommentContentChanged,
+            modifier = Modifier.weight(1f)
         )
         IconButton(
             onClick = {
@@ -369,6 +388,7 @@ private fun SendCommentTextField(
     commentContent : String,
     postId : String,
     focusRequester : FocusRequester,
+    modifier: Modifier = Modifier,
     onCommentContentChanged :(String) -> Unit,
     onCommentTriggered : (String,String) -> Unit
 ) {
@@ -406,8 +426,7 @@ private fun SendCommentTextField(
         },
         singleLine = true,
         maxLines = 1,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .padding(8.dp)
             .focusRequester(focusRequester)
             .onKeyEvent {

@@ -9,6 +9,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.ljp.common.result.Result
 import com.ljp.common.result.asResult
 import com.ljp.model.CommentProfileResource
@@ -17,6 +18,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -51,7 +53,8 @@ class PostViewModel @AssistedInject constructor(
         )
     val commentsFeedUiState : StateFlow<CommentsFeedUiState> = commentsFeedUiState(
         postId = postId,
-        commentRepository = commentRepository
+        commentRepository = commentRepository,
+        scope = viewModelScope
     )
         .stateIn(
             scope = viewModelScope,
@@ -119,10 +122,13 @@ private fun postUiState(
 }
 private fun commentsFeedUiState(
     postId: String,
-    commentRepository: CommentRepository
+    commentRepository: CommentRepository,
+    scope: CoroutineScope
 ) : Flow<CommentsFeedUiState> {
     val feed = commentRepository.getCommentsProfileResource(postId)
-    return feed.asResult()
+    return feed
+        .cachedIn(scope = scope)
+        .asResult()
         .map { feedResult ->
             when(feedResult) {
                 is Result.Error -> CommentsFeedUiState.Error

@@ -12,7 +12,7 @@ import ai.ljp.designsystem.component.scrollbar.scrollbarState
 import ai.ljp.designsystem.icon.AIForumIcon
 import ai.ljp.ui.WordsFeedUiState
 import ai.ljp.ui.wordsFeed
-import android.R
+import android.util.Log
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -37,6 +37,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -96,6 +97,9 @@ internal fun HomeScreen(
             null
         }
     }
+    LaunchedEffect(items) {
+        Log.e("sdas22","${items?.itemCount ?: 0}")
+    }
     val scrollState = state.scrollbarState(
         itemCount = items?.itemCount ?: 0
     )
@@ -113,6 +117,7 @@ internal fun HomeScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalItemSpacing = 24.dp,
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     wordsFeed(
                         wordsSource = items!!,
@@ -146,7 +151,7 @@ internal fun HomeScreen(
         }
         ExpandButton(
             state = expandButtonState,
-            modifier = Modifier.align(Alignment.BottomEnd),
+            modifier = Modifier.align(Alignment.CenterEnd),
             actionIcon = AIForumIcon.Add,
             popupContent = {
                 CompositionLocalProvider(

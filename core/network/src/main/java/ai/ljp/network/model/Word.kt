@@ -2,6 +2,7 @@ package ai.ljp.network.model
 
 import com.ljp.model.WordTag
 import io.ljp.simapi.util.simApiMapOf
+import kotlinx.datetime.Instant
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -33,7 +34,7 @@ data class WordDetailResponse(
     val wordName: String?,
     val status: String,
     @SerialName("created_at")
-    val createdAt: Long
+    val createdAt: Instant
 )
 @OptIn(InternalSerializationApi::class)
 @Serializable
@@ -42,5 +43,5 @@ data class WordFeedItem(
     val wordName: String,
     val category: String,
     val authorId: String,
-    val createdAt: Long
+    val createdAt: Instant
 )

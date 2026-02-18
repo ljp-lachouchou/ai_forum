@@ -6,6 +6,7 @@ import ai.ljp.designsystem.component.DynamicContent
 import ai.ljp.designsystem.icon.AIForumIcon
 import ai.ljp.designsystem.theme.LocalTintTheme
 import ai.ljp.designsystem.theme.TintTheme
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -29,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -56,24 +60,24 @@ fun WordCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = modifier
     ) {
-        Column {
+        Column(
+            modifier = Modifier.padding(10.dp)
+        ) {
             WordCardHead(category = category, bookmarked = bookmarked,
                 onToggleBookmark = {
                     onToggleBookmark(wordSource.wordId)
                 })
-            Spacer(Modifier.height(3.dp))
-            ProvideTextStyle(MaterialTheme.typography.headlineLarge) {
+            ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
                 Text(text = wordSource.wordName)
             }
-            Box(modifier = Modifier.padding(3.dp)) {
-                DynamicContent(
-                    url = wordSource.wordUrl,
+            DynamicContent(
+                modifier = Modifier.weight(1f),
+                url = wordSource.wordUrl,
                 ) {content ->
                     MarkdownView(
                         input = content
                     )
                 }
-            }
             HorizontalDivider()
             WordCardTail(author = wordSource.author,
                 isLike = isLike,
@@ -97,7 +101,7 @@ private fun WordCardHead(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
+        ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
             Text(text = category)
         }
         AIForumToggleButton(
@@ -109,7 +113,7 @@ private fun WordCardHead(
                 Icon(
                     imageVector = AIForumIcon.Bookmarks,
                     contentDescription = "bookmark",
-                    tint = Color.Transparent
+                    tint =  MaterialTheme.colorScheme.background
                 )
 
             },
@@ -138,7 +142,8 @@ private fun WordCardTail(
     val tint = LocalTintTheme.current.iconTint
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.height(50.dp).padding(vertical = 4.dp)
     ) {
         ProfileHead(profile = author,
             modifier = Modifier.weight(0.7F),
@@ -181,8 +186,9 @@ internal fun ProfileHead(
         DynamicAsyncImage(
             imageUrl = profile.avatarUrl,
             contentDescription = "profile",
+            modifier = Modifier.clip(CircleShape),
         )
-        ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
+        ProvideTextStyle(MaterialTheme.typography.bodySmall) {
             Text(text = profile.userName)
         }
     }

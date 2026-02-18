@@ -1,7 +1,10 @@
 package ai.ljp.ui
 
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
@@ -32,7 +35,8 @@ fun LazyStaggeredGridScope.wordsFeed(
                 onToggleBookmark = onToggleBookmarkClick,
                 onClick = onPostClick,
                 onProfileClick = onProfileClick,
-                onToggleLike = onToggleLikeClick
+                onToggleLike = onToggleLikeClick,
+                modifier = Modifier.heightIn(max = 500.dp)
             )
         }
 

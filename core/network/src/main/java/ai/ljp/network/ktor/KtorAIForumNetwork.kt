@@ -1,5 +1,5 @@
 package ai.ljp.network.ktor
-
+import kotlinx.serialization.InternalSerializationApi
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.AIAssistPostResponse
 import ai.ljp.network.model.AISearchResponse
@@ -42,6 +42,8 @@ import io.ljp.simapi.ResultWrapper
 import io.ljp.simapi.apiClient
 import io.ljp.simapi.apiRequest
 import io.ljp.simapi.util.simApiMapOf
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 
@@ -53,6 +55,15 @@ inline fun <reified T> ResultWrapper<T>.getOrNull() =
             null
         }
     }
+@OptIn(InternalSerializationApi::class)
+@Serializable
+data class CreateWordRequest(
+    @SerialName("author_id") val authorId: String,
+    @SerialName("word_url") val wordUrl: String,
+    val category: String,
+    val tags: List<WordTag>,
+    @SerialName("word_name") val wordName: String
+)
 class KtorAIForumNetwork @Inject constructor(
     val client : ApiClient
 ) : AIForumNetworkDataSource {
@@ -143,12 +154,12 @@ class KtorAIForumNetwork @Inject constructor(
         client.apiClient<WordDetailResponse?> {
             post<WordDetailResponse?> {
                 apiRequest("/api/v1/words") {
-                    body = simApiMapOf(
-                        "author_id" to authorId,
-                        "word_url" to wordUrl,
-                        "category" to category,
-                        "tags" to tags,
-                        "word_name" to wordName
+                    body = CreateWordRequest(
+                        authorId = authorId,
+                        wordUrl = wordUrl,
+                        category = category,
+                        tags = tags,
+                        wordName = wordName
                     )
 
                 }
@@ -174,11 +185,7 @@ class KtorAIForumNetwork @Inject constructor(
     override suspend fun submitWord(wordId: String, authorId: String) : Boolean =
         client.apiClient {
             val rw = post<Unit> {
-                apiRequest("/api/v1/words/$wordId/submit") {
-                    params = simApiMapOf(
-                        "author_id" to authorId
-                    )
-                }
+                apiRequest("/api/v1/words/$wordId/submit?author_id=$authorId")
             }
             rw is ResultWrapper.Success
         }
