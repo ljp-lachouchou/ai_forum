@@ -111,15 +111,19 @@ private fun WordCardHead(
             },
             icon = {
                 Icon(
-                    imageVector = AIForumIcon.Bookmarks,
+                    imageVector = AIForumIcon.OutlineBookmark,
                     contentDescription = "bookmark",
-                    tint =  MaterialTheme.colorScheme.background
+                    tint =  if (tint == Color.Unspecified) {
+                        MaterialTheme.colorScheme.onPrimary
+                    }else {
+                        tint
+                    }
                 )
 
             },
             checkedIcon = {
                 Icon(
-                    imageVector = AIForumIcon.Bookmarks,
+                    imageVector = AIForumIcon.Bookmark,
                     contentDescription = "bookmark",
                     tint = if (tint == Color.Unspecified) {
                         MaterialTheme.colorScheme.onPrimary
@@ -155,14 +159,18 @@ private fun WordCardTail(
             },
             icon = {
                 Icon(
-                    imageVector = AIForumIcon.Bookmarks,
+                    imageVector = AIForumIcon.OutlineLike,
                     contentDescription = "bookmark",
-                    tint = Color.Transparent
+                    tint = if (tint == Color.Unspecified) {
+                        MaterialTheme.colorScheme.onPrimary
+                    }else {
+                        tint
+                    }
                 )
             },
             checkedIcon = {
                 Icon(
-                    imageVector = AIForumIcon.Bookmarks,
+                    imageVector = AIForumIcon.Like,
                     contentDescription = "bookmark",
                     tint = if (tint == Color.Unspecified) {
                         MaterialTheme.colorScheme.onPrimary
@@ -180,13 +188,15 @@ internal fun ProfileHead(
     modifier: Modifier = Modifier,
     onProfileClick : (String) -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.clickable {
+    Row(verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier.clickable {
         onProfileClick(profile.id)
     }) {
         DynamicAsyncImage(
             imageUrl = profile.avatarUrl,
             contentDescription = "profile",
-            modifier = Modifier.clip(CircleShape),
+            modifier = Modifier.size(30.dp).clip(CircleShape),
         )
         ProvideTextStyle(MaterialTheme.typography.bodySmall) {
             Text(text = profile.userName)

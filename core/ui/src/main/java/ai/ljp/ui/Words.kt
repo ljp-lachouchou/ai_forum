@@ -117,6 +117,7 @@ private fun InteractionItem(
     icon : ImageVector,
     content : String,
     id : String? = null,
+    enabled : Boolean = true,
     checkIcon : ImageVector? = null,
     isChecked : ((String) -> StateFlow<Boolean>)? = null,
     onCheckClick : (String) -> Unit = {},
@@ -145,7 +146,7 @@ private fun InteractionItem(
                 if (checkIcon != null) {
                     Icon(imageVector = checkIcon, contentDescription = null, tint = color)
                 }
-            }
+            }, enabled = enabled
         )
         ProvideTextStyle(MaterialTheme.typography.bodySmall) {
             Text(text = content, color = color)
@@ -180,7 +181,8 @@ fun InteractionArea(
         )
         InteractionItem(
             AIForumIcon.OutlineChat,
-            "$comments"
+            "$comments",
+            enabled = false
         )
         InteractionItem(
             AIForumIcon.OutlineBookmark,
