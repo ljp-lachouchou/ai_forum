@@ -33,6 +33,7 @@ fun AIForumToolbar(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxWidth()
+            .statusBarsPadding()
     ) {
         IconButton(onClick = onBackClick) {
             Icon(imageVector = AIForumIcon.ArrowBack, contentDescription = null)

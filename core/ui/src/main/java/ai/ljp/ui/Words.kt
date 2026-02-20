@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,11 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.itemKey
 import com.ljp.common.baseui.markdown.render.actual.MarkdownView
 import com.ljp.model.WordCommentsResource
 import kotlinx.coroutines.flow.Flow
@@ -67,7 +67,7 @@ fun WordCardItem(
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(10.dp)
         ) {
             ProfileWordHead(
                 category = category,
@@ -79,6 +79,7 @@ fun WordCardItem(
             ProvideTextStyle(MaterialTheme.typography.bodySmall) {
                 DynamicContent(
                     url = wordUrl,
+                    modifier = Modifier.heightIn(max = 200.dp),
                     text = {
                         MarkdownView(input = it)
                     }
@@ -88,7 +89,8 @@ fun WordCardItem(
                 likes = likes,
                 comments = comments,
                 bookmarks = bookmarks,
-                postId = wordId
+                postId = wordId,
+                allEnabled = false
             )
         }
     }
@@ -104,10 +106,12 @@ private fun ProfileWordHead(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth()
     ) {
-        ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
+        ProvideTextStyle(MaterialTheme.typography.bodySmall
+            .copy(fontWeight = FontWeight.Bold)) {
             Text(text = category)
         }
-        ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
+        ProvideTextStyle(MaterialTheme.typography.bodySmall
+            .copy(fontWeight = FontWeight.Bold)) {
             Text(text = createdAt.toString())
         }
     }
@@ -155,17 +159,19 @@ private fun InteractionItem(
 }
 @Composable
 fun InteractionArea(
-    postId : String,
-    likes : Int,
-    comments : Int,
-    bookmarks : Int,
+    postId: String,
+    likes: Int,
+    comments: Int,
+    bookmarks: Int,
     modifier: Modifier = Modifier,
-    onLikeClick : (String) -> Unit = {},
-    onBookmarkClick : (String) -> Unit = {},
-    isLike : ((String) -> StateFlow<Boolean>)? = null,
-    isBookmark : ((String) -> StateFlow<Boolean>)? = null,
+    allEnabled: Boolean = true,
+    onLikeClick: (String) -> Unit = {},
+    onBookmarkClick: (String) -> Unit = {},
+    isLike: ((String) -> StateFlow<Boolean>)? = null,
+    isBookmark: ((String) -> StateFlow<Boolean>)? = null,
 
-) {
+
+    ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -177,7 +183,8 @@ fun InteractionArea(
             onCheckClick = onLikeClick,
             isChecked = isLike,
             checkIcon = AIForumIcon.Like,
-            id = postId
+            id = postId,
+            enabled = allEnabled
         )
         InteractionItem(
             AIForumIcon.OutlineChat,
@@ -190,7 +197,8 @@ fun InteractionArea(
             onCheckClick = onBookmarkClick,
             isChecked = isBookmark,
             checkIcon = AIForumIcon.Bookmark,
-            id = postId
+            id = postId,
+            enabled = allEnabled
         )
     }
 }

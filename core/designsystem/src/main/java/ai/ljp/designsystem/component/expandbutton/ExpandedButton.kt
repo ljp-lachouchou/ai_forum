@@ -80,18 +80,18 @@ fun ExpandButton(
         state.size.toPx().roundToInt()
     }
     val offsetY = with(density) {
-        (state.size.toPx() * 1.415).roundToInt()
+        (state.size.toPx() * 2.3).roundToInt()
     }
     Surface(
         color = Color.Transparent, // 背景透明，只作为容器
-        modifier = Modifier
+        modifier = modifier
             .graphicsLayer(
                 rotationZ = animateAngle,
                 transformOrigin = TransformOrigin.Center
             )
     ) {
         Box(
-            modifier
+            Modifier
                 .sizeIn(minWidth = minButtonSize, minHeight = minButtonSize)
                 .size(state.size,state.size)
                 .background(

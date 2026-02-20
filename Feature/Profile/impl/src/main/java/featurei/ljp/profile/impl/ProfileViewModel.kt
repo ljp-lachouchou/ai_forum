@@ -7,6 +7,7 @@ import ai.ljp.ui.WordsUiState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.ljp.common.result.Result
 import com.ljp.common.result.asResult
 import com.ljp.model.Profile
@@ -14,6 +15,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -39,7 +41,8 @@ class ProfileViewModel @AssistedInject constructor(
         )
     val wordsUiState : StateFlow<WordsUiState> = wordsUiState(
         profileId = profileId,
-        interactionWordRepository = interactionWordRepository
+        interactionWordRepository = interactionWordRepository,
+        scope = viewModelScope
     )
         .stateIn(
             scope = viewModelScope,
@@ -75,9 +78,12 @@ private fun profileUiState(
 private fun wordsUiState(
     profileId : String,
     interactionWordRepository: InteractionWordRepository,
+    scope: CoroutineScope
 ) : Flow<WordsUiState>{
     val flowPagingData = interactionWordRepository.getSelfWords(profileId)
-    return flowPagingData.asResult()
+    return flowPagingData
+        .cachedIn(scope)
+        .asResult()
         .map { dataResult->
             when(dataResult) {
                 is Result.Success -> {

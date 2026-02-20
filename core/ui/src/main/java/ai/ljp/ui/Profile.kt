@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
@@ -55,10 +56,11 @@ fun ProfileCard(
         when(profileUiState) {
             is ProfileUiState.Success -> {
                 val profile = profileUiState.profile
-                Box(modifier = Modifier.fillMaxWidth()) {
+                Box(modifier = Modifier.fillMaxSize()) {
                     Column(
                         modifier = Modifier
-                            .align(Alignment.Center)
+                            .align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(Modifier.height(10.dp))
                         Box(modifier = Modifier.wrapContentSize()) {
@@ -106,7 +108,7 @@ private fun AvatarArea(
     Surface(
         color = Color.White,
         shape = CircleShape,
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.size(100.dp).padding(8.dp)
     ) {
         DynamicAsyncImage(imageUrl = avatarUrl, contentDescription = null)
     }

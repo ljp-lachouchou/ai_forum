@@ -1,7 +1,6 @@
 package featurei.ljp.profile.impl
 
 import ai.ljp.designsystem.component.AIForumLoadingWheel
-import ai.ljp.designsystem.component.DynamicAsyncImage
 import ai.ljp.designsystem.component.scrollbar.DraggableScrollbar
 import ai.ljp.designsystem.component.scrollbar.rememberDraggableScroller
 import ai.ljp.designsystem.component.scrollbar.scrollbarState
@@ -10,7 +9,6 @@ import ai.ljp.ui.ProfileCard
 import ai.ljp.ui.ProfileUiState
 import ai.ljp.ui.WordsUiState
 import ai.ljp.ui.wordsItem
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

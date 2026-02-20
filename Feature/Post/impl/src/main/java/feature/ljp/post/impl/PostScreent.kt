@@ -14,16 +14,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
@@ -188,6 +183,7 @@ internal fun PostScreen(
                             }
                             item {
                                 InteractionArea(
+                                    postId = postUiState.post.wordId,
                                     likes = postUiState.post.likes.size,
                                     comments = postUiState.post.comments.size,
                                     bookmarks = postUiState.post.bookMarks.size,
@@ -195,7 +191,6 @@ internal fun PostScreen(
                                     onBookmarkClick = onBookmarkClick,
                                     isLike = isLike,
                                     isBookmark = isBookmark,
-                                    postId = postUiState.post.wordId
                                 )
                             }
                             item {
