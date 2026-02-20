@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.core.domain)//
     implementation(projects.feature.treeholeCreate.api)
     testImplementation(libs.junit)
+    implementation(projects.sync)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
 }

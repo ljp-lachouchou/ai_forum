@@ -12,6 +12,7 @@ dependencies {
 
     implementation(projects.core.domain)//
     implementation(projects.feature.post.api)
+    implementation(projects.sync)
     implementation(libs.androidx.compose.material3.adaptive.navigation3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

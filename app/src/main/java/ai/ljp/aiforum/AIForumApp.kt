@@ -25,7 +25,7 @@ class AIForumApp : Application(), ImageLoaderFactory {
         JPushInterface.setDebugMode(true)
         JPushInterface.init(this)
         if (isMainProcess()) {
-            Sync.initialize(this)
+            Sync.sync(this)
         }
     }
     @Inject

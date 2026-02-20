@@ -25,7 +25,7 @@ fun AIForumToolbar(
     modifier : Modifier = Modifier,
     @StringRes titleRes : Int,
     actionIcon : (@Composable ()-> Unit)? = null,
-    actionClick : () -> Unit = {},
+    actionClick : () -> Unit,
     onBackClick : () -> Unit,
 ) {
     Row(
@@ -47,6 +47,35 @@ fun AIForumToolbar(
             IconButton(onClick = actionClick) {
                 actionIcon()
             }
+        }
+    }
+
+}
+
+@Composable
+fun AIForumToolbar(
+    modifier : Modifier = Modifier,
+    @StringRes titleRes : Int,
+    actionIcon : (@Composable ()-> Unit)? = null,
+    onBackClick : () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+    ) {
+        IconButton(onClick = onBackClick) {
+            Icon(imageVector = AIForumIcon.ArrowBack, contentDescription = null)
+        }
+        ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
+            Text(text = stringResource(titleRes))
+        }
+        if (actionIcon == null) {
+            Spacer(Modifier.width(1.dp))
+        }else {
+            actionIcon()
         }
     }
 

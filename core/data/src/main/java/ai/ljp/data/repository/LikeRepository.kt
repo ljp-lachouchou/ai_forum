@@ -12,7 +12,8 @@ interface LikeRepository : Syncable {
     suspend fun toggleLike(
         userId : String,
         postId: String
-    ) : Boolean
+    )
+
     fun getLikesPostId(profileId : String) : List<String>
 
     fun markLike(postId : String,userId: String) : Flow<Boolean>

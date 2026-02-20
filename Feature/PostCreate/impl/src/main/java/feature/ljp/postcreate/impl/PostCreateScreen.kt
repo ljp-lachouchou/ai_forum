@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -109,12 +110,11 @@ private fun PostCreateScreen(
                             title
                         )
                     }) {
+
                         if (postCreateUiState is PostCreateUiState.Loading) {
                             AIForumLoadingWheel(Modifier.align(Alignment.CenterVertically))
                         }else {
-                            ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
-                                Text(text = stringResource(R.string.feature_post_create_api_create))
-                            }
+                            Text(text = stringResource(R.string.feature_post_create_api_create), textAlign = TextAlign.Center, color = Color.Black)
                         }
                     }
                 }
