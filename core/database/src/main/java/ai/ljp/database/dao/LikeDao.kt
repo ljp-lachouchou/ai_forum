@@ -21,17 +21,14 @@ interface LikeDao {
         """
     )
     suspend fun delete( userId: String,postId : String)
-    @Query (
-        """
-            UPDATE likes 
-            SET `deleted` = :deleted,
-            `updatedAt` = :updatedAt 
-            WHERE `userId` = :userId 
-            AND `postId` = :postId
-        """
-    )
+    @Query("""
+    UPDATE bookmarks 
+    SET deleted = CASE WHEN deleted = 1 THEN 0 ELSE 1 END,
+        createdAt = :updatedAt
+    WHERE userId = :userId AND postId = :postId
+""")
     suspend fun toggleLike(userId: String,
-                               postId: String,deleted : Boolean,
+                               postId: String,
                                updatedAt : Instant)
     @Query (
         """
@@ -55,10 +52,7 @@ interface LikeDao {
     suspend fun deleteAll(ids : List<String>)
     @Query(
         """
-            SELECT 1
-            FROM likes
-            WHERE `postId` = :postId AND `userId` = :userId AND `deleted` = 0
-            LIMIT 1;
+            SELECT EXISTS(SELECT 1 FROM likes WHERE postId = :postId AND userId = :userId AND deleted = 0);
 
         """
     )

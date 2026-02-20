@@ -14,7 +14,7 @@ class LoggingModule(override val enable: Boolean) : HttpClientModule {
         config.install(Logging) {
             logger = Logger.ANDROID
             level = LogLevel.ALL
-            sanitizeHeader { header -> header == HttpHeaders.Authorization }
+//            sanitizeHeader { header -> header == HttpHeaders.Authorization }
         }
     }
 }

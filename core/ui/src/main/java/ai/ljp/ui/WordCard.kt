@@ -96,7 +96,6 @@ private fun WordCardHead(
     bookmarked: Boolean,
     onToggleBookmark :() -> Unit,
 ) {
-    val tint = LocalTintTheme.current.iconTint
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -112,24 +111,14 @@ private fun WordCardHead(
             icon = {
                 Icon(
                     imageVector = AIForumIcon.OutlineBookmark,
-                    contentDescription = "bookmark",
-                    tint =  if (tint == Color.Unspecified) {
-                        MaterialTheme.colorScheme.onPrimary
-                    }else {
-                        tint
-                    }
+                    contentDescription = "bookmark"
                 )
 
             },
             checkedIcon = {
                 Icon(
-                    imageVector = AIForumIcon.Bookmark,
-                    contentDescription = "bookmark",
-                    tint = if (tint == Color.Unspecified) {
-                        MaterialTheme.colorScheme.onPrimary
-                    }else {
-                        tint
-                    }
+                    imageVector = AIForumIcon.Bookmarks,
+                    contentDescription = "bookmark"
                 )
             }
         )

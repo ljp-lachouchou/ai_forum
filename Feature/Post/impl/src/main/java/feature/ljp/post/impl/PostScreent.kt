@@ -235,7 +235,6 @@ private fun AuthorArea(
     username : String,
     modifier: Modifier = Modifier
 ) {
-    Log.e("sdas2222321",avatarUrl ?: "")
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(
@@ -466,7 +465,6 @@ private fun AuthorContent(
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
             Text(text = username)

@@ -40,8 +40,7 @@ class OfflineFirstProfileRepository @Inject constructor(
 
     override suspend fun login(email: String, password: String) : Boolean {
         val resp = network.login(email = email, password = password) ?: return false
-        preferencesDatastore.setAuthToken(resp.accessToken)
-        preferencesDatastore.setCurrentUserId(resp.userId)
+        preferencesDatastore.setIdAndToken(resp.accessToken,resp.userId)
         return true
     }
 

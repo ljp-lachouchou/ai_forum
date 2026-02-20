@@ -30,18 +30,13 @@ interface BookmarkDao {
         """,
     )
     suspend fun deleteAll(ids : List<String>)
-    @Query (
-        """
-            UPDATE bookmarks 
-            SET `deleted` = :deleted,
-            `updatedAt` = :updatedAt 
-            WHERE `userId` = :userId 
-            AND `postId` = :postId
-        """
-    )
-    suspend fun toggleBookmark(userId: String,
-                               postId: String,deleted : Boolean,
-                               updatedAt : Instant)
+    @Query("""
+    UPDATE bookmarks 
+    SET deleted = CASE WHEN deleted = 1 THEN 0 ELSE 1 END,
+        createdAt = :instant
+    WHERE userId = :userId AND postId = :postId
+""")
+    suspend fun toggleBookmark(userId: String, postId: String, instant: Instant)
     @Query (
         """
             UPDATE bookmarks 
@@ -56,10 +51,7 @@ interface BookmarkDao {
                                updatedAt : Instant)
     @Query(
         """
-            SELECT 1 
-            FROM bookmarks
-            WHERE `postId` = :postId AND `userId` = :userId AND `deleted` = 0
-            LIMIT 1;
+            SELECT EXISTS(SELECT 1 FROM bookmarks WHERE postId = :postId AND userId = :userId AND deleted = 0);
 
         """
     )

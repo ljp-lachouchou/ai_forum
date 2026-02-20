@@ -22,15 +22,17 @@ fun AIForumToggleButton(
         modifier = modifier,
         enabled = enabled,
         colors = IconButtonDefaults.iconToggleButtonColors(
-            checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
             checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             disabledContainerColor = if (checked) {
                 MaterialTheme.colorScheme.onBackground.copy(
                     alpha = NiaIconButtonDefaults.DISABLED_ICON_BUTTON_CONTAINER_ALPHA,
                 )
             } else {
-                Color.Transparent
+                MaterialTheme.colorScheme.onBackground.copy(
+                    alpha = NiaIconButtonDefaults.DISABLED_ICON_BUTTON_CONTAINER_ALPHA *2,
+                )
             },
+            contentColor = MaterialTheme.colorScheme.primaryContainer
         ),
     ) {
         if (checked) checkedIcon() else icon()

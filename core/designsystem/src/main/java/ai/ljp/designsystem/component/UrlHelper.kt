@@ -6,11 +6,17 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.readRawBytes
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
+private val sharedClient = HttpClient()
 @Composable
 fun DynamicContent(
     url : String,
@@ -19,11 +25,16 @@ fun DynamicContent(
         CircularProgressIndicator()
     },
     errorPlaceholder: @Composable (String) -> Unit = {Text("出错: $it")},
+    scope : CoroutineScope = rememberCoroutineScope(),
     text : @Composable (String) -> Unit,
 ) {
     val client = HttpClient()
     val contentState = produceState<Result<String>?>(initialValue = null,url) {
-        value = runCatching { client.get(url).readRawBytes().decodeToString() }
+        value = withContext(Dispatchers.IO) {
+            runCatching {
+                sharedClient.get(url).bodyAsText()
+            }
+        }
     }
     when(val result = contentState.value) {
         null -> loadingPlaceholder()

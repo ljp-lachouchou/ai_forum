@@ -7,6 +7,7 @@ import ai.ljp.data.repository.BookmarkRepository
 import ai.ljp.database.dao.BookmarkDao
 import ai.ljp.network.AIForumNetworkDataSource
 import ai.ljp.network.model.SyncBookmarkItem
+import android.util.Log
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -30,18 +31,16 @@ class OfflineFirstBookmarkRepository @Inject constructor(
         userId: String,
         postId: String
     ) {
-        val isBookmarked = bookmarkDao.markBookmark(postId = postId, userId = userId).first()
+
         mutex.withLock {
             val instant = Clock.System.now()
             bookmarkDao.toggleBookmark(userId,
                 postId,
-                !isBookmarked,
                 instant)
             val networkSuccess =  network.toggleBookmark(postId,userId)
             if (!networkSuccess) {
                 bookmarkDao.toggleBookmark(userId,
                     postId,
-                    isBookmarked,
                     instant)
             }
         }

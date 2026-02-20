@@ -8,6 +8,7 @@ import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Bookmark
+import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.ChatBubble
 import androidx.compose.material.icons.outlined.Soap
 import androidx.compose.material.icons.rounded.AccountTree
@@ -51,7 +52,7 @@ object AIForumIcon {
     val Like = Icons.Rounded.Soap
     val OutlineChat = Icons.Outlined.ChatBubble
     val Chat = Icons.Rounded.ChatBubble
-    val OutlineBookmark = Icons.Outlined.Bookmark
+    val OutlineBookmark = Icons.Outlined.Bookmarks
     val Bookmark = Icons.Rounded.Bookmark
 
     val ChevronRight = Icons.Rounded.ChevronRight

@@ -5,6 +5,7 @@ import ai.ljp.data.repository.CommentRepository
 import ai.ljp.data.repository.InteractionWordRepository
 import ai.ljp.data.repository.LikeRepository
 import ai.ljp.data.repository.UserDataRepository
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,12 +21,17 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -39,6 +45,8 @@ class PostViewModel @AssistedInject constructor(
     private val commentRepository: CommentRepository,
     private val userDataRepository: UserDataRepository,
 ) : ViewModel() {
+    private val likeStateCache = mutableMapOf<String, StateFlow<Boolean>>()
+    private val bookmarkStateCache = mutableMapOf<String, StateFlow<Boolean>>()
     val commentContent =savedStateHandle.getStateFlow(COMMENT_CONTENT_QUERY,"")
     val currentId : Flow<String> =
         userDataRepository.userData.map { it.currentUserId!! }
@@ -65,21 +73,32 @@ class PostViewModel @AssistedInject constructor(
         savedStateHandle[COMMENT_CONTENT_QUERY] = content
     }
     fun isLike(postId: String) : StateFlow<Boolean> =
-        currentId.flatMapLatest { userId ->
-            likeRepository.markLike(postId=postId,userId=userId)
-        }.stateIn(
-            scope = viewModelScope,
-            initialValue = false,
-            started = SharingStarted.WhileSubscribed(5_000)
-        )
+        likeStateCache.getOrPut(postId) {
+            currentId
+                .flatMapLatest { userId ->
+
+                    val liked = likeRepository.markLike(postId=postId,userId=userId)
+
+                    liked
+                }
+                .stateIn(
+                    scope = viewModelScope,
+                    initialValue = false,
+                    started = SharingStarted.WhileSubscribed(5_000)
+                )
+        }
+
     fun isBookmark(postId: String) : StateFlow<Boolean> =
-        currentId.flatMapLatest { userId ->
-            bookmarkRepository.markBookmark(postId=postId,userId=userId)
-        }.stateIn(
-            scope = viewModelScope,
-            initialValue = false,
-            started = SharingStarted.WhileSubscribed(5_000)
-        )
+        bookmarkStateCache.getOrPut(postId) {
+            currentId.flatMapLatest { userId ->
+                bookmarkRepository.markBookmark(postId=postId,userId=userId)
+            }
+                .stateIn(
+                    scope = viewModelScope,
+                    initialValue = false,
+                    started = SharingStarted.WhileSubscribed(5_000)
+                )
+        }
     fun toggleLike(postId : String) {
         viewModelScope.launch {
             val userId = currentId.first()

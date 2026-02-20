@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -125,19 +126,24 @@ private fun InteractionItem(
     checkIcon : ImageVector? = null,
     isChecked : ((String) -> StateFlow<Boolean>)? = null,
     onCheckClick : (String) -> Unit = {},
-    color : Color = MaterialTheme.colorScheme.onPrimaryContainer
+    color : Color = MaterialTheme.colorScheme.primary
 ) {
-    val checked = if (id != null && isChecked != null) {
-        isChecked(id).collectAsStateWithLifecycle()
-    }else {
-        remember { mutableStateOf(false) }
+    val checkFlow = remember(id, isChecked) {
+        if (id != null && isChecked != null) {
+            isChecked(id)
+        } else {
+            null
+        }
     }
+    val checked by checkFlow?.collectAsStateWithLifecycle()
+        ?:
+        remember { mutableStateOf(false) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         AIForumToggleButton(
-            checked = checked.value,
+            checked = checked,
             onCheckedChange = {
                 if (id != null) {
                     onCheckClick(id)
@@ -196,7 +202,7 @@ fun InteractionArea(
             "$bookmarks",
             onCheckClick = onBookmarkClick,
             isChecked = isBookmark,
-            checkIcon = AIForumIcon.Bookmark,
+            checkIcon = AIForumIcon.Bookmarks,
             id = postId,
             enabled = allEnabled
         )

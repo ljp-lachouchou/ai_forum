@@ -76,6 +76,14 @@ class AIForumPreferencesDatastore @Inject constructor(
             }
         }
     }
+    suspend fun setIdAndToken(token : String,userId : String) {
+        userPreferences.updateData {
+            it.copy {
+                this.currentUserId = userId
+                this.authToken = token
+            }
+        }
+    }
     suspend fun setThemeBrand(themeBrand: ThemeBrand) {
         userPreferences.updateData {
             it.copy {
@@ -151,8 +159,8 @@ class AIForumPreferencesDatastore @Inject constructor(
     override suspend fun clearToken() {
         userPreferences.updateData {
             it.copy {
-                this.authToken = ""
-                this.currentUserId = ""
+                this.authToken = "null"
+                this.currentUserId = "null"
             }
         }
     }

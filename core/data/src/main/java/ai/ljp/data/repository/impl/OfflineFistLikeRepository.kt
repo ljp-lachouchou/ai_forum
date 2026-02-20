@@ -31,15 +31,14 @@ class OfflineFistLikeRepository @Inject constructor(
         userId: String,
         postId: String
     ) {
-        val isLiked = likeDao.markLike(postId = postId, userId = userId).first()
         val updatedAt = Clock.System.now()
         mutex.withLock {
-            likeDao.toggleLike(userId, postId, !isLiked, updatedAt)
+            likeDao.toggleLike(userId, postId,  updatedAt)
 
             val networkSuccess = network.toggleLike(postId, userId)
 
             if (!networkSuccess) {
-                likeDao.toggleLike(userId, postId, isLiked, updatedAt)
+                likeDao.toggleLike(userId, postId, updatedAt)
             }
         }
     }
