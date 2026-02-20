@@ -3,6 +3,7 @@ package feature.ljp.postcreate.impl
 import ai.ljp.data.repository.WordRepository
 import ai.ljp.domain.UploadProfileDomain
 import ai.ljp.domain.UploadWordDomain
+import ai.ljp.sync.status.SyncManager
 import ai.ljp.ui.Category
 import android.content.Context
 import android.net.Uri
@@ -26,7 +27,8 @@ class PostCreateViewModel @Inject constructor(
     private val wordRepository: WordRepository,
     private val uploadWordDomain: UploadWordDomain,
     private val uploadProfileDomain: UploadProfileDomain,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val workManagerSyncManager: SyncManager
 ) : ViewModel() {
     val curImageUrl : StateFlow<String> = savedStateHandle.getStateFlow(CUR_IMAGE_KEY,"")
     val title : StateFlow<String> =
@@ -78,6 +80,7 @@ class PostCreateViewModel @Inject constructor(
                         wordName = wordName
                     )
                     if (isSuccess) {
+                        workManagerSyncManager.requestSync()
                         changePostUiState(PostCreateUiState.Success)
                     }else {
                         changePostUiState(PostCreateUiState.Error)

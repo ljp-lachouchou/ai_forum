@@ -30,10 +30,10 @@ class OfflineFistLikeRepository @Inject constructor(
     override suspend fun toggleLike(
         userId: String,
         postId: String
-    ) {
+    ) : Boolean{
         val isLiked = likeDao.markLike(postId = postId, userId = userId).first()
         val updatedAt = Clock.System.now()
-        mutex.withLock {
+        val success = mutex.withLock {
             likeDao.toggleLike(userId, postId, !isLiked, updatedAt)
 
             val networkSuccess = network.toggleLike(postId, userId)
@@ -41,7 +41,9 @@ class OfflineFistLikeRepository @Inject constructor(
             if (!networkSuccess) {
                 likeDao.toggleLike(userId, postId, isLiked, updatedAt)
             }
+            return@withLock networkSuccess
         }
+        return success
     }
 
     override fun getLikesPostId(profileId: String): List<String> =

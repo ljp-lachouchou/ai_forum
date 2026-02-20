@@ -13,7 +13,8 @@ interface BookmarkRepository : Syncable {
     suspend fun toggleBookmark(
         userId: String,
         postId: String
-    )
+    ) : Boolean
+
     fun markBookmark(postId : String,userId : String) : Flow<Boolean>
 
     fun getBookmarksPostId(profileId : String) : List<String>

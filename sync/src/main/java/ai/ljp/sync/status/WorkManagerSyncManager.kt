@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class WorkManagerSyncManager @Inject constructor(
     @ApplicationContext private val context: Context
-) : SyncManager{
+) : SyncManager {
     override val isSyncing: Flow<Boolean> =
         WorkManager.getInstance(context)
             .getWorkInfosForUniqueWorkFlow(SYNC_WORK_NAME) //work manager使用enqueueUniqueWork

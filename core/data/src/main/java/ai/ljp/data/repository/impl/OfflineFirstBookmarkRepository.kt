@@ -29,9 +29,9 @@ class OfflineFirstBookmarkRepository @Inject constructor(
     override suspend fun toggleBookmark(
         userId: String,
         postId: String
-    ) {
+    ): Boolean {
         val isBookmarked = bookmarkDao.markBookmark(postId = postId, userId = userId).first()
-        mutex.withLock {
+        val success = mutex.withLock {
             val instant = Clock.System.now()
             bookmarkDao.toggleBookmark(userId,
                 postId,
@@ -44,7 +44,9 @@ class OfflineFirstBookmarkRepository @Inject constructor(
                     isBookmarked,
                     instant)
             }
+            return@withLock networkSuccess
         }
+        return success
 
     }
 

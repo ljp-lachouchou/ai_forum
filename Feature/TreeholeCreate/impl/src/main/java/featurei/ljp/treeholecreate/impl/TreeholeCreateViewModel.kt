@@ -3,7 +3,9 @@ package featurei.ljp.treeholecreate.impl
 import ai.ljp.data.repository.ProfileRepository
 import ai.ljp.data.repository.TreeholeRepository
 import ai.ljp.data.repository.UserDataRepository
+import ai.ljp.sync.status.SyncManager
 import ai.ljp.ui.ProfileUiState
+import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,6 +20,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +28,8 @@ class TreeholeCreateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val treeholeRepository: TreeholeRepository,
     private val profileRepository: ProfileRepository,
-    private val userDataRepository: UserDataRepository
+    private val userDataRepository: UserDataRepository,
+    private val workManager: SyncManager
 ) : ViewModel(){
     val currentUserId : Flow<String> =
         userDataRepository.userData.map { it.currentUserId!! }
@@ -60,6 +64,7 @@ class TreeholeCreateViewModel @Inject constructor(
                 isAnonymous
             )
             if (created) {
+                workManager.requestSync()
                 savedStateHandle[UI_STATE_KEY] = CreateTreeholeUiState.Success
             }else {
                 savedStateHandle[UI_STATE_KEY] = CreateTreeholeUiState.Error
@@ -76,10 +81,15 @@ class TreeholeCreateViewModel @Inject constructor(
     }
 
 }
-sealed interface CreateTreeholeUiState {
+@Parcelize
+sealed interface CreateTreeholeUiState : Parcelable {
+    @Parcelize
     data object Idle : CreateTreeholeUiState
+    @Parcelize
     data object Loading : CreateTreeholeUiState
+    @Parcelize
     data object Error : CreateTreeholeUiState
+    @Parcelize
     data object Success : CreateTreeholeUiState
 }
 private fun profileUiState(

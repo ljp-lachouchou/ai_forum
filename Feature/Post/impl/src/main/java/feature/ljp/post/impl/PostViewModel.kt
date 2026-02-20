@@ -89,7 +89,7 @@ class PostViewModel @AssistedInject constructor(
     fun toggleBookmark(postId: String) {
         viewModelScope.launch {
             val userId = currentId.first()
-            bookmarkRepository.toggleBookmark(userId = userId,postId=postId)
+            bookmarkRepository.toggleBookmark(userId = userId, postId =postId)
         }
     }
     fun createComment(postId : String,content : String) {
