@@ -1,5 +1,6 @@
 package ai.ljp.network.model
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -14,7 +15,7 @@ data class TreeholeCreateResponse(
     @SerialName("is_anonymous")
     val isAnonymous: Boolean,
     @SerialName("created_at")
-    val createdAt: Long
+    val createdAt: Instant
 )
 @OptIn(InternalSerializationApi::class)
 @Serializable

@@ -13,7 +13,6 @@ import ai.ljp.network.model.LikeResponse
 import ai.ljp.network.model.LoginResponse
 import ai.ljp.network.model.NotificationCreateResponse
 import ai.ljp.network.model.NotificationItem
-import ai.ljp.network.model.NotificationReadAllResponse
 import ai.ljp.network.model.PersonaUpdateAvailableResponse
 import ai.ljp.network.model.PersonaUpdateStatsResponse
 import ai.ljp.network.model.ProfileResponse
@@ -63,6 +62,15 @@ data class CreateWordRequest(
     val category: String,
     val tags: List<WordTag>,
     @SerialName("word_name") val wordName: String
+)
+@OptIn(InternalSerializationApi::class)
+@Serializable
+data class CreateTreeholeRequest(
+    val content: String,
+    @SerialName("is_anonymous")
+    val isAnonymous: Boolean,
+    @SerialName("author_id")
+    val authorId: String
 )
 class KtorAIForumNetwork @Inject constructor(
     val client : ApiClient
@@ -369,10 +377,10 @@ class KtorAIForumNetwork @Inject constructor(
         client.apiClient<TreeholeCreateResponse?> {
             post<TreeholeCreateResponse?> {
                 apiRequest("/api/v1/treehole") {
-                    body = simApiMapOf(
-                        "author_id" to authorId,
-                        "content" to content,
-                        "is_anonymous" to isAnonymous
+                    body = CreateTreeholeRequest(
+                        content = content,
+                        isAnonymous = isAnonymous,
+                        authorId = authorId
                     )
                 }
             }.getOrNull()

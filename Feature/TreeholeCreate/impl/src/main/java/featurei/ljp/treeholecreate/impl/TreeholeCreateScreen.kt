@@ -10,10 +10,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -27,10 +29,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -81,6 +88,7 @@ internal fun TreeholeCreateScreen(
     val onCreateClickExpand = {
         keyboardController?.hide()
         onCreateClick(content,isAnonymous)
+        onContentChanged("")
     }
     val isLoading = createTreeholeUiState is CreateTreeholeUiState.Loading
     when(createTreeholeUiState) {
@@ -120,24 +128,21 @@ internal fun TreeholeCreateScreen(
             }
         ) { innerPadding ->
             Box(modifier = Modifier.fillMaxSize()) {
-                LazyColumn(
+                Column(
                     modifier = Modifier.fillMaxSize().padding(innerPadding).padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    item {
-                        AnonymousListItem(
-                            isAnonymous = isAnonymous,
-                            profileUiState = profileUiState,
-                            onAnonymousChanged = onAnonymousChanged
-                        )
-                    }
-                    item {
-                        TextArea(
-                            content = content,
-                            onValueChange = onContentChanged
-                        )
-                    }
+                    AnonymousListItem(
+                        isAnonymous = isAnonymous,
+                        profileUiState = profileUiState,
+                        onAnonymousChanged = onAnonymousChanged
+                    )
+                    TextArea(
+                        content = content,
+                        onValueChange = onContentChanged,
+                        modifier = Modifier.fillMaxWidth()
+                            .weight(1f)
+                    )
                 }
                 AnimatedVisibility(visible = isLoading) {
                     Box(modifier = Modifier.fillMaxWidth()) {
@@ -153,23 +158,22 @@ internal fun TreeholeCreateScreen(
 @Composable
 private fun TextArea(
     content : String,
+    modifier : Modifier = Modifier,
     onValueChange : (String) -> Unit,
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
     TextField(
         value = content,
         onValueChange = {
-            if ("\n" in it) {
-                keyboardController?.hide()
-                return@TextField
-            }
             onValueChange(it)
         },
         trailingIcon = {
             IconButton(onClick = {
                 onValueChange("")
             }) {
-                Icon(imageVector = AIForumIcon.Close, contentDescription = null)
+                if (content.isNotBlank()) {
+                    Icon(imageVector = AIForumIcon.Close, contentDescription = null)
+                }
             }
         },
         placeholder = {
@@ -178,9 +182,14 @@ private fun TextArea(
                 color = Color.Gray
             )
         },
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(200.dp),
+        colors = TextFieldDefaults.colors(
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent
+        ),
+        modifier = modifier.
+            focusRequester(focusRequester),
         minLines = 5,
         maxLines = 10,
     )
@@ -216,7 +225,8 @@ private fun AnonymousListItem(
                     )
                 }else {
                     DynamicAsyncImage(imageUrl = profile.avatarUrl, contentDescription = null,
-                        modifier = Modifier.background(color = Color.Transparent, shape = CircleShape))
+                        modifier = Modifier.size(48.dp)
+                            .clip(CircleShape))
                 }
             }
             val trailingContent : @Composable ()-> Unit = {
