@@ -26,7 +26,6 @@ class OfflineFirstBookmarkRepository @Inject constructor(
 
     override suspend fun delete(userId: String, postId: String) =
         bookmarkDao.delete(userId,postId)
-    @Transaction
     override suspend fun toggleBookmark(
         userId: String,
         postId: String

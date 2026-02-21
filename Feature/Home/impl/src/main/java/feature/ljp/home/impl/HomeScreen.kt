@@ -97,9 +97,6 @@ internal fun HomeScreen(
             null
         }
     }
-    LaunchedEffect(items) {
-        Log.e("sdas22","${items?.itemCount ?: 0}")
-    }
     val scrollState = state.scrollbarState(
         itemCount = items?.itemCount ?: 0
     )

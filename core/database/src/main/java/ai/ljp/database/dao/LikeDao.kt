@@ -22,10 +22,17 @@ interface LikeDao {
     )
     suspend fun delete( userId: String,postId : String)
     @Query("""
-    UPDATE bookmarks 
-    SET deleted = CASE WHEN deleted = 1 THEN 0 ELSE 1 END,
-        createdAt = :updatedAt
-    WHERE userId = :userId AND postId = :postId
+    INSERT OR REPLACE INTO likes (id, userId, postId, deleted, createdAt, updatedAt, syncState)
+    VALUES (
+        -- 如果已存在则保留原 ID，否则生成新 ID
+        COALESCE((SELECT id FROM likes WHERE userId = :userId AND postId = :postId), lower(hex(randomblob(16)))),
+        :userId, 
+        :postId, 
+        COALESCE((SELECT CASE WHEN deleted = 1 THEN 0 ELSE 1 END FROM likes WHERE userId = :userId AND postId = :postId), 0), 
+        COALESCE((SELECT createdAt FROM likes WHERE userId = :userId AND postId = :postId), :updatedAt),
+        :updatedAt,
+        0 -- 对应 SyncState.Pending
+    )
 """)
     suspend fun toggleLike(userId: String,
                                postId: String,
@@ -50,12 +57,11 @@ interface LikeDao {
         """,
     )
     suspend fun deleteAll(ids : List<String>)
-    @Query(
-        """
-            SELECT EXISTS(SELECT 1 FROM likes WHERE postId = :postId AND userId = :userId AND deleted = 0);
-
-        """
-    )
+    @Query("""
+    SELECT COUNT(*) > 0 
+    FROM likes 
+    WHERE postId = :postId AND userId = :userId AND deleted = 0
+""")
     fun markLike(postId: String,userId: String) : Flow<Boolean>
 
     @Query(

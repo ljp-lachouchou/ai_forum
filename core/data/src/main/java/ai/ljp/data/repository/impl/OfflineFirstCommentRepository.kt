@@ -27,13 +27,14 @@ class OfflineFirstCommentRepository @Inject constructor(
     private val commentDao: CommentDao,
     private val preferencesDatastore: AIForumPreferencesDatastore
 ) : CommentRepository{
-    override suspend fun createComment(postId: String, content: String) {
+    override suspend fun createComment(postId: String, content: String) : Boolean {
         val userData = preferencesDatastore.userData.first()
         network.createComment(
             postId = postId,
             content = content,
             authorId = userData.currentUserId!!
-        )
+        ) ?: return false
+        return true
     }
 
     override fun getComments(postId: String): Flow<PagingData<Comment>> =

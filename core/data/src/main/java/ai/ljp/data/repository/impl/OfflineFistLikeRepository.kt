@@ -26,7 +26,6 @@ class OfflineFistLikeRepository @Inject constructor(
 
     override suspend fun delete(userId: String, postId: String) =
         likeDao.delete(userId,postId)
-    @Transaction
     override suspend fun toggleLike(
         userId: String,
         postId: String

@@ -150,22 +150,14 @@ private fun WordCardTail(
                 Icon(
                     imageVector = AIForumIcon.OutlineLike,
                     contentDescription = "bookmark",
-                    tint = if (tint == Color.Unspecified) {
-                        MaterialTheme.colorScheme.onPrimary
-                    }else {
-                        tint
-                    }
+
                 )
             },
             checkedIcon = {
                 Icon(
                     imageVector = AIForumIcon.Like,
                     contentDescription = "bookmark",
-                    tint = if (tint == Color.Unspecified) {
-                        MaterialTheme.colorScheme.onPrimary
-                    }else {
-                        tint
-                    }
+
                 )
             }
         )

@@ -145,7 +145,7 @@ class AIForumPreferencesDatastore @Inject constructor(
 
     override suspend fun getToken(): String? =
         userPreferences.data.map {
-            it.authToken
+            it.authToken.takeIf {token-> token.isNotBlank() }
         }.firstOrNull()
 
     override suspend fun setAuthToken(token: String?) {
@@ -159,8 +159,8 @@ class AIForumPreferencesDatastore @Inject constructor(
     override suspend fun clearToken() {
         userPreferences.updateData {
             it.copy {
-                this.authToken = "null"
-                this.currentUserId = "null"
+                this.authToken = ""
+                this.currentUserId = ""
             }
         }
     }

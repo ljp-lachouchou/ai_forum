@@ -375,6 +375,7 @@ private fun CommentSendBottombar(
             onClick = {
                 keyboardController?.hide()
                 onCommentTriggered(postId,commentContent)
+                onCommentContentChanged("")
             },
             shape = CircleShape
         ) {
@@ -399,6 +400,7 @@ private fun SendCommentTextField(
     val onExplicitlyTriggered = {
         keyboardController?.hide()
         onCommentTriggered(postId,commentContent)
+        onCommentContentChanged("")
     }
     TextField(
         value = commentContent,

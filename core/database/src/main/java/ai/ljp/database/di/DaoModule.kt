@@ -14,44 +14,54 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object DaoModule {
     @Provides
+    @Singleton
     fun providersBookmarkDao(
         aiForumDatabase: AIForumDatabase
     ) : BookmarkDao = aiForumDatabase.bookmarkDao()
 
     @Provides
+    @Singleton
     fun providersCommentDao(
         aiForumDatabase: AIForumDatabase
     ) : CommentDao = aiForumDatabase.commentDao()
     @Provides
+    @Singleton
     fun providersFollowDao(
         aiForumDatabase: AIForumDatabase
     ) : FollowDao = aiForumDatabase.followDao()
     @Provides
+    @Singleton
     fun providersLikeDao(
         aiForumDatabase: AIForumDatabase
     ) : LikeDao = aiForumDatabase.likeDao()
     @Provides
+    @Singleton
     fun providersNotificationDao(
         aiForumDatabase: AIForumDatabase
     ) : NotificationDao = aiForumDatabase.notificationDao()
     @Provides
+    @Singleton
     fun providersProfileDao(
         aiForumDatabase: AIForumDatabase
     ) : ProfileDao = aiForumDatabase.profileDao()
     @Provides
+    @Singleton
     fun providersRecentSearchQueryDao(
         aiForumDatabase: AIForumDatabase
     ) : RecentSearchQueryDao = aiForumDatabase.recentSearchQueryDao()
     @Provides
+    @Singleton
     fun providersTreeholeDao(
         aiForumDatabase: AIForumDatabase
     ) : TreeholeDao = aiForumDatabase.treeholeDao()
     @Provides
+    @Singleton
     fun providersWordDao(
         aiForumDatabase: AIForumDatabase
     ) : WordDao = aiForumDatabase.wordDao()

@@ -4,6 +4,7 @@ import ai.ljp.analytics.AnalyticsHelper
 import ai.ljp.data.repository.BookmarkRepository
 import ai.ljp.data.repository.LikeRepository
 import ai.ljp.data.repository.UserDataRepository
+import ai.ljp.data.util.InteractionViewModel
 import ai.ljp.domain.UploadWordDomain
 import ai.ljp.sync.status.SyncManager
 import ai.ljp.ui.WordsFeedUiState
@@ -34,9 +35,7 @@ class HomeViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val likeRepository: LikeRepository,
     private val updateWordDomain: UploadWordDomain,
-) : ViewModel() {
-    val currentId : Flow<String> =
-        userDataRepository.userData.map { it.currentUserId!! }
+) : InteractionViewModel(userDataRepository) {
     val isSyncing =syncManager.isSyncing
         .stateIn(
             scope = viewModelScope,
@@ -63,32 +62,24 @@ class HomeViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = WordsFeedUiState.Loading
             )
-    fun isLike(postId: String) : StateFlow<Boolean> =
-        currentId.flatMapLatest { userId ->
-            likeRepository.markLike(postId=postId,userId=userId)
-        }.stateIn(
-            scope = viewModelScope,
-            initialValue = false,
-            started = SharingStarted.WhileSubscribed(5_000)
-        )
-    fun isBookmark(postId: String) : StateFlow<Boolean> =
-        currentId.flatMapLatest { userId ->
-            bookmarkRepository.markBookmark(postId=postId,userId=userId)
-        }.stateIn(
-            scope = viewModelScope,
-            initialValue = false,
-            started = SharingStarted.WhileSubscribed(5_000)
-        )
-    fun toggleLike(postId : String) {
-        viewModelScope.launch {
-            val userId = currentId.first()
-            likeRepository.toggleLike(userId = userId, postId = postId)
-        }
+
+    override fun markBookmark(
+        postId: String,
+        userId: String
+    ): Flow<Boolean> =
+        bookmarkRepository.markBookmark(postId,userId)
+
+    override fun markLike(
+        postId: String,
+        userId: String
+    ): Flow<Boolean> = likeRepository.markLike(postId,userId)
+
+    override suspend fun toggleBookmarkActual(postId: String, userId: String) {
+        bookmarkRepository.toggleBookmark(userId = userId,postId=postId)
     }
-    fun toggleBookmark(postId: String) {
-        viewModelScope.launch {
-            val userId = currentId.first()
-            bookmarkRepository.toggleBookmark(userId = userId,postId=postId)
-        }
+
+    override suspend fun toggleLikeBookmarkActual(postId: String, userId: String) {
+        likeRepository.toggleLike(userId=userId,postId=postId)
     }
+
 }

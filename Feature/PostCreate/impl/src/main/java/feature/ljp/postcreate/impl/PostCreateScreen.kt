@@ -25,6 +25,7 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -158,6 +159,12 @@ private fun TitleTextField(
     TextField(
         value = title,
         onValueChange = onTitleChanged,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        ),
         textStyle = TextStyle(
             color = Color.Black,
             fontSize = 20.sp,           // 决定了文字和光标的大小
@@ -166,6 +173,7 @@ private fun TitleTextField(
             lineHeight = 30.sp           // 行高
         ),
         modifier = Modifier
+            .fillMaxWidth()
             .focusRequester(focusRequester)
     )
 }

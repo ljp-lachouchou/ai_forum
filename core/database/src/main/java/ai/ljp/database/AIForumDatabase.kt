@@ -25,6 +25,9 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.AutoMigrationSpec
+import androidx.room.migration.Migration
+import kotlin.reflect.KClass
 
 @Database(
     entities = [
@@ -38,12 +41,13 @@ import androidx.room.TypeConverters
         TreeholeEntity::class,
         WordEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
-        AutoMigration(from = 2, to = 3)
-    ]
+        AutoMigration(from = 2, to = 3),
+
+    ],
 )
 @TypeConverters(
     InstantConverter::class,
@@ -60,5 +64,4 @@ internal abstract class AIForumDatabase : RoomDatabase() {
     abstract fun recentSearchQueryDao() : RecentSearchQueryDao
     abstract fun treeholeDao() : TreeholeDao
     abstract fun wordDao() : WordDao
-
 }

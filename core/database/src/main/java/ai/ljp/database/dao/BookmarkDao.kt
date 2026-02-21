@@ -31,10 +31,17 @@ interface BookmarkDao {
     )
     suspend fun deleteAll(ids : List<String>)
     @Query("""
-    UPDATE bookmarks 
-    SET deleted = CASE WHEN deleted = 1 THEN 0 ELSE 1 END,
-        createdAt = :instant
-    WHERE userId = :userId AND postId = :postId
+    INSERT OR REPLACE INTO bookmarks (id, userId, postId, deleted, createdAt, updatedAt, syncState)
+    VALUES (
+        -- 如果已存在则保留原 ID，否则生成新 ID
+        COALESCE((SELECT id FROM bookmarks WHERE userId = :userId AND postId = :postId), lower(hex(randomblob(16)))),
+        :userId, 
+        :postId, 
+        COALESCE((SELECT CASE WHEN deleted = 1 THEN 0 ELSE 1 END FROM bookmarks WHERE userId = :userId AND postId = :postId), 0), 
+        COALESCE((SELECT createdAt FROM bookmarks WHERE userId = :userId AND postId = :postId), :instant),
+        :instant,
+        0 -- 对应 SyncState.Pending
+    )
 """)
     suspend fun toggleBookmark(userId: String, postId: String, instant: Instant)
     @Query (
@@ -49,12 +56,11 @@ interface BookmarkDao {
     suspend fun updateSync(userId: String,
                                postId: String,syncState: SyncState,
                                updatedAt : Instant)
-    @Query(
-        """
-            SELECT EXISTS(SELECT 1 FROM bookmarks WHERE postId = :postId AND userId = :userId AND deleted = 0);
-
-        """
-    )
+    @Query("""
+    SELECT COUNT(*) > 0 
+    FROM bookmarks 
+    WHERE postId = :postId AND userId = :userId AND deleted = 0
+""")
     fun markBookmark(
         postId: String,
         userId: String

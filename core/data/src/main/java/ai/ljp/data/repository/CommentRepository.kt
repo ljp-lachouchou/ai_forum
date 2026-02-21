@@ -12,7 +12,7 @@ interface CommentRepository : Syncable {
     suspend fun createComment(
         postId: String,
         content: String
-    )
+    ) : Boolean
 
     fun getComments(postId : String) : Flow<PagingData<Comment>>
 

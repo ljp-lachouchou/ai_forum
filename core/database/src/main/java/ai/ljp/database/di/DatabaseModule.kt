@@ -1,6 +1,7 @@
 package ai.ljp.database.di
 
 import ai.ljp.database.AIForumDatabase
+import ai.ljp.database.DatabaseMigrations
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -23,5 +24,7 @@ internal object DatabaseModule {
             context = context,
             klass = AIForumDatabase::class.java,
             name = "aiforum-database"
-        ).build()
+        )
+            .addMigrations(DatabaseMigrations.MIGRATION_3_4)
+            .build()
 }

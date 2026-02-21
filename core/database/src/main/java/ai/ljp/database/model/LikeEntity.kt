@@ -7,17 +7,19 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import java.util.UUID
+
 @Entity (
     tableName = "likes",
     indices = [
         Index(value = ["postId"]),
         Index(value = ["userId"])
-    ]
+    ],
+    primaryKeys = ["userId", "postId"]
 )
 data class LikeEntity(
-    @PrimaryKey
     @ColumnInfo(name = "id")
-    val id : String,
+    val id : String = UUID.randomUUID().toString(),
     @ColumnInfo(name = "userId")
     val userId : String,
     @ColumnInfo(name = "postId")

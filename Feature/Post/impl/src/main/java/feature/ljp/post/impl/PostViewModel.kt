@@ -5,6 +5,8 @@ import ai.ljp.data.repository.CommentRepository
 import ai.ljp.data.repository.InteractionWordRepository
 import ai.ljp.data.repository.LikeRepository
 import ai.ljp.data.repository.UserDataRepository
+import ai.ljp.data.util.InteractionViewModel
+import ai.ljp.sync.status.SyncManager
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -44,12 +47,9 @@ class PostViewModel @AssistedInject constructor(
     private val likeRepository: LikeRepository,
     private val commentRepository: CommentRepository,
     private val userDataRepository: UserDataRepository,
-) : ViewModel() {
-    private val likeStateCache = mutableMapOf<String, StateFlow<Boolean>>()
-    private val bookmarkStateCache = mutableMapOf<String, StateFlow<Boolean>>()
+    private val workManager: SyncManager
+) : InteractionViewModel(userDataRepository) {
     val commentContent =savedStateHandle.getStateFlow(COMMENT_CONTENT_QUERY,"")
-    val currentId : Flow<String> =
-        userDataRepository.userData.map { it.currentUserId!! }
     val postUiState : StateFlow<PostUiState> = postUiState(
         postId = postId,
         interactionWordRepository = interactionWordRepository
@@ -72,53 +72,38 @@ class PostViewModel @AssistedInject constructor(
     fun onCommentContentChanged(content : String) {
         savedStateHandle[COMMENT_CONTENT_QUERY] = content
     }
-    fun isLike(postId: String) : StateFlow<Boolean> =
-        likeStateCache.getOrPut(postId) {
-            currentId
-                .flatMapLatest { userId ->
 
-                    val liked = likeRepository.markLike(postId=postId,userId=userId)
-
-                    liked
-                }
-                .stateIn(
-                    scope = viewModelScope,
-                    initialValue = false,
-                    started = SharingStarted.WhileSubscribed(5_000)
-                )
-        }
-
-    fun isBookmark(postId: String) : StateFlow<Boolean> =
-        bookmarkStateCache.getOrPut(postId) {
-            currentId.flatMapLatest { userId ->
-                bookmarkRepository.markBookmark(postId=postId,userId=userId)
-            }
-                .stateIn(
-                    scope = viewModelScope,
-                    initialValue = false,
-                    started = SharingStarted.WhileSubscribed(5_000)
-                )
-        }
-    fun toggleLike(postId : String) {
-        viewModelScope.launch {
-            val userId = currentId.first()
-            likeRepository.toggleLike(userId = userId, postId = postId)
-        }
-    }
-    fun toggleBookmark(postId: String) {
-        viewModelScope.launch {
-            val userId = currentId.first()
-            bookmarkRepository.toggleBookmark(userId = userId, postId =postId)
-        }
-    }
     fun createComment(postId : String,content : String) {
         viewModelScope.launch {
-            commentRepository.createComment(
+            val success = commentRepository.createComment(
                 postId = postId,
                 content = content
             )
+            if (success) {
+                workManager.requestSync()
+            }
         }
     }
+
+    override fun markBookmark(
+        postId: String,
+        userId: String
+    ): Flow<Boolean> =
+        bookmarkRepository.markBookmark(postId,userId)
+
+    override fun markLike(
+        postId: String,
+        userId: String
+    ): Flow<Boolean> = likeRepository.markLike(postId,userId)
+
+    override suspend fun toggleBookmarkActual(postId: String, userId: String) {
+        bookmarkRepository.toggleBookmark(userId = userId,postId=postId)
+    }
+
+    override suspend fun toggleLikeBookmarkActual(postId: String, userId: String) {
+        likeRepository.toggleLike(userId=userId,postId=postId)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(postId : String) : PostViewModel
