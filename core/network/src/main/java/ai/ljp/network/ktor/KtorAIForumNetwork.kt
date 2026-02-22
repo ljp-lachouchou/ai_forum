@@ -70,7 +70,8 @@ data class CreateTreeholeRequest(
     @SerialName("is_anonymous")
     val isAnonymous: Boolean,
     @SerialName("author_id")
-    val authorId: String
+    val authorId: String,
+    val mood: String
 )
 class KtorAIForumNetwork @Inject constructor(
     val client : ApiClient
@@ -372,7 +373,8 @@ class KtorAIForumNetwork @Inject constructor(
     override suspend fun createTreehole(
         authorId: String,
         content: String,
-        isAnonymous: Boolean
+        isAnonymous: Boolean,
+        mood: String
     ): TreeholeCreateResponse?=
         client.apiClient<TreeholeCreateResponse?> {
             post<TreeholeCreateResponse?> {
@@ -380,7 +382,8 @@ class KtorAIForumNetwork @Inject constructor(
                     body = CreateTreeholeRequest(
                         content = content,
                         isAnonymous = isAnonymous,
-                        authorId = authorId
+                        authorId = authorId,
+                        mood = mood
                     )
                 }
             }.getOrNull()

@@ -6,6 +6,7 @@ import ai.ljp.data.repository.UserDataRepository
 import ai.ljp.sync.status.SyncManager
 import ai.ljp.ui.ProfileUiState
 import android.os.Parcelable
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -33,13 +35,6 @@ class TreeholeCreateViewModel @Inject constructor(
 ) : ViewModel(){
     val currentUserId : Flow<String> =
         userDataRepository.userData.map { it.currentUserId!! }
-    val currentMood : StateFlow<MoodThemeConfig> = userDataRepository.userData.map {
-        it.moodThemeConfig
-    }.stateIn(
-        scope = viewModelScope,
-        initialValue = MoodThemeConfig.Normal,
-        started = SharingStarted.WhileSubscribed(5_000)
-    )
     val createTreeholeUiState : StateFlow<CreateTreeholeUiState> =
         savedStateHandle.getStateFlow(
             UI_STATE_KEY,
@@ -56,12 +51,13 @@ class TreeholeCreateViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = ProfileUiState.Loading
     )
-    fun onCreateClick(content: String,isAnonymous : Boolean) {
+    fun onCreateClick(content: String,isAnonymous : Boolean,moodThemeConfig: MoodThemeConfig) {
         viewModelScope.launch {
             savedStateHandle[UI_STATE_KEY] = CreateTreeholeUiState.Loading
             val created = treeholeRepository.createTreehole(
                 content,
-                isAnonymous
+                isAnonymous,
+                MoodThemeConfig.fromMood(moodThemeConfig)
             )
             if (created) {
                 workManager.requestSync()

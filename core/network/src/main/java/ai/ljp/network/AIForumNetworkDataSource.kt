@@ -120,7 +120,8 @@ interface AIForumNetworkDataSource {
     suspend fun createTreehole(
         authorId : String,
         content : String,
-        isAnonymous : Boolean
+        isAnonymous : Boolean,
+        mood : String
     ) : TreeholeCreateResponse?
 
     suspend fun getTreeholes(

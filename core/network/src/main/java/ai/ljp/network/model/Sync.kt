@@ -72,6 +72,7 @@ data class SyncTreeholeItem(
     val anonymous : Boolean,
     @SerialName("created_at")
     val createdAt : Instant,
+    val mood : String
 )
 @OptIn(InternalSerializationApi::class)
 @Serializable

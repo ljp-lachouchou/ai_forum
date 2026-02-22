@@ -4,6 +4,8 @@ import ai.ljp.designsystem.component.AIForumLoadingWheel
 import ai.ljp.designsystem.component.AIForumTopAppBar
 import ai.ljp.designsystem.component.DynamicAsyncImage
 import ai.ljp.designsystem.icon.AIForumIcon
+import ai.ljp.designsystem.theme.LocalMood
+import ai.ljp.designsystem.theme.Mood
 import ai.ljp.ui.ProfileUiState
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -45,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ljp.model.MoodThemeConfig
 import com.ljp.model.anonymousName
 import feature.ljp.treehole.api.R
 
@@ -71,6 +74,13 @@ internal fun TreeholeCreateScreen(
         modifier = modifier.fillMaxSize()
     )
 }
+fun Mood.asExtraModel() = when(this) {
+    Mood.Sad -> MoodThemeConfig.Sad
+    Mood.Anxiety -> MoodThemeConfig.Anxiety
+    Mood.Normal -> MoodThemeConfig.Normal
+    Mood.Happy -> MoodThemeConfig.Happy
+}
+
 @Composable
 internal fun TreeholeCreateScreen(
     profileUiState : ProfileUiState,
@@ -79,15 +89,16 @@ internal fun TreeholeCreateScreen(
     isAnonymous : Boolean,
     modifier: Modifier = Modifier,
     onBackClick : () -> Unit,
-    onCreateClick : (String, Boolean) -> Unit,
+    onCreateClick : (String, Boolean, MoodThemeConfig) -> Unit,
     onContentChanged : (String) -> Unit,
     onAnonymousChanged : () -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
+    val currentMood = LocalMood.current
     val onCreateClickExpand = {
         keyboardController?.hide()
-        onCreateClick(content,isAnonymous)
+        onCreateClick(content,isAnonymous,currentMood.asExtraModel())
         onContentChanged("")
     }
     val isLoading = createTreeholeUiState is CreateTreeholeUiState.Loading

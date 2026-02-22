@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.Flow
 interface TreeholeRepository : Syncable {
     suspend fun createTreehole(
         content: String,
-        isAnonymous: Boolean
+        isAnonymous: Boolean,
+        mood : String
     ) : Boolean
 
     fun getTreeholes() : Flow<PagingData<TreeholeProfileSource>>

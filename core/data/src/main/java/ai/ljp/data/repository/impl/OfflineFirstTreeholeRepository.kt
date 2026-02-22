@@ -6,7 +6,6 @@ import ai.ljp.data.model.asDBModel
 import ai.ljp.data.repository.TreeholeRepository
 import ai.ljp.database.dao.TreeholeDao
 import ai.ljp.database.model.PopulateTreeholeEntity
-import ai.ljp.database.model.TreeholeEntity
 import ai.ljp.database.model.asExtraModel
 import ai.ljp.datastore.AIForumPreferencesDatastore
 import ai.ljp.network.AIForumNetworkDataSource
@@ -14,7 +13,6 @@ import ai.ljp.network.model.SyncTreeholeItem
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.ljp.model.Treehole
 import com.ljp.model.TreeholeProfileSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -29,13 +27,15 @@ class OfflineFirstTreeholeRepository @Inject constructor(
 ) : TreeholeRepository{
     override suspend fun createTreehole(
         content: String,
-        isAnonymous: Boolean
+        isAnonymous: Boolean,
+        mood : String
     ) : Boolean {
         val userData = preferencesDatastore.userData.first()
         val response = network.createTreehole(
             authorId = userData.currentUserId!!,
             content = content,
-            isAnonymous = isAnonymous
+            isAnonymous = isAnonymous,
+            mood = mood
         )
         return response != null
     }

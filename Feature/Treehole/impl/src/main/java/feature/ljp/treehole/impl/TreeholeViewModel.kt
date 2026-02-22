@@ -7,7 +7,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.ljp.common.result.Result
 import com.ljp.common.result.asResult
-import com.ljp.model.Treehole
 import com.ljp.model.TreeholeProfileSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,11 +28,6 @@ class TreeholeViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = TreeholeFeedUiState.Loading
         )
-    fun onCreateTreeholeClick(content : String,isAnonymous : Boolean) {
-        viewModelScope.launch {
-            treeholeRepository.createTreehole(content,isAnonymous)
-        }
-    }
 
 }
 private fun treeholeFeedUiState(

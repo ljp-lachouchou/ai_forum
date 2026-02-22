@@ -86,7 +86,8 @@ fun SyncTreeholeItem.asDBModel() =
         authorId = authorId,
         content = content,
         anonymous = anonymous,
-        createdAt = createdAt
+        createdAt = createdAt,
+        mood = mood
     )
 fun SyncWordItem.asDBModel() =
     WordEntity(
