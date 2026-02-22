@@ -9,6 +9,8 @@ import ai.ljp.database.dao.ProfileDao
 import ai.ljp.database.dao.RecentSearchQueryDao
 import ai.ljp.database.dao.TreeholeDao
 import ai.ljp.database.dao.WordDao
+import ai.ljp.database.model.ActiveBookmarkCrossRef
+import ai.ljp.database.model.ActiveLikeCrossRef
 import ai.ljp.database.model.BookmarkEntity
 import ai.ljp.database.model.CommentEntity
 import ai.ljp.database.model.FollowEntity
@@ -41,7 +43,11 @@ import kotlin.reflect.KClass
         TreeholeEntity::class,
         WordEntity::class
     ],
-    version = 4,
+    views = [
+        ActiveLikeCrossRef::class,
+        ActiveBookmarkCrossRef::class
+    ],
+    version = 5,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),

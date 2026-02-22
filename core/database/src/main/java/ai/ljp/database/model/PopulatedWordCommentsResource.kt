@@ -3,9 +3,7 @@ package ai.ljp.database.model
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-import com.ljp.model.Profile
 import com.ljp.model.WordCommentsResource
-import javax.sql.CommonDataSource
 
 data class PopulatedWordCommentsResource(
     @Embedded
@@ -24,7 +22,7 @@ data class PopulatedWordCommentsResource(
         parentColumn = "wordId",
         entityColumn = "profileId",
         associateBy = Junction(
-            value = LikeEntity::class,
+            value = ActiveLikeCrossRef::class,
             parentColumn = "postId",
             entityColumn = "userId"
         )
@@ -34,7 +32,7 @@ data class PopulatedWordCommentsResource(
         parentColumn = "wordId",
         entityColumn = "profileId",
         associateBy = Junction(
-            value = BookmarkEntity::class,
+            value = ActiveBookmarkCrossRef::class,
             parentColumn = "postId",
             entityColumn = "userId"
         )

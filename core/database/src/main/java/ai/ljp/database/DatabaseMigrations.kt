@@ -65,4 +65,17 @@ object DatabaseMigrations {
         }
     }
 
+    val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(db: SQLiteConnection) {
+            db.execSQL("DROP VIEW IF EXISTS `active_likes`")
+            db.execSQL(
+                "CREATE VIEW `active_likes` AS SELECT `userId`, `postId` FROM likes WHERE `deleted` = 0"
+            )
+            db.execSQL("DROP VIEW IF EXISTS `active_bookmarks`")
+            db.execSQL(
+                "CREATE VIEW `active_bookmarks` AS SELECT `userId`, `postId` FROM bookmarks WHERE `deleted` = 0"
+            )
+        }
+    }
+
 }

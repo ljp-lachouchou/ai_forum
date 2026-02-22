@@ -25,6 +25,9 @@ internal object DatabaseModule {
             klass = AIForumDatabase::class.java,
             name = "aiforum-database"
         )
-            .addMigrations(DatabaseMigrations.MIGRATION_3_4)
+            .addMigrations(
+                DatabaseMigrations.MIGRATION_3_4,
+                DatabaseMigrations.MIGRATION_4_5
+            )
             .build()
 }
