@@ -12,7 +12,6 @@ import ai.ljp.designsystem.component.scrollbar.scrollbarState
 import ai.ljp.designsystem.icon.AIForumIcon
 import ai.ljp.ui.WordsFeedUiState
 import ai.ljp.ui.wordsFeed
-import android.util.Log
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -34,17 +33,14 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.flow.StateFlow
 import androidx.paging.compose.collectAsLazyPagingItems
 
 @Composable
@@ -63,10 +59,6 @@ fun HomeScreen(
         wordsFeedState = wordsFeedState,
         onProfileClick = onProfileClick,
         onPostClick = onPostClick,
-        onToggleLikeClick = viewModel::toggleLike,
-        onToggleBookmarkClick = viewModel::toggleBookmark,
-        isLike = viewModel::isLike,
-        isBookmark = viewModel::isBookmark,
         modifier = modifier,
         onPostCreateClick = onPostCreateClick,
         onTreeholeCreateClick = onTreeholeCreateClick
@@ -78,10 +70,6 @@ internal fun HomeScreen(
     wordsFeedState : WordsFeedUiState,
     onProfileClick : (String) -> Unit,
     onPostClick : (String) -> Unit,
-    onToggleLikeClick : (String) -> Unit,
-    onToggleBookmarkClick : (String) -> Unit,
-    isLike : (String) -> StateFlow<Boolean>,
-    isBookmark : (String) -> StateFlow<Boolean>,
     onPostCreateClick : () -> Unit,
     onTreeholeCreateClick : () -> Unit,
     modifier: Modifier = Modifier
@@ -97,6 +85,8 @@ internal fun HomeScreen(
             null
         }
     }
+    println("count=${items?.itemCount}")
+    println("refresh=${items?.loadState?.refresh}")
     val scrollState = state.scrollbarState(
         itemCount = items?.itemCount ?: 0
     )
@@ -108,6 +98,7 @@ internal fun HomeScreen(
         when(wordsFeedState) {
             WordsFeedUiState.Loading -> Unit
             is WordsFeedUiState.Success -> {
+                println("加载成功")
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Adaptive(300.dp),
                     state = state,
@@ -119,11 +110,7 @@ internal fun HomeScreen(
                     wordsFeed(
                         wordsSource = items!!,
                         onProfileClick = onProfileClick,
-                        onPostClick = onPostClick,
-                        onToggleLikeClick = onToggleLikeClick,
-                        onToggleBookmarkClick = onToggleBookmarkClick,
-                        isLike = isLike,
-                        isBookmark = isBookmark
+                        onPostClick = onPostClick
                     )
                 }
             }
