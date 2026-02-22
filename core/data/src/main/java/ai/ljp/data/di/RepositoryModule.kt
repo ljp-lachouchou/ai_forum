@@ -26,60 +26,72 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 interface RepositoryModule {
     @Binds
+    @Singleton
     fun bindsBookmarkRepo(
         bookmarkRepo : OfflineFirstBookmarkRepository
     ) : BookmarkRepository
     @Binds
+    @Singleton
     fun bindsCommentRepository(
         commentRepo : OfflineFirstCommentRepository
     ) : CommentRepository
 
     @Binds
+    @Singleton
     fun bindsFollowRepository(
         followRepo : OfflineFirstFollowRepository
     ) : FollowRepository
 
     @Binds
+    @Singleton
     fun bindsInteractionRepo(
         interactionWordRepository: OfflineFirstInteractionWordRepository
     ) : InteractionWordRepository
 
     @Binds
+    @Singleton
     fun bindsLikeRepo(
         likeRepo : OfflineFistLikeRepository
     ) : LikeRepository
 
     @Binds
+    @Singleton
     fun bindsNotificationRepo(
         notificationRepository: OfflineFirstNotificationRepository
     ) : NotificationRepository
 
     @Binds
+    @Singleton
     fun bindsProfileRepo(
         profileRepo : OfflineFirstProfileRepository
     ) : ProfileRepository
 
     @Binds
+    @Singleton
     fun bindsRSRRepo(
         defaultRecentSearchRepository: DefaultRecentSearchRepository
     ) : RecentSearchRepository
 
     @Binds
+    @Singleton
     fun bindsTreeholeRepo(
         treeholeRepository: OfflineFirstTreeholeRepository
     ) : TreeholeRepository
 
     @Binds
+    @Singleton
     fun bindUserDataRepo(
         userdataRepo : OfflineFirstUserDataRepository
     ) : UserDataRepository
 
     @Binds
+    @Singleton
     fun bindsWordRepo(
         wordRepo : OfflineFirstWordRepository
     ) : WordRepository

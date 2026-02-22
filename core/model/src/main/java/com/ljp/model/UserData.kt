@@ -18,7 +18,14 @@ data class Settings(
     val darkThemeConfig: DarkThemeConfig,
     val themeBrand: ThemeBrand,
     val useDynamicColor: Boolean,
-)
+    val debugToken: Double = Math.random()
+) {
+    constructor() : this(
+        darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
+        themeBrand = ThemeBrand.DEFAULT,
+        useDynamicColor = false
+    )
+}
 fun UserData.asSetting() =
     Settings(
         darkThemeConfig = darkThemeConfig,

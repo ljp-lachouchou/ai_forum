@@ -14,6 +14,7 @@ import ai.ljp.designsystem.theme.AIForumTheme
 import ai.ljp.designsystem.theme.Mood
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -32,6 +33,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.metrics.performance.JankStats
 import dagger.Lazy
 import dagger.hilt.android.AndroidEntryPoint
+import feature.ljp.login.impl.LoginUiState
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -84,7 +86,10 @@ class MainActivity : ComponentActivity() {
                         mood = uiState.currentMood
                     )
                 }
-                    .onEach { themeSettings = it }
+                    .onEach {
+                        Log.e("themeSettings = ",themeSettings.toString())
+                        themeSettings = it
+                    }
                     .map { it.darkTheme }
                     .distinctUntilChanged()
                     .collect { darkTheme->

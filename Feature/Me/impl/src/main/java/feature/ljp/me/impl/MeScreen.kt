@@ -536,13 +536,17 @@ private fun SettingItem(
         modifier = Modifier
             .fillMaxWidth(),
         colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            headlineColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = MaterialTheme.colorScheme
+                .onPrimaryContainer
+                .copy(alpha = 0.7f),
+            headlineColor = Color.White
         ),
         trailingContent = {
             Switch(
                 checked = isSelected,
-                onCheckedChange = onSettingChange,
+                onCheckedChange = {
+                    onSettingChange(!it)
+                },
                 thumbContent = {
                     Canvas(onDraw = {
                         drawCircle(

@@ -9,6 +9,7 @@ import ai.ljp.data.repository.WordRepository
 import ai.ljp.sync.status.SyncManager
 import ai.ljp.ui.ProfileUiState
 import android.os.Parcelable
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,11 +31,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -92,6 +93,16 @@ class MeViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = ProfileUiState.Loading
+        )
+    val settings : StateFlow<Settings> = userDataRepository.userData
+        .map {
+            it.asSetting()
+        }
+        .onEach { Log.e("nihaoy","${it.toString()}") }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = Settings(),
+            started = SharingStarted.WhileSubscribed(5_000)
         )
     val currentActionState : StateFlow<ActionState> =
         savedStateHandle.getStateFlow(ACTION_KEY, ActionState.Empty)
@@ -161,7 +172,7 @@ class MeViewModel @Inject constructor(
             scope = viewModelScope,
             profileRepository = profileRepository,
             interactionWordRepository = interactionWordRepository,
-            userDataRepository = userDataRepository
+            settings = settings
         )
 
     }.stateIn(
@@ -242,7 +253,7 @@ private fun sheetContentUiState(
     scope : CoroutineScope,
     profileRepository: ProfileRepository,
     interactionWordRepository: InteractionWordRepository,
-    userDataRepository: UserDataRepository,
+    settings : Flow<Settings>
 ) : Flow<SheetContentUiState> {
     return when(actionState) {
         is ActionState.BookmarksPost,
@@ -269,9 +280,7 @@ private fun sheetContentUiState(
         }
 
         is ActionState.Settings -> {
-            userDataRepository.userData.map {
-                SheetContentUiState.SettingsChange(it.asSetting())
-            } // 这本身就是 Flow，没问题
+            settings.map { SheetContentUiState.SettingsChange(it) }
         }
 
         is ActionState.UpdateProfile -> {

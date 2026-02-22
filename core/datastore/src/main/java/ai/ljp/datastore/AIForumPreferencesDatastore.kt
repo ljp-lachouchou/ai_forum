@@ -9,13 +9,17 @@ import com.ljp.model.ThemeBrand
 import com.ljp.model.UserData
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import okio.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AIForumPreferencesDatastore @Inject constructor(
     private val userPreferences : DataStore<UserPreferences>
 ) : TokenProvider{
     val userData = userPreferences.data
+        .onEach { Log.e("RawProto", "darkThemeConfig value: ${it.darkThemeConfigValue}") }
         .map {
             UserData(
                 darkThemeConfig = when(it.darkThemeConfig) {
@@ -103,13 +107,15 @@ class AIForumPreferencesDatastore @Inject constructor(
     }
     suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
         userPreferences.updateData {
-            it.copy {
+            val nextProto = it.copy {
                 this.darkThemeConfig = when(darkThemeConfig) {
                     DarkThemeConfig.FOLLOW_SYSTEM -> DarkThemeConfigProto.DARK_THEME_CONFIG_FOLLOW_SYSTEM
                     DarkThemeConfig.DARK -> DarkThemeConfigProto.DARK_THEME_CONFIG_DARK
                     DarkThemeConfig.LIGHT -> DarkThemeConfigProto.DARK_THEME_CONFIG_LIGHT
                 }
             }
+            Log.e("DataStore", "Old: ${it.darkThemeConfig}, New: ${nextProto.darkThemeConfig}")
+            nextProto
         }
     }
     suspend fun getChangeVersion() = userPreferences.data.map {
