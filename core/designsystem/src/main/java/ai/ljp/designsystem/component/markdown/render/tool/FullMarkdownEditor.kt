@@ -43,7 +43,7 @@ fun FullMarkdownEditor(
         MarkdownVisualTransformation(colorScheme, typography)
     }
     val focusRequesters = remember { mutableMapOf<String, FocusRequester>() }
-    Column(Modifier.fillMaxSize().imePadding()) {
+    Column(Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
@@ -72,16 +72,7 @@ fun FullMarkdownEditor(
                 )
             }
         }
-        MarkdownToolbar(
-            modifier = Modifier.fillMaxWidth()
-        ) { markdownStyle ->
-            manager.updateBlockContent(
-                index = manager.focusedIndex,
-                newValue = markdownStyle.apply(
-                    manager.focusBlock.content)
-            )
-        }
-        Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
+
     }
     LaunchedEffect(manager.focusedIndex) {
         if (focusRequesters.contains(manager.focusBlock.id)) {

@@ -2,6 +2,8 @@ package feature.ljp.postcreate.impl
 
 import ai.ljp.designsystem.component.AIForumLoadingWheel
 import ai.ljp.designsystem.component.markdown.render.tool.FullMarkdownEditor
+import ai.ljp.designsystem.component.markdown.render.tool.MarkdownToolbar
+import ai.ljp.designsystem.component.markdown.render.tool.focusBlock
 import ai.ljp.designsystem.component.markdown.render.tool.rememberMarkdownEditorManager
 import ai.ljp.ui.AIForumToolbar
 import ai.ljp.ui.Category
@@ -10,15 +12,18 @@ import ai.ljp.ui.PickOnly
 import ai.ljp.ui.rememberLauncherImageForActivityResult
 import android.content.Context
 import android.net.Uri
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ProvideTextStyle
@@ -39,6 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -122,30 +128,51 @@ private fun PostCreateScreen(
             )
         }
     ) {innerPadding->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding)
-                .consumeWindowInsets(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TitleTextField(
-                title = title,
-                onTitleChanged = onTitleChanged,
-                focusRequester = focusRequester
-            )
-            CategoryFlowRow(
-                currentCategory = category,
-                onCategoryChanged = onCategoryOrdinalChanged,
-                modifier = Modifier.fillMaxWidth()
-            )
-            FullMarkdownEditor(
-                manager = manager
-            ) {
-                picLauncher.launch(
-                    PickOnly
-                )
+        Box(
+            Modifier
+                .fillMaxSize()
 
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
+                    .padding(bottom = 48.dp),
+            ) {
+                TitleTextField(
+                    title = title,
+                    onTitleChanged = onTitleChanged,
+                    focusRequester = focusRequester
+                )
+                CategoryFlowRow(
+                    currentCategory = category,
+                    onCategoryChanged = onCategoryOrdinalChanged,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                FullMarkdownEditor(
+                    manager = manager
+                ) {
+                    picLauncher.launch(
+                        PickOnly
+                    )
+
+                }
             }
-            Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
+            MarkdownToolbar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .windowInsetsPadding(
+                        WindowInsets.ime.union(WindowInsets.navigationBars)
+                    )
+            ) { markdownStyle ->
+                manager.updateBlockContent(
+                    index = manager.focusedIndex,
+                    newValue = markdownStyle.apply(
+                        manager.focusBlock.content)
+                )
+            }
         }
     }
 }

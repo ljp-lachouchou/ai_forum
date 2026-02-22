@@ -118,33 +118,10 @@ private fun AIForumApp(
         )
         return
     }
-    AIForumNavigationSuiteScaffold(
-        navigationSuiteItems = {
-            TOP_LEVEL_NAV_ITEMS.forEach { (navKey,navItem) ->
-                val selected = navKey == appState.navigationState.currentTopKey
-                item(
-                    selected = selected,
-                    onClick = { navigator.navigate(navKey) },
-                    icon = {
-                        Icon(
-                            imageVector = navItem.unselectedIcon,
-                            contentDescription = null,
-                        )
-                    },
-                    selectedIcon = {
-                        Icon(
-                            imageVector = navItem.selectedIcon,
-                            contentDescription = null,
-                            )
-                    },
-                    label = {
-                        Text(stringResource(navItem.iconTextId))
-                    }
-                )
-            }
-        },
-        windowAdaptiveInfo = windowAdaptiveInfo
-    ) {
+    val shouldShowNavigationSuite =
+        appState.navigationState.currentKey in appState.navigationState.topKeys
+
+    val appContent: @Composable () -> Unit = {
         Scaffold(
             modifier = modifier,
             containerColor = Color.Transparent,
@@ -219,5 +196,39 @@ private fun AIForumApp(
             }
 
         }
+    }
+
+    if (shouldShowNavigationSuite) {
+        AIForumNavigationSuiteScaffold(
+            navigationSuiteItems = {
+                TOP_LEVEL_NAV_ITEMS.forEach { (navKey, navItem) ->
+                    val selected = navKey == appState.navigationState.currentTopKey
+                    item(
+                        selected = selected,
+                        onClick = { navigator.navigate(navKey) },
+                        icon = {
+                            Icon(
+                                imageVector = navItem.unselectedIcon,
+                                contentDescription = null,
+                            )
+                        },
+                        selectedIcon = {
+                            Icon(
+                                imageVector = navItem.selectedIcon,
+                                contentDescription = null,
+                            )
+                        },
+                        label = {
+                            Text(stringResource(navItem.iconTextId))
+                        }
+                    )
+                }
+            },
+            windowAdaptiveInfo = windowAdaptiveInfo
+        ) {
+            appContent()
+        }
+    } else {
+        appContent()
     }
 }

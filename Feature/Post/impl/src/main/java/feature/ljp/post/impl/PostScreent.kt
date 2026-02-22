@@ -14,11 +14,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
@@ -213,7 +218,11 @@ internal fun PostScreen(
                             postId = postUiState.post.wordId,
                             onCommentContentChanged = onCommentContentChanged,
                             onCommentTriggered = onCommentTriggered,
-                            modifier = Modifier.align(Alignment.BottomEnd)
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .windowInsetsPadding(
+                                    WindowInsets.navigationBars.union(WindowInsets.ime)
+                                )
                         )
                     }
                 }
