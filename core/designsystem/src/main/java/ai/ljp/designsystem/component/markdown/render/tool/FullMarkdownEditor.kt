@@ -50,7 +50,6 @@ fun FullMarkdownEditor(
                 contentPadding = PaddingValues(bottom = 100.dp)
             ) {
                 itemsIndexed(manager.blocks, key = { _, b -> b.id }) { index, block ->
-                    println(block.id)
                     val requester = focusRequesters.getOrPut(block.id) { FocusRequester() }
                     MarkdownBlockItem(index, block, manager, vt,requester)
                 }

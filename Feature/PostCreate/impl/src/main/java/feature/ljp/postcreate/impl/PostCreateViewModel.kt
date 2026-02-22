@@ -1,6 +1,7 @@
 package feature.ljp.postcreate.impl
 
 import ai.ljp.data.repository.WordRepository
+import ai.ljp.designsystem.component.ImagePreprocessor
 import ai.ljp.domain.UploadProfileDomain
 import ai.ljp.domain.UploadWordDomain
 import ai.ljp.sync.status.SyncManager
@@ -13,8 +14,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ljp.model.WordTag
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import java.io.InputStream
 import java.lang.Exception
@@ -30,7 +33,6 @@ class PostCreateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val workManagerSyncManager: SyncManager
 ) : ViewModel() {
-    val curImageUrl : StateFlow<String> = savedStateHandle.getStateFlow(CUR_IMAGE_KEY,"")
     val title : StateFlow<String> =
         savedStateHandle.getStateFlow(TITLE_KEY,"")
     val postCreateUiState : StateFlow<PostCreateUiState> =
@@ -49,9 +51,6 @@ class PostCreateViewModel @Inject constructor(
     }
     fun onTitleChanged(title : String) {
         savedStateHandle[TITLE_KEY] = title
-    }
-    fun onImageUrlChanged(imageUrl : String) {
-        savedStateHandle[CUR_IMAGE_KEY] = imageUrl
     }
 
     @OptIn(ExperimentalTime::class)
@@ -94,19 +93,17 @@ class PostCreateViewModel @Inject constructor(
     }
 
     @OptIn(ExperimentalTime::class)
-    fun onUploadImage(context : Context, uri : Uri) {
-        val fileName = "image_${Clock.System.now()}.jpg"
+    fun onUploadImage(context : Context, uri : Uri,block : (String) -> Unit) {
         viewModelScope.launch {
-            try {
-                context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                    val url = uploadProfileDomain(fileName,inputStream.readBytes())
-                    url?.let {
-                        onImageUrlChanged(it)
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            val prepared = ImagePreprocessor.prepare(context, uri)
+            if (prepared == null) {
+                return@launch
             }
+            val fileName = "image_${Clock.System.now()}.${prepared.extension}"
+            val url = withContext(Dispatchers.IO) {
+                uploadProfileDomain(fileName, prepared.bytes)
+            }
+            url?.let(block)
         }
     }
 }

@@ -21,10 +21,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color.Companion.Unspecified
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Precision
+import coil.size.Scale
 
 @Composable
 fun DynamicAsyncImage(
@@ -33,12 +39,27 @@ fun DynamicAsyncImage(
     modifier: Modifier = Modifier,
     placeholder: Painter = painterResource(R.drawable.core_designsystem_ic_placeholder_default)
 ) {
+    val context = LocalContext.current
     val iconTint = LocalTintTheme.current.iconTint
     val isLocalInspection = LocalInspectionMode.current // 防止预览报错
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
+    var size by remember { mutableStateOf(IntSize.Zero) }
+    val req = remember(imageUrl,size) {
+        ImageRequest.Builder(context)
+            .data(imageUrl ?: AIForumIcon.User)
+            .size(
+                if (size.width > 0) size.width.coerceAtMost(1440) else 1080,
+                if (size.height > 0) size.height.coerceAtMost(1440) else 1080
+
+            )
+            .precision(Precision.INEXACT) //如果内存里已经缓存了一张大小接近的图，就直接复用。这能显著提高缓存命中率
+            .scale(Scale.FILL)
+            .allowRgb565(true) // 非透明图可显著降内存
+            .build()
+    }
     val loader = rememberAsyncImagePainter(
-        model = imageUrl ?: AIForumIcon.User,
+        model = req,
         onState = {state ->
             isLoading = state is AsyncImagePainter.State.Loading
             isError = state is AsyncImagePainter.State.Error
