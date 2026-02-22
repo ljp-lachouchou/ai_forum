@@ -11,6 +11,7 @@ android {
 dependencies {
 
     implementation(projects.core.domain)//
+    implementation(projects.sync)//
     implementation(projects.feature.me.api)//
     implementation(projects.feature.post.api)//
     testImplementation(libs.junit)

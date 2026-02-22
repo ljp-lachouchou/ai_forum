@@ -135,7 +135,7 @@ internal fun HomeScreen(
         }
         ExpandButton(
             state = expandButtonState,
-            modifier = Modifier.align(Alignment.CenterEnd),
+            modifier = Modifier.align(Alignment.CenterEnd).padding(end = 15.dp),
             actionIcon = AIForumIcon.Add,
             popupContent = {
                 CompositionLocalProvider(

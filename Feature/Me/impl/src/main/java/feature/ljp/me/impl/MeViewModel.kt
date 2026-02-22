@@ -6,12 +6,14 @@ import ai.ljp.data.repository.LikeRepository
 import ai.ljp.data.repository.ProfileRepository
 import ai.ljp.data.repository.UserDataRepository
 import ai.ljp.data.repository.WordRepository
+import ai.ljp.sync.status.SyncManager
 import ai.ljp.ui.ProfileUiState
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.ljp.common.result.Result
 import com.ljp.common.result.asResult
 import com.ljp.model.DarkThemeConfig
@@ -22,6 +24,8 @@ import com.ljp.model.ThemeBrand
 import com.ljp.model.WordCommentsResource
 import com.ljp.model.asSetting
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,9 +33,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
@@ -39,6 +45,7 @@ import javax.inject.Inject
 class MeViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val userDataRepository: UserDataRepository,
+    private val syncManager: SyncManager,
     private val profileRepository: ProfileRepository,
     private val interactionWordRepository: InteractionWordRepository,
     private val wordRepository: WordRepository,
@@ -120,22 +127,24 @@ class MeViewModel @Inject constructor(
         currentActionState,
         currentUserId
     ) {actionState,profileId ->
-        return@combine when(actionState) {
-            is ActionState.MyPost -> {
-                wordRepository.getPostIds(profileId)
-            }
+        return@combine withContext(Dispatchers.IO) {
+            when(actionState) {
+                is ActionState.MyPost -> {
+                    wordRepository.getPostIds(profileId)
+                }
 
-            is ActionState.BookmarksPost -> {
-                bookmarkRepository.getBookmarksPostId(profileId)
-            }
+                is ActionState.BookmarksPost -> {
+                    bookmarkRepository.getBookmarksPostId(profileId)
+                }
 
-            is ActionState.LikesPost -> {
-                likeRepository.getLikesPostId(profileId)
-            }
+                is ActionState.LikesPost -> {
+                    likeRepository.getLikesPostId(profileId)
+                }
 
-            else -> emptyList()
+                else -> emptyList()
+            }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     val sheetContentUiState : StateFlow<SheetContentUiState> = combine(
         flow = currentPostIds,
@@ -149,6 +158,7 @@ class MeViewModel @Inject constructor(
             actionState = actionState,
             profileId = profileId,
             postIds = postIds,
+            scope = viewModelScope,
             profileRepository = profileRepository,
             interactionWordRepository = interactionWordRepository,
             userDataRepository = userDataRepository
@@ -177,6 +187,7 @@ class MeViewModel @Inject constructor(
                 avatarUrl = avatarUrl,
                 bio = bio
             )
+            syncManager.requestSync()
         }
     }
     fun darkModeChanged(darkThemeConfig: DarkThemeConfig) {
@@ -228,6 +239,7 @@ private fun sheetContentUiState(
     actionState: ActionState,
     postIds : List<String>?,
     profileId : String,
+    scope : CoroutineScope,
     profileRepository: ProfileRepository,
     interactionWordRepository: InteractionWordRepository,
     userDataRepository: UserDataRepository,
@@ -240,6 +252,7 @@ private fun sheetContentUiState(
                 flowOf(SheetContentUiState.Error) // 统一：使用 flowOf
             } else {
                 interactionWordRepository.getPosts(postIds)
+                    .cachedIn(scope)
                     .asResult()
                     .map { postResult ->
                         when(postResult) {

@@ -17,10 +17,13 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,7 +34,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,15 +46,17 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -75,9 +79,6 @@ import com.ljp.model.DarkThemeConfig
 import com.ljp.model.MoodThemeConfig
 import com.ljp.model.ThemeBrand
 import feature.ljp.me.api.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MeScreen(
@@ -90,14 +91,14 @@ internal fun MeScreen(
     val currentMood by viewModel.currentMood.collectAsStateWithLifecycle()
     val username by viewModel.userName.collectAsStateWithLifecycle()
     val bio by viewModel.bio.collectAsStateWithLifecycle()
-    val scaffoldState = rememberBottomSheetScaffoldState()
+    val sheetState = rememberModalBottomSheetState()
     MeScreen(
         profileUiState = profileUiState,
         currentMood = currentMood,
         username = username,
         bio =bio,
         sheetContentUiState = sheetContentUiState,
-        scaffoldState = scaffoldState,
+        sheetState = sheetState,
         modifier = modifier,
         onPostClick = onPostClick,
         moodChanged = viewModel::moodChanged,
@@ -118,9 +119,8 @@ internal fun MeScreen(
     username : String,
     bio : String,
     sheetContentUiState: SheetContentUiState,
-    scaffoldState: BottomSheetScaffoldState,
+    sheetState: SheetState,
     modifier: Modifier = Modifier,
-    scope : CoroutineScope = rememberCoroutineScope(),
     onPostClick : (String) -> Unit,
     moodChanged : (MoodThemeConfig) -> Unit,
     actionChanged : (ActionState) -> Unit,
@@ -131,11 +131,10 @@ internal fun MeScreen(
     themeBrandChanged : (ThemeBrand) -> Unit,
     dynamicColorPreferenceChanged : (Boolean) -> Unit
 ) {
+    var isSheetVisible by remember { mutableStateOf(false) }
     val onSheetShowClickTriggered : (ActionState) -> Unit = {actionState->
         actionChanged(actionState)
-        scope.launch {
-            scaffoldState.bottomSheetState.show()
-        }
+        isSheetVisible = true
     }
     val resources = LocalResources.current
     AIForumBottomSheetScaffold(
@@ -155,15 +154,16 @@ internal fun MeScreen(
         },
         content = { innerPadding ->
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                modifier = Modifier.fillMaxSize()
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
                     ProfileCard(
                         profileUiState = profileUiState,
                         dotContent = {
-                            Dot(color = Color.Blue)
+                            Dot()
                         },
                         onDotClick = {
                             onSheetShowClickTriggered(ActionState.UpdateProfile)
@@ -184,6 +184,7 @@ internal fun MeScreen(
                         options = moodOptions(resources),
                         currentMood = currentMood,
                         moodChanged = moodChanged,
+                        modifier = Modifier.height(48.dp)
                     )
                 }
                 item {
@@ -208,7 +209,11 @@ internal fun MeScreen(
             }
         },
         modifier = modifier.fillMaxSize(),
-        scaffoldState = scaffoldState
+        isVisible = isSheetVisible,
+        sheetState = sheetState,
+        onDismissRequest = {
+            isSheetVisible = false
+        }
     )
 }
 @Stable
@@ -342,29 +347,32 @@ private fun MoodSelector(
     modifier: Modifier = Modifier
 ) {
     Card(
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onPrimaryContainer
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
         ),
         modifier = modifier.fillMaxWidth()
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .selectableGroup(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            options.forEach { option ->
-                val isSelected = option.mood == currentMood
-                MoodItem(
-                    isSelected = isSelected,
-                    label = option.label,
-                    activeColor = option.activeColor,
-                    onClick = {
-                        moodChanged(option.mood)
-                    },
-                )
+        Box(Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center)
+                    .selectableGroup(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                options.forEach { option ->
+                    val isSelected = option.mood == currentMood
+                    MoodItem(
+                        isSelected = isSelected,
+                        label = option.label,
+                        activeColor = option.activeColor,
+                        onClick = {
+                            moodChanged(option.mood)
+                        },
+                    )
+                }
             }
         }
     }
@@ -392,7 +400,7 @@ private fun MoodItem(
                 onClick = onClick
             ),
     ) {
-        ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
+        ProvideTextStyle(MaterialTheme.typography.bodyLarge.copy(color = Color.White)) {
             Text(text = label)
         }
     }
@@ -412,7 +420,12 @@ fun MeSheetContent(
 
 ) {
     when(sheetContentUiState) {
-        is SheetContentUiState.Error -> Unit
+        is SheetContentUiState.Error -> {
+            Text(
+                text = "加载失败，请重试",
+                modifier = Modifier.padding(16.dp)
+            )
+        }
         is SheetContentUiState.Loading -> {
             Text(text = "加载中...")
         }
@@ -613,7 +626,7 @@ private fun PostFeedSheetContent(
 ) {
     val wordsLazyItems = sheetContentUiState.feed.collectAsLazyPagingItems()
     LazyColumn(
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {

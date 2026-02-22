@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
@@ -59,16 +60,17 @@ fun ProfileCard(
                 Box(modifier = Modifier.fillMaxSize()) {
                     Column(
                         modifier = Modifier
-                            .align(Alignment.Center),
+                            .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(Modifier.height(10.dp))
-                        Box(modifier = Modifier.wrapContentSize()) {
+                        Box {
                             AvatarArea(avatarUrl = profile.avatarUrl)
                             if (dotContent != null) {
                                 Box(
                                     modifier = Modifier
                                         .align(Alignment.BottomEnd)
+                                        .size(40.dp)
                                         .clickable {
                                             onDotClick()
                                         }
@@ -82,13 +84,17 @@ fun ProfileCard(
                             Text(text = profile.userName)
                         }
                         ProvideTextStyle(MaterialTheme.typography.bodySmall) {
-                            Text(text = profile.bio ?:"")
+                            Text(text = profile.bio ?:"",modifier= Modifier.padding(horizontal = 20.dp))
                         }
                     }
                 }
             }
             is ProfileUiState.Error -> {}
-            else -> Unit
+            else -> {
+                Box(Modifier.fillMaxWidth()) {
+                    AIForumLoadingWheel(Modifier.align(Alignment.Center))
+                }
+            }
         }
         AnimatedVisibility(visible = isLoading) {
             Box(
@@ -110,19 +116,20 @@ private fun AvatarArea(
         shape = CircleShape,
         modifier = Modifier.size(100.dp).padding(8.dp)
     ) {
-        DynamicAsyncImage(imageUrl = avatarUrl, contentDescription = null)
+        DynamicAsyncImage(imageUrl = avatarUrl, contentDescription = null, modifier = Modifier.clip(CircleShape))
     }
 }
 @Composable
 fun Dot(
-    color: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.primary,
+
 ) {
     Canvas(
         modifier = modifier.fillMaxSize(),
         onDraw = {
             drawCircle(color = color,
-                radius = size.minDimension / 8.0f)
+                radius = size.minDimension / 4.0f)
         }
     )
 }
