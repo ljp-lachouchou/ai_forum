@@ -1,5 +1,6 @@
 package ai.ljp.ui
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.ui.Modifier
@@ -23,7 +24,7 @@ fun LazyStaggeredGridScope.wordsFeed(
                 category = wordCommentsResource.category,
                 onClick = onPostClick,
                 onProfileClick = onProfileClick,
-                modifier = Modifier.heightIn(max = 500.dp)
+                modifier = Modifier.height(300.dp)
             )
         }
 

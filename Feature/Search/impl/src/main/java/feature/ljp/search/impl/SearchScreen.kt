@@ -196,40 +196,36 @@ private fun SearchResultBody(
             }
         }
         items(items=items, key = {it.wordId}) {word->
-            Surface(
-                color = MaterialTheme.colorScheme.primary
+            Card(
+                border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             ) {
-                Card(
-                    border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.onPrimaryContainer
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clickable(
+                        enabled = true,
+                        onClick = {
+                            onPostClick(word.wordId)
+                        }
                     )
                 ) {
-                    Column(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clickable(
-                            enabled = true,
-                            onClick = {
-                                onPostClick(word.wordId)
-                            }
-                        )
-                    ) {
-                        ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
-                            Text(text = word.category, color = MaterialTheme.colorScheme.onPrimary)
-                        }
-                        ProvideTextStyle(MaterialTheme.typography.headlineLarge) {
-                            Text(text = word.wordName, color = MaterialTheme.colorScheme.onPrimary)
-                        }
-                        DynamicContent(
-                            url = word.wordUrl
-                        ) {
-                            MarkdownView(input = it)
-                        }
+                    ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
+                        Text(text = word.category, color = MaterialTheme.colorScheme.onPrimary)
                     }
-
+                    ProvideTextStyle(MaterialTheme.typography.headlineLarge) {
+                        Text(text = word.wordName, color = MaterialTheme.colorScheme.onPrimary)
+                    }
+                    DynamicContent(
+                        url = word.wordUrl
+                    ) {
+                        MarkdownView(input = it)
+                    }
                 }
+
             }
         }
 
