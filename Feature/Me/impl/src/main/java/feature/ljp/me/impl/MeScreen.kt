@@ -9,10 +9,14 @@ import ai.ljp.designsystem.theme.LocalTintTheme
 import ai.ljp.designsystem.theme.Purple100
 import ai.ljp.designsystem.theme.Slate600
 import ai.ljp.ui.Dot
+import ai.ljp.ui.PickOnly
 import ai.ljp.ui.ProfileCard
 import ai.ljp.ui.ProfileUiState
+import ai.ljp.ui.rememberLauncherImageForActivityResult
 import ai.ljp.ui.wordsItem
+import android.content.Context
 import android.content.res.Resources
+import android.net.Uri
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -66,6 +70,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -108,7 +113,8 @@ internal fun MeScreen(
         onUsernameChanged = viewModel::onUsernameChanged,
         darkModeChanged = viewModel::darkModeChanged,
         themeBrandChanged = viewModel::themeBrandChanged,
-        dynamicColorPreferenceChanged = viewModel::dynamicColorPreferenceChanged
+        dynamicColorPreferenceChanged = viewModel::dynamicColorPreferenceChanged,
+        onUploadImage = viewModel::onUploadImage
     )
 }
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,12 +135,17 @@ internal fun MeScreen(
     onBioChanged : (String) -> Unit,
     darkModeChanged : (DarkThemeConfig) -> Unit,
     themeBrandChanged : (ThemeBrand) -> Unit,
-    dynamicColorPreferenceChanged : (Boolean) -> Unit
+    dynamicColorPreferenceChanged : (Boolean) -> Unit,
+    onUploadImage : (Context, Uri) -> Unit
 ) {
     var isSheetVisible by remember { mutableStateOf(false) }
     val onSheetShowClickTriggered : (ActionState) -> Unit = {actionState->
         actionChanged(actionState)
         isSheetVisible = true
+    }
+    val context = LocalContext.current
+    val picker = rememberLauncherImageForActivityResult { uri ->
+        onUploadImage(context,uri)
     }
     val resources = LocalResources.current
     AIForumBottomSheetScaffold(
@@ -167,6 +178,11 @@ internal fun MeScreen(
                         },
                         onDotClick = {
                             onSheetShowClickTriggered(ActionState.UpdateProfile)
+                        },
+                        onAvatarClick = {
+                            picker.launch(
+                                PickOnly
+                            )
                         }
                     )
                 }

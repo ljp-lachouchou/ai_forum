@@ -1,6 +1,7 @@
 package ai.ljp.sync.worker
 
 import android.content.Context
+import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.CoroutineWorker
 import androidx.work.Data
@@ -39,7 +40,10 @@ class DelegatorWorker(
 
     override suspend fun getForegroundInfo(): ForegroundInfo = delegateWorker.getForegroundInfo()
 
-    override suspend fun doWork(): Result = delegateWorker.doWork()
+    override suspend fun doWork(): Result {
+        Log.e("Delegator", "Delegator received task, target: ${inputData.getString("WORKER_CLASS_NAME")}")
+        return delegateWorker.doWork()
+    }
 
 
 }

@@ -12,12 +12,15 @@ import android.content.pm.ApplicationInfo
 import android.os.Process
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy.Builder
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import javax.inject.Inject
 
 @HiltAndroidApp
-class AIForumApp : Application(), ImageLoaderFactory {
+class AIForumApp : Application(), ImageLoaderFactory, Configuration.Provider {
+    @Inject lateinit var workerFactory: HiltWorkerFactory
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate() {
         super.onCreate()
@@ -43,6 +46,10 @@ class AIForumApp : Application(), ImageLoaderFactory {
     }
 
     override fun newImageLoader(): ImageLoader = imageLoader.get()
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
 }
 
 

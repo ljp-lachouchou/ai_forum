@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.sync)
     implementation(projects.feature.me.api)//
     implementation(projects.feature.post.api)//
+    implementation(libs.androidx.activity.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)

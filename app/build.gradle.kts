@@ -71,7 +71,8 @@ dependencies {
     implementation(projects.feature.postCreate.api)
     implementation(projects.feature.postCreate.impl)
 
-
+    implementation(libs.androidx.work.ktx)
+    implementation(libs.hilt.ext.work)
 
     implementation(projects.core.common)
     implementation(projects.core.ui)

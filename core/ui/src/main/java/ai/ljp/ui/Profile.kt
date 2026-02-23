@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,6 +44,7 @@ fun ProfileCard(
     profileUiState: ProfileUiState,
     modifier: Modifier = Modifier,
     dotContent : (@Composable () -> Unit)? = null,
+    onAvatarClick : () -> Unit = {},
     onDotClick : () -> Unit = {},
 ) {
     val isLoading = profileUiState is ProfileUiState.Loading
@@ -65,7 +65,10 @@ fun ProfileCard(
                     ) {
                         Spacer(Modifier.height(10.dp))
                         Box {
-                            AvatarArea(avatarUrl = profile.avatarUrl)
+                            AvatarArea(
+                                avatarUrl = profile.avatarUrl,
+                                onAvatarClick = onAvatarClick
+                            )
                             if (dotContent != null) {
                                 Box(
                                     modifier = Modifier
@@ -109,14 +112,16 @@ fun ProfileCard(
 
 @Composable
 private fun AvatarArea(
-    avatarUrl : String?,
+    avatarUrl: String?,
+    onAvatarClick: () -> Unit,
 ) {
     Surface(
         color = Color.White,
         shape = CircleShape,
         modifier = Modifier.size(100.dp).padding(8.dp)
     ) {
-        DynamicAsyncImage(imageUrl = avatarUrl, contentDescription = null, modifier = Modifier.clip(CircleShape))
+        DynamicAsyncImage(imageUrl = avatarUrl, contentDescription = null, modifier = Modifier.clip(CircleShape)
+            .clickable(enabled = true, onClick = onAvatarClick))
     }
 }
 @Composable

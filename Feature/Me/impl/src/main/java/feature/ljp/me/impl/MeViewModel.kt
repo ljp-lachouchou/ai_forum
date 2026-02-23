@@ -6,8 +6,12 @@ import ai.ljp.data.repository.LikeRepository
 import ai.ljp.data.repository.ProfileRepository
 import ai.ljp.data.repository.UserDataRepository
 import ai.ljp.data.repository.WordRepository
+import ai.ljp.designsystem.component.ImagePreprocessor
+import ai.ljp.domain.UploadProfileDomain
 import ai.ljp.sync.status.SyncManager
 import ai.ljp.ui.ProfileUiState
+import android.content.Context
+import android.net.Uri
 import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -41,6 +45,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @HiltViewModel
 class MeViewModel @Inject constructor(
@@ -48,6 +54,7 @@ class MeViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val syncManager: SyncManager,
     private val profileRepository: ProfileRepository,
+    private val profileDomain: UploadProfileDomain,
     private val interactionWordRepository: InteractionWordRepository,
     private val wordRepository: WordRepository,
     private val likeRepository: LikeRepository,
@@ -98,7 +105,6 @@ class MeViewModel @Inject constructor(
         .map {
             it.asSetting()
         }
-        .onEach { Log.e("nihaoy","${it.toString()}") }
         .stateIn(
             scope = viewModelScope,
             initialValue = Settings(),
@@ -185,7 +191,29 @@ class MeViewModel @Inject constructor(
             userDataRepository.setMoodThemeConfig(mood)
         }
     }
+    @OptIn(ExperimentalTime::class)
+    fun onUploadImage(context : Context, uri : Uri) {
+        viewModelScope.launch {
+            val prepared = ImagePreprocessor.prepare(context, uri)
+            if (prepared == null) {
+                return@launch
+            }
+            val fileName = "image_${Clock.System.now()}.${prepared.extension}"
+            withContext(Dispatchers.IO) {
+                val url =  profileDomain(fileName, prepared.bytes)
+                url?.let {avatar->
+                    profileRepository.updateProfile(
+                        userName = null,
+                        avatarUrl = avatar,
+                        bio = null
+                    )
+                    syncManager.requestSync()
+                }
+            }
 
+
+        }
+    }
     fun actionChanged(actionState: ActionState) {
         savedStateHandle[ACTION_KEY] = actionState
     }

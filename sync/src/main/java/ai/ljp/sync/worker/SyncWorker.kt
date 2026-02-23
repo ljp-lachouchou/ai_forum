@@ -68,7 +68,7 @@ class SyncWorker @AssistedInject constructor(
         analyticsHelper.logSyncStarted()
 
         val repositories = listOf(
-            treeholeRepository, wordRepository, profileRepository,notificationRepository,
+            profileRepository,treeholeRepository, wordRepository, notificationRepository,
             commentRepository, bookmarkRepository, likeRepository,followRepository
 
         )
@@ -109,7 +109,17 @@ class SyncWorker @AssistedInject constructor(
         Log.e(SYNC_LOG_TAG,"${resp.changes}")
         val changes = resp.changes
         val lastVersion = resp.latestVersion
-        repos.chunked(3).forEach { batch ->
+        val repoFirst = repos.firstOrNull() ?: return@suspendRunCatching false
+        val sf = repoFirst.sync(
+            changeList = changes.filter {
+                it.entityType.trim().lowercase() == repoFirst.tableName
+            }
+        )
+        if (!sf) {
+            return@suspendRunCatching false
+        }
+        val reposOther = repos - repoFirst
+        reposOther.chunked(3).forEach { batch ->
             batch.map { repo ->
                 val sf = repo.sync(
                     changeList = changes.filter {
