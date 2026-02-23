@@ -158,6 +158,7 @@ internal fun PostScreen(
                                 .fillMaxSize()
                                 .padding(innerPadding)
                                 .padding(10.dp)
+                                .padding(bottom = 100.dp)
                                 .consumeWindowInsets(innerPadding)
                                ,
                             verticalArrangement = Arrangement.spacedBy(4.dp),

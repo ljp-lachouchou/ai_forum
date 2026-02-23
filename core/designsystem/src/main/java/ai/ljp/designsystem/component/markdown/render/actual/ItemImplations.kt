@@ -453,12 +453,11 @@ fun MarkdownRenderer(
     nodes: List<MarkNode.Block>,
     onLinkClick: (String) -> Unit = {}
 ) {
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp)
+    Column(
+        modifier = modifier,
     ) {
-        items(nodes) { node ->
-            MarkdownBlockItem(node, modifier,onLinkClick)
+        nodes.forEach { node ->
+            MarkdownBlockItem(node, modifier, onLinkClick)
         }
     }
 }

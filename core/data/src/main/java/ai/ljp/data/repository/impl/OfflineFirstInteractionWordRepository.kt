@@ -44,7 +44,7 @@ class OfflineFirstInteractionWordRepository @Inject constructor(
             userId = userData.currentUserId!!,
             query = query
         ) ?: return AISearch(searchOk = false)
-        val wordItems = aiSearchResp.referenceWords.sortedBy(SearchResult::score)
+        val wordItems = aiSearchResp.referenceWords
             .map(SearchResult::wordId)
             .let {wordIds ->
                 network.syncWords(ids = wordIds)

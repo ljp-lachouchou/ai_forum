@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -162,35 +163,39 @@ private fun SearchResultBody(
     items : List<Word>,
     onPostClick : (String) -> Unit
 ) {
-    val state = rememberScrollState()
-    Column(
+    LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .scrollable(state = state, orientation = Orientation.Vertical),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
-            Text(text = stringResource(
-                R.string.feature_search_api_ai_search
-            ))
+        item {
+            ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
+                Text(text = stringResource(
+                    R.string.feature_search_api_ai_search
+                ))
+            }
         }
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            ),
-            modifier = Modifier.fillMaxWidth()
-                .padding(8.dp)
-        ) {
-            MarkdownView(input = answer)
+        item {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                MarkdownView(input = answer)
+            }
         }
-        ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
-            Text(text = stringResource(
-                R.string.feature_search_api_reference
-            ))
+        item {
+            ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
+                Text(text = stringResource(
+                    R.string.feature_search_api_reference
+                ))
+            }
         }
-        items.forEach { word->
+        items(items=items, key = {it.wordId}) {word->
             Surface(
                 color = MaterialTheme.colorScheme.primary
             ) {
@@ -198,11 +203,12 @@ private fun SearchResultBody(
                     border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.onSurface
+                        containerColor = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 ) {
                     Column(modifier = Modifier
                         .fillMaxWidth()
+                        .height(200.dp)
                         .clickable(
                             enabled = true,
                             onClick = {
@@ -213,6 +219,9 @@ private fun SearchResultBody(
                         ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
                             Text(text = word.category, color = MaterialTheme.colorScheme.onPrimary)
                         }
+                        ProvideTextStyle(MaterialTheme.typography.headlineLarge) {
+                            Text(text = word.wordName, color = MaterialTheme.colorScheme.onPrimary)
+                        }
                         DynamicContent(
                             url = word.wordUrl
                         ) {
@@ -222,8 +231,8 @@ private fun SearchResultBody(
 
                 }
             }
-
         }
+
 
     }
 }
